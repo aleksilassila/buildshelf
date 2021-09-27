@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:11
+    environment:
+      POSTGRES_USER: post
+      POSTGRES_DB: post
+      POSTGRES_PASSWORD: post
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  backend:
+    build: backend
+    volumes:
+      # - ./backend/uploads:/usr/src/app/uploads
+      - ./backend:/usr/src/app
+    ports:
+      - 9000:9000
+    environment:
+      DB_URL: ${DB_URL}
+      BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
+      FRONTEND_ENDPOINT: ${FRONTEND_ENDPOINT}
+    depends_on:
+      - db
+
+  # frontend:
+  #   build: frontend
+  #   volumes:
+  #     - ./frontend:/usr/src/app
+  #   environment:
+  #     BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
+  #   ports:
+  #     - 3001:3000
+
+volumes:
+  dbdata:
