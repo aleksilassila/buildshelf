@@ -1,6 +1,12 @@
+const { Favorites } = require("../models/Favorites");
 const { Posts } = require("../models/Posts");
 
 exports.upload = function (req, res) {
+    if (req.files?.buildFile === undefined) {
+        res.status(400).send('Bad request')
+        return;
+    }
+
     const buildFile = req.files?.buildFile[0];
     const { description, title } = req.body;
 
@@ -37,6 +43,80 @@ exports.getNew = async function (req, res) {
     });
 
     res.send(rows);
+}
+
+exports.get = async function (req, res) {
+    const { post: postId } = req.params;
+
+    const post = await Posts.findOne({
+        where: {
+            id: postId,
+        }
+    });
+
+    if (!post) {
+        res.status(404).send('Post not found')
+        return;
+    }
+
+    res.send({
+        title: post.title,
+        description: post.description,
+        buildFile: post.buildFile,
+        images: post.images,
+        downloads: post.downloads,
+    });
+}
+
+exports.favorite = async function (req, res) {
+    const user = req.user;
+    const { post: postId } = req.params;
+    const liked = req.query.liked === 'true';
+    console.log(user);
+
+    if (postId === null) {
+        res.status(400).send('Bad request');
+        return;
+    }
+
+    const post = await Posts.findOne({
+        where: {
+            id: postId,
+        }
+    });
+
+    if (!post) {
+        res.status(404).send('Post not found');
+        return;
+    }
+
+    if (liked) {
+        await Favorites.findOrCreate({
+            where: {
+                postId,
+                userId: user.id,
+            },
+            defaults: {
+                postId,
+                userId: user.id,
+            }
+        });
+    } else {
+        await Favorites.destroy({
+            where: {
+                postId,
+                userId: user.id,
+            }
+        })
+    }
+
+    res.status(200).send(liked ?
+        'Post added to favorites' :
+        'Post removed from favorites');
+}
+
+exports.download = function (req, res) {
+
 }
 
 exports.search = function (req, res) {

@@ -6,4 +6,8 @@ const Posts = exports.Posts = sequelize.define("posts", {
     description: DataTypes.STRING,
     buildFile: DataTypes.STRING,
     images: DataTypes.ARRAY(DataTypes.STRING),
+    downloads: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
 });

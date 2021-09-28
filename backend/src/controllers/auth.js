@@ -2,16 +2,27 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const { User } = require("../models/User");
 
-exports.auth = function (req, res, next) {
+exports.auth = async function (req, res, next) {
     const token = req.query.token;
 
     const decoded = verifyToken(token);
 
     if (decoded) {
-        console.log("Authenticated: ", decoded.username)
-        next();
+        const user = await User.findOne({
+            where: {
+                username: decoded.username,
+            }
+        })
+
+        if (user) {
+            req.user = user;
+            console.log('Authenticated as: ', decoded.username)
+            next();
+        } else {
+            res.status(500).send('Error occurred during authentication.')
+        }
     } else {
-        res.status(403).send("Unauthenticated");
+        res.status(403).send('Unauthenticated');
     }
 }
 
@@ -19,7 +30,7 @@ exports.login = async function (req, res) {
     const { username, password, clientToken } = req.body;
 
     if (!username || !password || !clientToken) {
-        res.status(400).send("Bad request");
+        res.status(400).send('Bad request');
         return;
     }
 
@@ -42,13 +53,14 @@ exports.login = async function (req, res) {
             where: { username: user.username },
             defaults: {
                 username: user.username,
+                id: user.id,
                 uuid: "Test",
             }
         });
 
         res.send(signToken(user))
     } else {
-        res.status(403).send("Invalid credentials");
+        res.status(403).send('Invalid credentials');
     }
 }
 

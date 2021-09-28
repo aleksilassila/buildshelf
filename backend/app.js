@@ -40,12 +40,18 @@ router.post('/upload', auth,
         { name: "buildFile", maxCount: 1 },
         { name: "images", maxCount: 4 }
     ]), buildsLibrary.upload);
+
 router.get('/posts/new', buildsLibrary.getNew);
-router.post('/posts/:post/like');
+router.get('/posts/search', buildsLibrary.search);
+
+router.get('/post/:post', buildsLibrary.get);
+router.post('/post/:post/favorite', auth, buildsLibrary.favorite);
+router.get('/post/:post/download', auth, buildsLibrary.download);
+
 
 router.post('/login', login);
 
 app.use('/api', router);
-sequelize.sync().then(() => {
+sequelize.sync({ force: false }).then(() => {
     app.listen(9000);
 })
