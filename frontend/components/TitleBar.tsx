@@ -1,14 +1,17 @@
 import theme from "../theme";
 import Link from 'next/link';
+import Auth from "../utils/auth";
 
 const TitleBar = () => {
+    const userObject = Auth.getUser();
+
     return (
         <div className="title-bar">
             <span className="title">Litematica Library</span>
             <ul>
                 <Link href="/"><a>Home</a></Link>
                 <Link href="/builds"><a>Browse Builds</a></Link>
-                <Link href="/login"><a>Log In</a></Link>
+                {userObject?.username ? <span>Logged in as {userObject.username}</span> : <Link href="/login"><a>Log In</a></Link>}
             </ul>
             <style jsx>{`
                 .title-bar {
@@ -26,10 +29,9 @@ const TitleBar = () => {
                     padding: 0;
                 }
                 
-                ul a {
+                ul a, ul span {
                     display: inline-block;
                     margin: 0 0.6em;
-                    cursor: pointer;
                     font-weight: 100;
                     text-transform: uppercase;
                     font-size: 0.8em;
@@ -38,6 +40,7 @@ const TitleBar = () => {
                 }
                 
                 ul a:hover {
+                    cursor: pointer;
                     text-decoration: underline;
                 }
             `}</style>

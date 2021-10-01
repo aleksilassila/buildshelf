@@ -1,6 +1,6 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const multer = require("multer");
+const cors = require("cors");
 
 const config = require("./src/config");
 const buildsLibrary = require("./src/controllers/buildsLibrary");
@@ -10,6 +10,12 @@ const { sequelize } = require("./src/database");
 
 const app = express();
 const api = express.Router();
+
+app.use(
+    cors({
+        origin: '*'
+    })
+);
 
 sequelize.authenticate()
   .then(() => console.log('Database connected'))
