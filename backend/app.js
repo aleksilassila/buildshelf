@@ -9,7 +9,7 @@ const { auth, login } = require("./src/controllers/auth");
 const { sequelize } = require("./src/database");
 
 const app = express();
-const router = express.Router();
+const api = express.Router();
 
 sequelize.authenticate()
   .then(() => console.log('Database connected'))
@@ -28,30 +28,29 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.get('/protected', auth, (req, res) => {
+api.get('/protected', auth, (req, res) => {
     res.send("Authenticated!");
 });
 
-router.use('/files', express.static('uploads'));
-router.use(express.json());
+api.use('/files', express.static('uploads'));
+api.use(express.json());
 
-router.post('/upload', auth,
+api.post('/upload', auth,
     upload.fields([
         { name: "buildFile", maxCount: 1 },
         { name: "images", maxCount: 4 }
     ]), buildsLibrary.upload);
 
-router.get('/posts/new', buildsLibrary.getNew);
-router.get('/posts/search', buildsLibrary.search);
+api.get('/posts/new', buildsLibrary.getNew);
+api.get('/posts/search', buildsLibrary.search);
 
-router.get('/post/:post', buildsLibrary.get);
-router.post('/post/:post/favorite', auth, buildsLibrary.favorite);
-router.get('/post/:post/download', auth, buildsLibrary.download);
+api.get('/post/:post', buildsLibrary.get);
+api.post('/post/:post/favorite', auth, buildsLibrary.favorite);
+api.get('/post/:post/download', auth, buildsLibrary.download);
 
+api.post('/login', login);
 
-router.post('/login', login);
-
-app.use('/api', router);
+app.use('/api', api);
 sequelize.sync({ force: false }).then(() => {
     app.listen(9000);
 })

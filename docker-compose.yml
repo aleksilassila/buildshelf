@@ -26,14 +26,14 @@ services:
     depends_on:
       - db
 
-  # frontend:
-  #   build: frontend
-  #   volumes:
-  #     - ./frontend:/usr/src/app
-  #   environment:
-  #     BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
-  #   ports:
-  #     - 3001:3000
+  frontend:
+    build: frontend
+    volumes:
+      - ./frontend:/usr/src/app
+    environment:
+      BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
+    ports:
+      - 3000:3000
 
 volumes:
   dbdata:

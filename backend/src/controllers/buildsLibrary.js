@@ -45,6 +45,10 @@ exports.getNew = async function (req, res) {
     res.send(rows);
 }
 
+exports.getTop = async function (req, res) {
+
+}
+
 exports.get = async function (req, res) {
     const { post: postId } = req.params;
 
@@ -59,12 +63,19 @@ exports.get = async function (req, res) {
         return;
     }
 
+    const favorites = await Favorites.count({
+        where: {
+            postId,
+        }
+    })
+
     res.send({
         title: post.title,
         description: post.description,
         buildFile: post.buildFile,
         images: post.images,
         downloads: post.downloads,
+        favorites,
     });
 }
 
