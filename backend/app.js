@@ -5,8 +5,12 @@ const cors = require("cors");
 const config = require("./src/config");
 const buildsLibrary = require("./src/controllers/buildsLibrary");
 const { auth, login } = require("./src/controllers/auth");
+const Tasks = require("./src/lib/Tasks");
+const State = require("./src/lib/State");
 
 const { sequelize } = require("./src/database");
+
+const hotPosts = [];
 
 const app = express();
 const api = express.Router();
@@ -48,6 +52,7 @@ api.post('/upload', auth,
     ]), buildsLibrary.upload);
 
 api.get('/posts/new', buildsLibrary.getNew);
+api.get('/posts/top', buildsLibrary.getTop);
 api.get('/posts/search', buildsLibrary.search);
 
 api.get('/post/:post', buildsLibrary.get);
@@ -57,6 +62,12 @@ api.get('/post/:post/download', auth, buildsLibrary.download);
 api.post('/login', login);
 
 app.use('/api', api);
-sequelize.sync({ force: false }).then(() => {
+sequelize.sync({ force: false }).then(async () => {
+    State.topPosts.day = await Tasks.generateTopPosts(1000 * 60 * 60 * 24);
+    State.topPosts.week = await Tasks.generateTopPosts(1000 * 60 * 60 * 24 * 7);
+    State.topPosts.month = await Tasks.generateTopPosts(1000 * 60 * 60 * 24 * 30);
+    State.topPosts.year = await Tasks.generateTopPosts(1000 * 60 * 60 * 24 * 365);
+}).then(() => {
+    console.log("App listening on port 9000");
     app.listen(9000);
-})
+});

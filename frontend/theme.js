@@ -1,11 +1,11 @@
 const theme = {
-    text: {
-        light: "#fff",
-        medium: "#fff",
-        dark: "#fff",
-        lightPurple: "#d3c5dc",
-    },
-    darkPurple: "#0d0c19",
+    layout: "#5189ef",
+    lowContrastLight: "#bbc2d0",
+    lowContrastDark: "#262631",
+    highContrastLight: "#dbdef1",
+    highContrastDark: "#16161c",
+    green: "#7dd745",
+    red: "#d74a45"
 };
 
 export default theme;

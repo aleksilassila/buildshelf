@@ -64,11 +64,11 @@ const Login = () => {
                     <button onClick={submitLogin}>Submit</button>
                 </form>
 
-                {loginError !== null && <span>{loginError}</span>}
+                {loginError !== null && <span className="error">{loginError}</span>}
             </div>
             <style jsx>{`
                 .login {
-                    background-color: ${theme.darkPurple};
+                    background-color: ${theme.highContrastDark};
                     height: 100vh;
                     width: 100vw;
                     display: flex;
@@ -78,7 +78,7 @@ const Login = () => {
                 }
                 
                 .login > div {
-                    background-color: #00000088;
+                    background-color: ${theme.lowContrastDark};
                     padding: 4em;
                 }
                 
@@ -92,15 +92,40 @@ const Login = () => {
                     display: block;
                 }
                 
-                .fields {
-                    //display: flex;
-                    //justify-content: center;
-                    //flex-flow: column;
+                input {
+                    background-color: ${theme.highContrastDark};
+                    color: ${theme.lowContrastLight};
+                    border: 2px solid ${theme.highContrastDark};
+                    margin: 0.5em auto;
+                    width: 250px;
                 }
                 
-                input, button {
+                input:focus {
+                    border-color: ${theme.layout};
+                }
+                
+                button {
+                    background-color: ${theme.layout};
+                    color: ${theme.highContrastLight};
+                    border: 2px solid ${theme.layout};
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin: 1.5em auto;
+                }
+                
+                button, input {
+                    font-family: "Open Sans", sans-serif;
+                    padding: 0.4em 0.8em;
+                    border-radius: 999px;
+                    outline: none;
                     display: block;
-                    margin: 0.2em auto;
+                }
+                
+                span.error {
+                    font-size: 0.8em;
+                    text-align: center;
+                    display: block;
+                    margin-top: 2em;
                 }
             `}</style>
         </div>

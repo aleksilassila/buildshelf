@@ -1,3 +1,4 @@
+const { Favorites } = require("./Favorites");
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../database");
 
@@ -11,3 +12,5 @@ const Posts = exports.Posts = sequelize.define("posts", {
         defaultValue: 0,
     },
 });
+
+Posts.hasMany(Favorites);

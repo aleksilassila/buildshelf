@@ -1,3 +1,4 @@
+const State = require("../lib/State");
 const { Favorites } = require("../models/Favorites");
 const { Posts } = require("../models/Posts");
 
@@ -15,11 +16,17 @@ exports.upload = function (req, res) {
         return;
     }
 
+    const images = [];
+
+    for (const image of (req.files?.images || [])) {
+        images.push(image.filename);
+    }
+
     const values = {
         title,
         buildFile: buildFile.filename,
         description,
-        images: [],
+        images,
     }
 
     Posts.create(values);
@@ -37,7 +44,7 @@ exports.getNew = async function (req, res) {
     }
 
     const { rows } = await Posts.findAndCountAll({
-        order: [ [ 'createdAt', 'DESC' ]],
+        order: [[ 'createdAt', 'DESC' ]],
         offset: postIndex,
         limit: amount
     });
@@ -46,7 +53,26 @@ exports.getNew = async function (req, res) {
 }
 
 exports.getTop = async function (req, res) {
+    const posts = [];
+    const { timespan } = req.query.timespan ? req.query : { timespan: 'day' };
 
+    console.log(timespan, State.topPosts[timespan])
+    if (!State.topPosts[timespan]?.length) {
+        res.status(500).send('Internal error');
+        return;
+    }
+
+    for (const post of State.topPosts[timespan]) {
+        posts.push({
+            title: post.title,
+            description: post.description,
+            images: post.images,
+            buildFile: post.buildFile,
+            downloads: post.downloads,
+        });
+    }
+
+    res.send(posts);
 }
 
 exports.get = async function (req, res) {

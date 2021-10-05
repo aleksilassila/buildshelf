@@ -10,17 +10,18 @@ const TitleBar = () => {
             <span className="title">Litematica Library</span>
             <ul>
                 <Link href="/"><a>Home</a></Link>
-                <Link href="/builds"><a>Browse Builds</a></Link>
+                <Link href="/builds"><a>Builds</a></Link>
+                <Link href="/about"><a>About</a></Link>
                 {userObject?.username ? <span>Logged in as {userObject.username}</span> : <Link href="/login"><a>Log In</a></Link>}
             </ul>
             <style jsx>{`
                 .title-bar {
-                    background-color: ${theme.darkPurple};
-                    color: ${theme.text.light};
+                    background-color: ${theme.layout};
+                    color: ${theme.highContrastLight};
                     display: flex;
                     justify-content: space-between;
                     padding: 1.4em 1.2em;
-                    color: ${theme.text.lightPurple}
+                    position: sticky;
                 }
                 
                 ul {
