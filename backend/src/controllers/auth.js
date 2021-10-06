@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-const { User } = require("../models/User");
+const { User } = require("../models/index");
 
 exports.auth = async function (req, res, next) {
     const token = req.query.token;
@@ -16,7 +16,6 @@ exports.auth = async function (req, res, next) {
 
         if (user) {
             req.user = user;
-            console.log('Authenticated as: ', decoded.username)
             next();
         } else {
             res.status(500).send('Error occurred during authentication.')

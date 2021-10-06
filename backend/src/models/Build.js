@@ -1,8 +1,7 @@
-const { Favorites } = require("./Favorites");
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../database");
 
-const Posts = exports.Posts = sequelize.define("posts", {
+const Build = exports.Build = sequelize.define("build", {
     title: DataTypes.STRING,
     description: DataTypes.STRING,
     buildFile: DataTypes.STRING,
@@ -11,6 +10,8 @@ const Posts = exports.Posts = sequelize.define("posts", {
         type: DataTypes.INTEGER,
         defaultValue: 0,
     },
+    totalFavorites: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
 });
-
-Posts.hasMany(Favorites);

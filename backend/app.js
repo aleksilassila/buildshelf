@@ -3,14 +3,11 @@ const multer = require("multer");
 const cors = require("cors");
 
 const config = require("./src/config");
-const buildsLibrary = require("./src/controllers/buildsLibrary");
+const buildsController = require("./src/controllers/buildsController");
+const userController = require("./src/controllers/userController");
 const { auth, login } = require("./src/controllers/auth");
-const Tasks = require("./src/lib/Tasks");
-const State = require("./src/lib/State");
 
 const { sequelize } = require("./src/database");
-
-const hotPosts = [];
 
 const app = express();
 const api = express.Router();
@@ -31,8 +28,8 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const fileExtension = file.originalname.split('.').pop();
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, file.fieldname + '-' + uniqueSuffix + '.' + fileExtension)
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '.' + fileExtension);
     },
 });
 
@@ -45,29 +42,27 @@ api.get('/protected', auth, (req, res) => {
 api.use('/files', express.static('uploads'));
 api.use(express.json());
 
-api.post('/upload', auth,
+api.post('/build/create', auth,
     upload.fields([
         { name: "buildFile", maxCount: 1 },
         { name: "images", maxCount: 4 }
-    ]), buildsLibrary.upload);
+    ]), buildsController.create);
 
-api.get('/posts/new', buildsLibrary.getNew);
-api.get('/posts/top', buildsLibrary.getTop);
-api.get('/posts/search', buildsLibrary.search);
+api.get('/user/:userId', userController.getUser);
 
-api.get('/post/:post', buildsLibrary.get);
-api.post('/post/:post/favorite', auth, buildsLibrary.favorite);
-api.get('/post/:post/download', auth, buildsLibrary.download);
+api.get('/builds/new', buildsController.getNewBuilds);
+api.get('/builds/top', buildsController.getTopBuilds);
+api.get('/builds/search', buildsController.search);
+
+api.get('/build/:buildId', buildsController.getBuild);
+api.post('/build/:buildId/favorite', auth, buildsController.favorite);
+api.post('/build/:buildId/save', auth, buildsController.save);
+api.get('/build/:buildId/download', auth, buildsController.download);
 
 api.post('/login', login);
 
 app.use('/api', api);
-sequelize.sync({ force: false }).then(async () => {
-    State.topPosts.day = await Tasks.generateTopPosts(1000 * 60 * 60 * 24);
-    State.topPosts.week = await Tasks.generateTopPosts(1000 * 60 * 60 * 24 * 7);
-    State.topPosts.month = await Tasks.generateTopPosts(1000 * 60 * 60 * 24 * 30);
-    State.topPosts.year = await Tasks.generateTopPosts(1000 * 60 * 60 * 24 * 365);
-}).then(() => {
+sequelize.sync({ force: false }).then(() => {
     console.log("App listening on port 9000");
     app.listen(9000);
 });

@@ -13,3 +13,4 @@ const User = exports.User = sequelize.define("user", {
     },
     uuid: DataTypes.STRING,
 });
+

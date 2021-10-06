@@ -1,20 +1,20 @@
 import TitleBar from "../components/TitleBar";
-import TopBuilds from "../components/TopBuilds";
 import theme from "../theme";
 import BuildsList from "../containers/BuildsList";
 import useAxios from "axios-hooks";
 
 const Home = () => {
-    const [{ data, loading, error }, refetch] = useAxios('http://localhost:9000/api/posts/top');
+    const [{ data, loading, error }, refetch] = useAxios(process.env.BACKEND_ENDPOINT + '/builds/top');
     return (
         <div className={'background'}>
             <TitleBar />
             <div className="banner">
                 <h2>Welcome to Litematica Library</h2>
-                <span>A Place to Browse and Share Litematica Builds.</span>
+                <span>A Place to Browse and Share Litematica Builds. You can download Litematica mod{" "}
+                    <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">here</a>.</span>
             </div>
 
-            <BuildsList posts={data || []} />
+            <BuildsList builds={data || []} />
 
             <style jsx>{`
                 .background {
