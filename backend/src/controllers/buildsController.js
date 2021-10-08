@@ -1,3 +1,4 @@
+const { Category } = require("../models");
 const { Op } = require("sequelize");
 const { Build } = require("../models/index");
 
@@ -8,7 +9,17 @@ exports.create = async function (req, res) {
     }
 
     const buildFile = req.files?.buildFile[0];
-    const { description, title } = req.body;
+    const { description, title, category: categoryString, collection } = req.body;
+
+    let tags;
+
+    try {
+        tags = JSON.parse(req.body.tags);
+    } catch {
+        tags = [];
+    }
+
+    tags.slice(0,3)
 
     if (!buildFile || !title) {
         res.status(400).send("Bad request");
@@ -27,6 +38,10 @@ exports.create = async function (req, res) {
         description,
         images,
         creatorId: req.user.id,
+    }
+
+    if (categoryString) {
+        values.category = Category.getCategory(categoryString);
     }
 
     const build = await Build.create(values);

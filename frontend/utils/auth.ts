@@ -1,11 +1,12 @@
 export interface UserObject {
-    username: string;
-    password: string;
-    token: string;
+    username: string,
+    token: string,
+    id: string,
+    iat: number,
 }
 
 class Auth {
-    static getUser = function () {
+    static getUser = function (): UserObject {
         try {
             return JSON.parse(window.localStorage.getItem("user"));
         } catch {

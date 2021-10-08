@@ -12,7 +12,9 @@ const TitleBar = () => {
                 <Link href="/"><a>Home</a></Link>
                 <Link href="/builds"><a>Builds</a></Link>
                 <Link href="/about"><a>About</a></Link>
-                {userObject?.username ? <span>Logged in as {userObject.username}</span> : <Link href="/login"><a>Log In</a></Link>}
+                {userObject?.username ?
+                    <Link href={"/user/" + userObject.id}><a>{userObject.username}</a></Link> :
+                    <Link href="/login"><a>Log In</a></Link>}
             </ul>
             <style jsx>{`
                 .title-bar {
