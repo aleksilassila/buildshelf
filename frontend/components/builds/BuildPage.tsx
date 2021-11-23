@@ -1,9 +1,9 @@
 import useAxios from "axios-hooks";
-import {Build} from "../interfaces/Builds";
-import CloseIcon from "./icons/CloseIcon";
-import theme from "../theme";
-import ImageCollection from "./ImageCollection";
-import Separator from "./icons/Separator";
+import {Build} from "../../interfaces/Builds";
+import CloseIcon from "../icons/CloseIcon";
+import theme from "../../theme";
+import ImageCollection from "../ImageCollection";
+import Separator from "../icons/Separator";
 
 interface Props {
     buildId: number,

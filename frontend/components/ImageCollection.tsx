@@ -25,6 +25,10 @@ const ImageCollection = ({ images }: Props) => {
                     border-radius: 4px;
                     margin: 1em;
                 }
+                
+                ::-webkit-scrollbar {
+                    width: 0;
+                }
             `}
         </style>
     </div>;

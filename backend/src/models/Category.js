@@ -8,7 +8,7 @@ const Category = sequelize.define("category", {
     },
 });
 
-Category.getCategory = async (categoryString) => {
+Category.getOrCreateCategory = async function (categoryString) {
     const parts = categoryString.split("/");
 
     for (let i = 1; i < parts.length; i++) {
@@ -19,9 +19,14 @@ Category.getCategory = async (categoryString) => {
         });
     }
 
-    return await Category.create({
-        name: categoryString,
-    })
+    return Category.findOrCreate({
+        where: {
+            name: categoryString,
+        },
+        defaults: {
+            name: categoryString,
+        }
+    });
 }
 
 module.exports = { Category };

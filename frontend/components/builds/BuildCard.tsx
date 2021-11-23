@@ -1,5 +1,5 @@
-import theme from "../theme";
-import {Build} from "../interfaces/Builds";
+import theme from "../../theme";
+import {Build} from "../../interfaces/Builds";
 
 interface Props {
     build: Build,
@@ -8,7 +8,14 @@ interface Props {
 
 const BuildCard = ({ build, openBuild }: Props) => {
     return <div className="card" onClick={() => openBuild(build.id)}>
-        <h3 className="title">{build.title}</h3>
+        <div>
+            <h3 className="title">{build.title}</h3>
+            <h3 className="category">{build.category?.name?.replace("/", " / ")}</h3>
+        </div>
+        <h4 className="tags">{
+            // build.tags?.map((tag, index) => <h3 key={index} className="tag">{tag.name}</h3>)
+            build.tags?.map((tag, index) => tag.name).join(" ● ")
+        }</h4>
         <span className="description">
             <span>{build.description}</span>
         </span>
@@ -16,7 +23,7 @@ const BuildCard = ({ build, openBuild }: Props) => {
             {`
             .card {
                 background-color: ${theme.lowContrastDark};
-                background-image: url("${build.images[0] ? process.env.BACKEND_ENDPOINT + "/files/" + build.images[0] : "/blueprint.jpeg"}");
+                background-image: url("${build?.images?.length ? process.env.BACKEND_ENDPOINT + "/files/" + build?.images[0] : "/blueprint.jpeg"}");
                 background-position: center;
                 background-size: cover;
                 background-repeat: no-repeat;
@@ -28,14 +35,27 @@ const BuildCard = ({ build, openBuild }: Props) => {
                 width: auto;
                 flex-grow: 1;
                 position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
             }
             
-            .title {
-                display: inline;
+            .title, .category, .tags {
+                display: inline-block;
                 margin-bottom: 0.4em;
                 padding: 0.2em;
                 background-color: ${theme.lowContrastDark};
                 border-radius: 4px;
+            }
+            
+            .category {
+                background-color: ${theme.lowContrastLight};
+                color: ${theme.lowContrastDark};
+                margin-left: 0.5em;
+            }
+            
+            .tags {
+                font-size: 0.8em;
             }
             
             .description {

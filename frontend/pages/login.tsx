@@ -3,6 +3,8 @@ import {useState} from "react";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import theme from "../theme";
+import FormInput from "../components/forms/FormInput";
+import FormButton from "../components/forms/FormButton";
 
 export interface User {
     accessToken: string,
@@ -57,11 +59,9 @@ const Login = () => {
                 <span className="disclosure">Your credentials will not be saved and are only sent to Mojang.</span>
 
                 <form className="fields" onSubmit={e => e.preventDefault()}>
-                    <input type="text" placeholder="Username" value={username}
-                           onChange={e => setUsername(e.target.value)} />
-                    <input type="password" placeholder="Password" value={password}
-                           onChange={e => setPassword(e.target.value)} />
-                    <button onClick={submitLogin}>Submit</button>
+                    <div className="input"><FormInput value={username} placeholder="Username" setValue={setUsername} /></div>
+                    <div className="input"><FormInput type="password" placeholder="Password" value={password} setValue={setPassword} /></div>
+                    <div className="submit"><FormButton onClick={submitLogin}>Log In</FormButton></div>
                 </form>
 
                 {loginError !== null && <span className="error">{loginError}</span>}
@@ -92,33 +92,17 @@ const Login = () => {
                     display: block;
                 }
                 
-                input {
-                    background-color: ${theme.highContrastDark};
-                    color: ${theme.lowContrastLight};
-                    border: 2px solid ${theme.highContrastDark};
+                .input {
                     margin: 0.5em auto;
-                    width: 250px;
                 }
                 
-                input:focus {
-                    border-color: ${theme.layout};
-                }
-                
-                button {
-                    background-color: ${theme.layout};
-                    color: ${theme.highContrastLight};
-                    border: 2px solid ${theme.layout};
-                    font-weight: 600;
-                    cursor: pointer;
+                .submit {
                     margin: 1.5em auto;
                 }
                 
-                button, input {
-                    font-family: "Open Sans", sans-serif;
-                    padding: 0.4em 0.8em;
-                    border-radius: 999px;
-                    outline: none;
-                    display: block;
+                .input, .submit {
+                    display: flex;
+                    justify-content: center;
                 }
                 
                 span.error {

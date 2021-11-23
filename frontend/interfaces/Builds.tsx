@@ -1,3 +1,18 @@
+export interface Tag {
+    name: string,
+}
+
+export interface Category {
+    name: string,
+}
+
+export interface Collection {
+    id: number,
+    name: string,
+    description: string,
+    ownerId: string,
+}
+
 export interface Build {
     id: number,
     title: string,
@@ -6,4 +21,7 @@ export interface Build {
     images: string[],
     downloads: number,
     totalFavorites: number,
+    tags: Tag[],
+    category: Category,
+    collection: Collection,
 }

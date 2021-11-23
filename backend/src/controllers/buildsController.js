@@ -1,25 +1,16 @@
 const { Category } = require("../models");
 const { Op } = require("sequelize");
-const { Build } = require("../models/index");
+const { Build, Collection, Tag } = require("../models/index");
 
 exports.create = async function (req, res) {
     if (req.files?.buildFile === undefined) {
-        res.status(400).send('Bad request')
+        res.status(400).send('No build file attached.')
         return;
     }
 
     const buildFile = req.files?.buildFile[0];
-    const { description, title, category: categoryString, collection } = req.body;
-
-    let tags;
-
-    try {
-        tags = JSON.parse(req.body.tags);
-    } catch {
-        tags = [];
-    }
-
-    tags.slice(0,3)
+    const { description, title, category: categoryString, collectionName, collectionDescription } = req.body;
+    const tags = req.body.tags?.split(",").slice(0,3) || [];
 
     if (!buildFile || !title) {
         res.status(400).send("Bad request");
@@ -32,19 +23,39 @@ exports.create = async function (req, res) {
         images.push(image.filename);
     }
 
+    const [collection] = collectionName ?
+        await Collection.getOrCreateCollection(collectionName, collectionDescription, req.user.id) :
+        [null];
+
+    const [category] = categoryString ?
+        await Category.getOrCreateCategory(categoryString) :
+        [null];
+
     const values = {
         title,
-        buildFile: buildFile.filename,
         description,
+        buildFile: buildFile.filename,
         images,
         creatorId: req.user.id,
-    }
-
-    if (categoryString) {
-        values.category = Category.getCategory(categoryString);
+        tags,
+        collectionId: collection?.id,
+        categoryName: category?.name,
     }
 
     const build = await Build.create(values);
+
+    for (const tagName of tags) {
+        const [tag] = await Tag.findOrCreate({
+            where: {
+                name: tagName,
+            },
+            defaults: {
+                name: tagName,
+            }
+        });
+
+        build.addTag(tag);
+    }
 
     res.send(`${build.id}`);
 }
@@ -64,7 +75,7 @@ exports.getNewBuilds = async function (req, res) {
         limit: amount
     });
 
-    res.send(builds);
+    res.send(await Promise.all(builds.map(build => build.toJSON())));
 }
 
 exports.getTopBuilds = async function (req, res) {
@@ -89,7 +100,7 @@ exports.getTopBuilds = async function (req, res) {
         limit: amount,
     });
 
-    res.send(builds);
+    res.send(await Promise.all(builds.map(build => build.toJSON())));
 }
 
 exports.getBuild = async function (req, res) {
@@ -103,23 +114,15 @@ exports.getBuild = async function (req, res) {
     const build = await Build.findOne({
         where: {
             id: buildId,
-        }
+        },
+        // include: ['tags', 'category', 'collection'],
     });
 
     if (!build) {
         res.status(404).send('Build not found')
         return;
     }
-
-    res.send({
-        id: build.id,
-        title: build.title,
-        description: build.description,
-        buildFile: build.buildFile,
-        images: build.images,
-        downloads: build.downloads,
-        totalFavorites: build.totalFavorites,
-    });
+    res.send(await build.toJSON());
 }
 
 exports.favorite = async function (req, res) {
@@ -127,7 +130,7 @@ exports.favorite = async function (req, res) {
     const { buildId } = req.params;
     const addFavorite = req.query.favorite === 'true';
 
-    if (buildId === null) {
+    if (buildId === null || isNaN(parseInt(buildId))) {
         res.status(400).send('Bad request');
         return;
     }
@@ -173,7 +176,7 @@ exports.save = async function (req, res) {
     const { buildId } = req.params;
     const addSave = req.query.save === 'true';
 
-    if (buildId === null) {
+    if (buildId === null || isNaN(parseInt(buildId))) {
         res.status(400).send('Bad request');
         return;
     }

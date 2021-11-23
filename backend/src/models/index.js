@@ -16,11 +16,14 @@ Build.belongsToMany(User, { through: 'saves', as: 'save' });
 Collection.hasMany(Build);
 Build.belongsTo(Collection);
 
+User.hasMany(Collection, { as: 'owner', foreignKey: 'ownerId' });
+Collection.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
+
 Category.hasMany(Build, { as: 'category' });
 Build.belongsTo(Category, { as: 'category' });
 
-// Tag.hasMany(Build);
-// Build.belongsTo(Tag);
+Build.belongsToMany(Tag, { through: 'postTags' });
+Tag.belongsToMany(Build, { through: 'postTags', as: 'tags' });
 
 module.exports = {
     Build,

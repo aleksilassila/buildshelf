@@ -12,6 +12,7 @@ const TitleBar = () => {
                 <Link href="/"><a>Home</a></Link>
                 <Link href="/builds"><a>Builds</a></Link>
                 <Link href="/about"><a>About</a></Link>
+                {userObject?.username ? <Link href="/upload"><a>Upload</a></Link> : null}
                 {userObject?.username ?
                     <Link href={"/user/" + userObject.id}><a>{userObject.username}</a></Link> :
                     <Link href="/login"><a>Log In</a></Link>}

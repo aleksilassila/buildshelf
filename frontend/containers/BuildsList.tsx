@@ -1,15 +1,20 @@
-import BuildCard from "../components/BuildCard";
+import BuildCard from "../components/builds/BuildCard";
 import {Build} from "../interfaces/Builds";
-import BuildPage from "../components/BuildPage";
+import BuildPage from "../components/builds/BuildPage";
 import {useState} from "react";
 
-const BuildsList = ({ builds }) => {
+interface Props {
+    builds: Build[],
+    heading: JSX.Element | undefined,
+}
+
+const BuildsList = ({ builds, heading }: Props) => {
     const [buildId, setBuildId] = useState(undefined);
 
     return (
         <div className="builds-list">
             <BuildPage buildId={buildId} setBuildPage={setBuildId} modal={true} />
-            <h3>Popular builds right now</h3>
+            {heading}
             <div className="cards-container">
                 {
                     builds.map((build: Build, index) => {

@@ -5,7 +5,10 @@ const cors = require("cors");
 const config = require("./src/config");
 const buildsController = require("./src/controllers/buildsController");
 const userController = require("./src/controllers/userController");
-const { auth, login } = require("./src/controllers/auth");
+const tagsController = require("./src/controllers/tagsController");
+const categoriesController = require("./src/controllers/categoriesController");
+const collectionsController = require("./src/controllers/collectionsController");
+const { auth, optionalAuth, login } = require("./src/controllers/auth");
 
 const { sequelize } = require("./src/database");
 
@@ -48,7 +51,11 @@ api.post('/build/create', auth,
         { name: "images", maxCount: 4 }
     ]), buildsController.create);
 
-api.get('/user/:userId', userController.getUser);
+api.get('/user/:userId', optionalAuth, userController.getUser);
+api.get('/user/:userId/builds', userController.getUserBuilds);
+api.get('/user/:userId/favorites', userController.getUserFavorites);
+api.get('/user/:userId/saves', auth, userController.getUserSaves);
+api.get('/user/:userId/collections', userController.getUserCollections);
 
 api.get('/builds/new', buildsController.getNewBuilds);
 api.get('/builds/top', buildsController.getTopBuilds);
@@ -58,6 +65,15 @@ api.get('/build/:buildId', buildsController.getBuild);
 api.post('/build/:buildId/favorite', auth, buildsController.favorite);
 api.post('/build/:buildId/save', auth, buildsController.save);
 api.get('/build/:buildId/download', auth, buildsController.download);
+
+api.get('/tags', tagsController.getTags);
+
+api.get('/categories', categoriesController.getCategories);
+
+api.get('/collections/find', auth, collectionsController.findCollections);
+// api.get('/collections/get', auth, collectionsController.getUserCollections);
+api.get('/collections/create', auth, collectionsController.createCollection);
+api.delete('/collections/:collectionId/delete', auth, collectionsController.deleteCollection);
 
 api.post('/login', login);
 

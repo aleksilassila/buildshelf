@@ -2,39 +2,26 @@ import TitleBar from "../components/TitleBar";
 import theme from "../theme";
 import BuildsList from "../containers/BuildsList";
 import useAxios from "axios-hooks";
+import InfoBox from "../components/InfoBox";
 
 const Home = () => {
     const [{ data, loading, error }, refetch] = useAxios(process.env.BACKEND_ENDPOINT + '/builds/top');
     return (
         <div className={'background'}>
             <TitleBar />
-            <div className="banner">
-                <h2>Welcome to Litematica Library</h2>
-                <span>A Place to Browse and Share Litematica Builds. You can download Litematica mod{" "}
+            <InfoBox>
+                <h3 className="info-box-heading">Welcome to Litematica Library</h3>
+                <span>A Place to Store, Browse and Share Litematica Builds. You can download Litematica mod{" "}
                     <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">here</a>.</span>
-            </div>
+            </InfoBox>
 
-            <BuildsList builds={data || []} />
+            <BuildsList builds={data || []} heading={<h3>Popular builds right now</h3>}/>
 
             <style jsx>{`
                 .background {
                     background-color: ${theme.highContrastDark};
                     min-height: 100vh;
                     width: 100vw;
-                }
-                
-                .banner {
-                    margin: 2em;
-                    padding: 1em;
-                    background-color: ${theme.lowContrastDark};
-                    border-radius: 4px;
-                }
-                
-                .banner h2 {
-                    margin: 0;
-                    font-size: 1.2em;
-                    font-weight: 800;
-                    text-transform: uppercase;
                 }
                 
                 .banner span {
