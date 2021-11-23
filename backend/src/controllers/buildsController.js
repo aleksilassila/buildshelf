@@ -9,7 +9,7 @@ exports.create = async function (req, res) {
     }
 
     const buildFile = req.files?.buildFile[0];
-    const { description, title, category: categoryString, collectionName, collectionDescription } = req.body;
+    const { description, title, category: categoryString, collectionId } = req.body;
     const tags = req.body.tags?.split(",").slice(0,3) || [];
 
     if (!buildFile || !title) {
@@ -23,9 +23,16 @@ exports.create = async function (req, res) {
         images.push(image.filename);
     }
 
-    const [collection] = collectionName ?
-        await Collection.getOrCreateCollection(collectionName, collectionDescription, req.user.id) :
-        [null];
+    const collection = collectionId ? await Collection.findOne({
+        where: {
+            id: collectionId,
+            ownerId: req.user.id,
+        }
+    }) : null;
+
+    // const [collection] = collectionName ?
+    //     await Collection.getOrCreateCollection(collectionName, collectionDescription, req.user.id) :
+    //     [null];
 
     const [category] = categoryString ?
         await Category.getOrCreateCategory(categoryString) :

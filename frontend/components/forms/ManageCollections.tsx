@@ -21,7 +21,7 @@ const Container = ({ children, setShowMenu }) => <div className="container">
     `}</style>
 </div>
 
-const ManageCollections = ({ showMenu, setShowMenu }) => {
+const ManageCollections = ({ showMenu, setShowMenu, setCollection }) => {
     const [data, setData] = useState<Collection[] | null>(null);
     const [newCollectionName, setNewCollectionName] = useState("");
     const [newCollectionDescription, setNewCollectionDescription] = useState("");
@@ -64,6 +64,12 @@ const ManageCollections = ({ showMenu, setShowMenu }) => {
             }).catch(err => {});
     }
 
+    const selectCollection = (collection: Collection) => (e) => {
+        e.preventDefault();
+        setCollection(collection);
+        setShowMenu(false);
+    }
+
     if (!data) {
         return <Container setShowMenu={setShowMenu}>
             <div>Loading...</div>
@@ -74,7 +80,7 @@ const ManageCollections = ({ showMenu, setShowMenu }) => {
     return <Container setShowMenu={setShowMenu}>
         <span>Collections</span>
         {data.map((collection: Collection, index) => <div key={index}>
-            {collection.name}
+            <span onClick={selectCollection(collection)}>{collection.name}</span>
             <span onClick={deleteCollection(collection.id)}>Delete</span>
         </div>)}
         <span>Create a New Collection</span>

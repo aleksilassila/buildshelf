@@ -5,6 +5,7 @@ import FormInput from "../components/forms/FormInput";
 import theme from "../theme";
 import axios from "axios";
 import ManageCollections from "../components/forms/ManageCollections";
+import {Collection} from "../interfaces/Builds";
 
 const CustomInput = ({ value, setValue, placeholder, type = "text" }) => {
     return <div>
@@ -32,7 +33,7 @@ const CustomFileInput = ({ setFiles, multiple = false }) => {
     </div>
 }
 
-const CollectionSearchInput = ({ placeholder, type = "text" }) => {
+const CollectionSearchInput = ({ placeholder, setCollection, type = "text" }) => {
     const [searchValue, setSearchValue] = useState("");
     const [showSearch, setShowSearch] = useState(false);
     const [typingTimeout, setTypingTimeout] = useState(null);
@@ -50,7 +51,13 @@ const CollectionSearchInput = ({ placeholder, type = "text" }) => {
             }).catch(err => {});
     }
 
-    return <div className="container">
+    return <div className="container"
+                // onFocus={() => setShowSearch(true)}
+                // onBlur={() => {
+                //     setShowSearch(false);
+                //     setSearchData([]);
+                // }}
+                >
         <input
             value={searchValue}
             onChange={e => {
@@ -61,14 +68,13 @@ const CollectionSearchInput = ({ placeholder, type = "text" }) => {
                 setTypingTimeout(window.setTimeout(doSearch(e.target.value), 800));
             }}
             placeholder={placeholder}
-            type={type}
-            onFocus={() => setShowSearch(true)}
-            onBlur={() => {
-                setShowSearch(false);
-                setSearchData([]);
-            }} />
+            type={type} />
         {showSearch ? <div className="search">{
-            searchData.map((collection, index) => <span key={index}>{collection?.name}</span>)
+            searchData.map((collection, index) =>
+                <span key={index} onClick={() => {
+                    setCollection(collection);
+                    setShowSearch(false);
+                }}>{collection?.name}</span>)
         }</div> : null}
         <style jsx>{`
             .container {
@@ -94,6 +100,7 @@ const Upload = () => {
         category: "",
         collectionSearch: "",
         collectionName: "",
+        collectionId: "",
         collectionDescription: "",
     });
     const [response, setResponse] = useState("");
@@ -114,9 +121,11 @@ const Upload = () => {
         data.append("title", formData.title);
         data.append("description", formData.description);
         data.append("buildFile", formData.buildFile);
-        data.append("images", formData.images);
+        for (const image of formData.images) {
+            data.append("images", image);
+        }
         data.append("category", formData.category);
-        data.append("collectionName", formData.collectionName);
+        data.append("collectionId", formData.collectionId);
         data.append("tags", formData.tags.join(","));
 
         axios({
@@ -154,6 +163,14 @@ const Upload = () => {
                 tags,
             })
         }
+    }
+
+    const setCollection = (collection) => {
+        setFormData({
+            ...formData,
+            collectionId: collection.id,
+            collectionName: collection.name,
+        })
     }
 
     const userObject = Auth.getUser();
@@ -197,9 +214,13 @@ const Upload = () => {
                 placeholder="Category Path" />
             <label>Collection</label>
             <CollectionSearchInput
-                placeholder="Search Collections" />
+                placeholder="Search Collections"
+                setCollection={setCollection} />
             <button type="button" onClick={() => setShowCollectionsManager(true)}>Manage Collections</button>
-            <ManageCollections showMenu={showCollectionsManager} setShowMenu={setShowCollectionsManager}  />
+            <ManageCollections
+                showMenu={showCollectionsManager}
+                setShowMenu={setShowCollectionsManager}
+                setCollection={setCollection} />
             {formData.collectionName}
             <button type="submit">Upload</button>
         </form>
