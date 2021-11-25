@@ -12,7 +12,7 @@ const FormButton = ({ children, onClick }) => {
                     font-weight: 600;
                     cursor: pointer;
                     
-                    font-family: "Open Sans", sans-serif;
+                    font-family: 'Avenir', Arial, sans-serif;
                     padding: 0.4em 0.8em;
                     border-radius: 999px;
                     outline: none;

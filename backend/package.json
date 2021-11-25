@@ -5,7 +5,9 @@
     "author": "Aleksi Lassila",
     "license": "",
     "scripts": {
-        "start": "nodemon app.js"
+        "start": "nodemon app.js",
+        "seed": "npx sequelize-cli db:seed:all",
+        "undo-seed": "npx sequelize-cli db:seed:undo:all"
     },
     "dependencies": {
         "axios": "^0.21.4",
@@ -17,5 +19,8 @@
         "pg": "^8.7.1",
         "pg-hstore": "^2.3.4",
         "sequelize": "^6.6.5"
+    },
+    "devDependencies": {
+        "sequelize-cli": "^6.3.0"
     }
 }

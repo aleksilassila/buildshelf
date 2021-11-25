@@ -11,10 +11,10 @@ class MyDocument extends Document {
         return (
             <Html>
                 <Head>
-                    <link
-                        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;800&display=swap"
-                        rel="stylesheet"
-                    />
+                    {/*<link*/}
+                    {/*    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;800&display=swap"*/}
+                    {/*    rel="stylesheet"*/}
+                    {/*/>*/}
                 </Head>
                 <body>
                     <Main />
@@ -23,19 +23,20 @@ class MyDocument extends Document {
                 <style global>
                     {`
                         body {
-                            font-family: Open Sans, sans-serif;
-                            color: ${theme.lowContrastLight};
+                            font-family: Avenir, Arial, sans-serif;
+                            color: ${theme.highContrastDark};
                         }
 
                         body, head, html {
                             margin: 0;
                             padding: 0;
-                            background-color: ${theme.highContrastDark};
+                            background-color: ${theme.highContrastLight};
                         }
 
                         h1, h2, h3, h4, h5, h6 {
                             font-weight: 600;
                             margin: 0;
+                            padding: 0;
                         }
                         
                         .uppercase {
