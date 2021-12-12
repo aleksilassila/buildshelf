@@ -9,7 +9,7 @@ interface Props {
     heading: JSX.Element | undefined,
 }
 
-const BuildsList = ({ builds, heading }: Props) => {
+const BuildsRow = ({ builds, heading }: Props) => {
     const [buildId, setBuildId] = useState(undefined);
     const [scrollIndex, setScrollIndex] = useState(0);
 
@@ -62,6 +62,7 @@ const BuildsList = ({ builds, heading }: Props) => {
                     flex-wrap: wrap;
                     overflow: hidden;
                     height: calc(250px + 1em);
+                    margin: 0 -0.5em;
                 }
                 
                 .buttons-container {
@@ -91,14 +92,14 @@ const BuildsList = ({ builds, heading }: Props) => {
                 }
                 
                 .back {
-                    left: -1em;
+                    left: -1.5em;
                     background-image: url("/angle-left.svg");
                     background-position: 45% center;
 
                 }
                 
                 .forward {
-                    right: -1em;
+                    right: -1.5em;
                     background-image: url("/angle-right.svg");
                     background-position: 55% center;
 
@@ -108,4 +109,4 @@ const BuildsList = ({ builds, heading }: Props) => {
     </div>
 }
 
-export default BuildsList;
+export default BuildsRow;

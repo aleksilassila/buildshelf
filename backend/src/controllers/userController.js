@@ -1,13 +1,13 @@
 const { User, Build, Collection } = require("../models/index");
 
 exports.getUser = async function (req, res) {
-    const { userId } = req.params;
+    const { uuid } = req.params;
 
     const user = await User.findOne({
         where: {
-            id: userId,
+            uuid,
         },
-        include: 'saved',
+        include: 'favorites',
     });
 
     if (!user) {
@@ -19,11 +19,11 @@ exports.getUser = async function (req, res) {
 }
 
 exports.getUserBuilds = async function (req, res) {
-    const { userId } = req.params;
+    const { uuid } = req.params;
 
     const user = await User.findOne({
         where: {
-            id: userId,
+            uuid,
         },
     });
 
@@ -34,7 +34,7 @@ exports.getUserBuilds = async function (req, res) {
 
     const builds = await Build.findAll({
         where: {
-            creatorId: userId,
+            creatorId: uuid,
         },
         order: [['createdAt', 'DESC']],
     });
@@ -46,17 +46,12 @@ exports.getUserBuilds = async function (req, res) {
 }
 
 exports.getUserFavorites = async function (req, res) {
-    const { userId } = req.params;
+    const { uuid } = req.params;
 
     const user = await User.findOne({
         where: {
-            id: userId,
+            uuid,
         },
-        include: {
-            model: Build,
-            as: 'favorite',
-            order: [['createdAt', 'DESC']],
-        }
     });
 
     if (!user) {
@@ -64,24 +59,21 @@ exports.getUserFavorites = async function (req, res) {
         return;
     }
 
-    res.send({
-        username: user.username,
-        favorites: user.favorite,
-    });
+    res.send(await Promise.all((await user.getFavorites()).map(build => build.toJSON())));
 }
 
 exports.getUserSaves = async function (req, res) {
-    const { userId } = req.params;
+    const { uuid } = req.params;
+
+    if (uuid !== req.user.uuid) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
 
     const user = await User.findOne({
         where: {
-            id: userId,
+            uuid,
         },
-        include: {
-            model: Build,
-            as: 'save',
-            order: [['createdAt', 'DESC']],
-        }
     });
 
     if (!user) {
@@ -89,23 +81,20 @@ exports.getUserSaves = async function (req, res) {
         return;
     }
 
-    res.send({
-        username: user.username,
-        saves: user.save,
-    });
+    res.send(await Promise.all((await user.getSaves()).map(build => build.toJSON())));
 }
 
 exports.getProfile = async function (req, res) {
-    const { userId } = req.params;
+    const { uuid } = req.params;
 
     const profileObject = {
 
     };
 
-    if (userId === req.user?.id) {
+    if (uuid === req.user?.id) {
         const user = await User.findOne({
             where: {
-                id: userId,
+                uuid,
             },
             include: 'saved',
         });
@@ -118,8 +107,6 @@ exports.getProfile = async function (req, res) {
 
 exports.getUserCollections = async function (req, res) {
     const { userId } = req.params;
-
-    console.log("Params", req.params)
 
     if (!userId) {
         res.status(400).send("User id not found.");

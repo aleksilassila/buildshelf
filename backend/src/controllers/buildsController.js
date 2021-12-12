@@ -1,4 +1,4 @@
-const { Category } = require("../models");
+const { Category, User } = require("../models");
 const { Op } = require("sequelize");
 const { Build, Collection, Tag } = require("../models/index");
 
@@ -10,7 +10,7 @@ exports.create = async function (req, res) {
 
     const buildFile = req.files?.buildFile[0];
     const { description, title, category: categoryString, collectionId } = req.body;
-    const tags = req.body.tags?.split(",").slice(0,3) || [];
+    const tags = req.body.tags?.split(",").slice(0,3).map(i => i.toLowerCase()) || [];
 
     if (!buildFile || !title) {
         res.status(400).send("Bad request");
@@ -26,7 +26,7 @@ exports.create = async function (req, res) {
     const collection = collectionId ? await Collection.findOne({
         where: {
             id: collectionId,
-            ownerId: req.user.id,
+            ownerId: req.user.uuid,
         }
     }) : null;
 
@@ -43,7 +43,7 @@ exports.create = async function (req, res) {
         description,
         buildFile: buildFile.filename,
         images,
-        creatorId: req.user.id,
+        creatorId: req.user.uuid,
         tags,
         collectionId: collection?.id,
         categoryName: category?.name,
@@ -67,44 +67,68 @@ exports.create = async function (req, res) {
     res.send(`${build.id}`);
 }
 
-exports.getNewBuilds = async function (req, res) {
-    const offset = req.query.offset || 0;
-    const amount = Math.min(req.query.amount || 20, 50);
+exports.getBuilds = async function (req, res) {
+    const { timespan, tags, collection, category, title, sort, uuid } = req.query;
 
-    if (isNaN(parseFloat(amount)) || isNaN(parseFloat(offset))) {
-        res.status(400).send('Bad request');
-        return;
-    }
+    const where = {};
+    let tagsWhere = undefined;
+    let order = undefined;
 
-    const builds = await Build.findAll({
-        order: [[ 'createdAt', 'DESC' ]],
-        offset: offset,
-        limit: amount
-    });
-
-    res.send(await Promise.all(builds.map(build => build.toJSON())));
-}
-
-exports.getTopBuilds = async function (req, res) {
-    const offset = req.query.offset || 0;
-    const amount = Math.min(req.query.amount || 20, 50);
-
-    const { timespan } = req.query.timespan ? req.query : { timespan: 1000 * 60 * 60 * 24 };
-
-    if (isNaN(parseFloat(timespan)) || isNaN(parseFloat(amount)) || isNaN(parseFloat(offset))) {
-        res.status(400).send('Bad request');
-        return;
-    }
-
-    const builds = await Build.findAll({
-        where: {
-            createdAt: {
-                [Op.gte]: new Date(new Date().getTime() - timespan),
+    // Tags
+    if (tags && tags.length !== 0) {
+        tagsWhere = {
+            name: {
+                [Op.in]: tags.split(",").map(i => i.toLowerCase()),
             }
-        },
-        order: [[ 'totalFavorites', 'DESC' ]],
-        offset,
-        limit: amount,
+        }
+    }
+
+    // Date
+    if (!isNaN(parseFloat(timespan))) {
+        where.createdAt = {
+            [Op.gte]: new Date(new Date().getTime() - timespan),
+        };
+    }
+
+    // Collection
+    if (!isNaN(parseInt(collection))) {
+        where.collectionId = parseInt(collection);
+    }
+
+    // Category
+    if (category) {
+        where.categoryName = {
+            [Op.startsWith]: category,
+        }
+    }
+
+    // Title
+    if (title) {
+        where.title = {
+            [Op.iLike]: "%" + title + "%",
+        }
+    }
+
+    if (uuid) {
+        where.creatorId = uuid;
+    }
+
+    // Sorting order
+    if (sort === "new") {
+        order = [[ 'createdAt', 'DESC' ]]
+    } else if (sort === "top") {
+        order = [[ 'totalFavorites', 'DESC' ]];
+    }
+
+    const builds = await Build.findAll({
+        where,
+        include: [{
+            model: Tag,
+            where: tagsWhere,
+        }],
+        order,
+        offset: isNaN(parseInt(req.query.offset)) ? 0 : Math.max(0, parseInt(req.query.offset)),
+        limit: isNaN(parseInt(req.query.amount)) ? 20 : Math.max(1, Math.min(parseInt(req.query.amount), 50)),
     });
 
     res.send(await Promise.all(builds.map(build => build.toJSON())));
@@ -122,7 +146,6 @@ exports.getBuild = async function (req, res) {
         where: {
             id: buildId,
         },
-        // include: ['tags', 'category', 'collection'],
     });
 
     if (!build) {

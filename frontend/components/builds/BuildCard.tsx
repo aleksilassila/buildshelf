@@ -1,42 +1,54 @@
 import theme from "../../theme";
 import {Build} from "../../interfaces/Builds";
+import Link from 'next/link';
 
 interface Props {
     build: Build,
     openBuild: (number) => void,
 }
 
+const ProfilePicture = ({ uuid }) => <div>
+    <style jsx>{`
+      div {
+        background: url("https://crafatar.com/avatars/${uuid}");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 1.5em;
+        height: 1.5em;
+        display: inline-block;
+        margin-right: 0.5em;
+      }
+    `}</style>
+</div>
+
+
 const BuildCard = ({ build, openBuild }: Props) => {
     return <div className="container">
         <div className="card" onClick={() => openBuild(build.id)}>
             <div>
                 <h3 className="title">{build.title}</h3>
-                {/*<h3 className="category">{build.category?.name?.replace("/", " / ")}</h3>*/}
             </div>
             <div className="stats">
-                {/*<h3 className="downloads"><div className="downloads-icon" />{build.downloads}</h3>*/}
                 <h3 className="saves"><div className="saves-icon" />{build.totalFavorites}</h3>
             </div>
-            {/*<h4 className="tags">{*/}
-            {/*    // build.tags?.map((tag, index) => <h3 key={index} className="tag">{tag.name}</h3>)*/}
-            {/*    build.tags?.map((tag, index) => tag.name).join(" ● ")*/}
-            {/*}</h4>*/}
-            <span className="description">
-                <span>{build.description}</span>
-            </span>
+            <a href={"/user/" + build.creator.uuid} className="creator-container" onClick={e => e.stopPropagation()}>
+                <ProfilePicture uuid={build.creator.uuid} />
+                <span className="creator">{build.creator.username}</span>
+            </a>
+            <span className="info">houses, #medieval</span>
         </div>
-        {/*<div className="info">*/}
-        {/*    <span>By <span className="username">Username</span> in <span className="collection">Medieval village</span></span>*/}
-        {/*    <span className="category">houses/medieval</span>*/}
-        {/*</div>*/}
         <style jsx>
             {`
-            .card {
-                background-color: ${theme.lowContrastDark};
+            .container {
                 background-image: url("${build?.images?.length ? process.env.BACKEND_ENDPOINT + "/files/" + build?.images[0] : "/blueprint.jpeg"}");
                 background-position: center;
                 background-size: cover;
                 background-repeat: no-repeat;
+                border-radius: 4px;
+            }
+            
+            .card {
                 padding: 1em;
                 border-radius: 4px;
                 min-width: 350px;
@@ -46,6 +58,12 @@ const BuildCard = ({ build, openBuild }: Props) => {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 grid-template-rows: 1fr 1fr;
+                transition: background;
+                cursor: pointer;
+            }
+            
+            .card:hover {
+              background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.4) 90%);
             }
             
             .title, .downloads, .saves {
@@ -87,47 +105,28 @@ const BuildCard = ({ build, openBuild }: Props) => {
                 margin-right: 0.15em;
             }
             
-            .description {
-                color: ${theme.highContrastLight};
-                position: absolute;
-                padding: 1.2em;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                transition: opacity 0.15s linear;
-                backdrop-filter: blur(3px);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                border-radius: 4px;
-                background-color: ${theme.lowContrastDark}80;
-                cursor: pointer;
-                border-bottom: 5px solid ${theme.highContrastDark};
+            .info, .creator {
+              font-weight: 600;
+              color: ${theme.highContrastLight}
             }
             
-            .description:hover {
-                opacity: 1;
+            .creator-container {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              align-self: flex-end;
+              opacity: 0;
+
             }
             
             .info {
-                font-size: 1em;
-                display: flex;
-                height: 30px;
-                align-items: center;
-                justify-content: space-between;
-                //font-weight: 600;
-                color: #333333;
+              opacity: 0;
+              justify-self: flex-end;
+              align-self: flex-end;
             }
             
-            .username {
-                font-weight: 600;
-            }
-            
-            .username:hover {
-                text-decoration: underline;
-                cursor: pointer;
+            .card:hover .info, .card:hover .creator-container {
+              opacity: 1;
             }
         `}
         </style>

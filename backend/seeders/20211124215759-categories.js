@@ -12,14 +12,13 @@ module.exports = {
      * }], {});
     */
 
-    await queryInterface.bulkInsert('categories',
-      [
-        {
-          name: 'houses',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ], {});
+    const categories = ["houses", "decoration", "castles", "bases", "traps", "xp-farms",
+      "temples", "statues", "redstone", "pixel-art", "boats", "megabuilds", "floating-islands",
+      "spawns", "tree", "world-prefab", "other"];
+
+    await queryInterface.bulkInsert('categories', categories.map(category => {
+      return { name: category, createdAt: new Date(), updatedAt: new Date() };
+    }), {});
   },
 
   down: async (queryInterface, Sequelize) => {

@@ -182,7 +182,7 @@ const Upload = () => {
     }
 
     return <div className="container">
-        <TitleBar />
+        <TitleBar active="upload" />
         <form onSubmit={submitData}>
             <h3>Upload a build</h3>
             <label>Title</label>

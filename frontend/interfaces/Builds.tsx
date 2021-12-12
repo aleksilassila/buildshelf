@@ -21,7 +21,16 @@ export interface Build {
     images: string[],
     downloads: number,
     totalFavorites: number,
+    creator: {
+        username: string,
+        uuid: string,
+    },
     tags: Tag[],
     category: Category,
     collection: Collection,
+}
+
+export interface User {
+    username: string,
+    uuid: string,
 }

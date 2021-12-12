@@ -25,7 +25,6 @@ const Login = () => {
         const response = await axios.post('http://localhost:9000/api/login', {
             username,
             password,
-            clientToken: "a",
         }).catch(err => {
             console.error("Error occurred", err);
             setLoginError("Invalid credentials.")

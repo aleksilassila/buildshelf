@@ -51,7 +51,7 @@ exports.optionalAuth = async function (req, res, next) {
 exports.login = async function (req, res) {
     const { username, password, clientToken } = req.body;
 
-    if (!username || !password || !clientToken) {
+    if (!username || !password) {
         res.status(400).send('Bad request | You need to provide username, password and client token.');
         return;
     }
@@ -63,24 +63,31 @@ exports.login = async function (req, res) {
         },
         username,
         password,
-        clientToken,
         requestUser: true
     };
 
+    if (clientToken) {
+        payload.clientToken = clientToken;
+    }
+
     const response = await axios.post('https://authserver.mojang.com/authenticate', payload).catch(err => err.response);
     const user = response?.data?.user;
+    const profile = response?.data?.selectedProfile;
 
-    if (response?.status === 200 && user) {
+    if (response?.status === 200 && user && profile) {
         await User.findOrCreate({
-            where: { username: user.username },
+            where: { username: profile.name },
             defaults: {
-                username: user.username,
-                id: user.id,
-                uuid: "Test",
+                username: profile.name,
+                remoteId: user.id,
+                uuid: profile.id,
             }
         });
 
-        res.send(signToken(user))
+        res.send(signToken({
+            username: profile.name,
+            id: profile.id,
+        }))
     } else {
         res.status(403).send('Invalid credentials');
     }

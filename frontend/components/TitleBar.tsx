@@ -2,36 +2,43 @@ import theme from "../theme";
 import Link from 'next/link';
 import Auth from "../utils/auth";
 
-const TitleBar = () => {
+const TitleBar = ({ active = null, floating = false, dim = false }) => {
     const userObject = Auth.getUser();
 
     return <>
         <div className="title-bar">
-            <h2 className="title">Litematica Library</h2>
+            <Link href="/"><h2 className="title">Litematica Library</h2></Link>
             <ul>
-                <Link href="/"><a>Home</a></Link>
-                <Link href="/builds"><a>Builds</a></Link>
-                <Link href="/about"><a>About</a></Link>
-                {userObject?.username ? <Link href="/upload"><a>Upload</a></Link> : null}
+                <Link href="/"><a className={active === "home" && "active"}>Home</a></Link>
+                <Link href="/builds"><a className={active === "builds" && "active"}>Builds</a></Link>
+                <Link href="/about"><a className={active === "about" && "active"}>About</a></Link>
                 {userObject?.username ?
-                    <Link href={"/user/" + userObject.id}><a>{userObject.username}</a></Link> :
-                    <Link href="/login"><a>Log In</a></Link>}
+                    <Link href="/upload"><a className={active === "upload" && "active"}>Upload</a></Link> : null}
+                {userObject?.username ?
+                    <a href={"/user/" + userObject.id} className={active === "profile" && "active"}>{userObject.username}</a> :
+                    <Link href="/login"><a className={active === "login" && "active"}>Log In</a></Link>}
             </ul>
         </div>
-        <div className="separator" />
+        {!floating && <div className="separator" />}
         <style jsx>{`
             .title-bar {
-                background-color: ${theme.highContrastLight};
+                background-color: ${theme.highContrastLight}${dim ? "77" : "ff"};
                 color: ${theme.highContrastDark};
                 display: flex;
                 justify-content: space-between;
                 padding: 1em 1.2em;
                 position: sticky;
+                transition: background-color 80ms linear;
+            }
+            
+            .title-bar:hover {
+              background-color: ${theme.highContrastLight}ff;
             }
             
             .title {
                 text-transform: uppercase;
                 font-weight: bold;
+                cursor: pointer;
             }
             
             .separator {
@@ -52,15 +59,22 @@ const TitleBar = () => {
             ul a, ul span {
                 display: inline-block;
                 margin: 0 0.6em;
-                text-transform: uppercase;
-                font-size: 0.8em;
+                text-transform: capitalize;
+                font-size: 0.9em;
+                font-weight: 500;
                 color: inherit;
                 text-decoration: none;
+                color: ${theme.lowContrastDark};
             }
             
             ul a:hover {
                 cursor: pointer;
                 text-decoration: underline;
+            }
+            
+            .active {
+               color: ${theme.layout} !important;
+              //font-weight: 600;
             }
         `}</style>
     </>

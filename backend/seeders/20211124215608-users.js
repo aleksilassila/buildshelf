@@ -13,8 +13,8 @@ module.exports = {
     */
 
     await queryInterface.bulkInsert('users', [{
-      username: 'example@gmail.com',
-      id: "06235c6b4fe18ea2949375ade5661823",
+      username: 'jeb_',
+      remoteId: "06235c6b4fe18ea2949375ade5661823",
       uuid: "f2cc1eadd681243467e4e11476c27df2",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -29,6 +29,8 @@ module.exports = {
      * await queryInterface.bulkDelete('People', null, {});
      */
 
-    queryInterface.bulkDelete('users', null, {});
+    queryInterface.bulkDelete('users', {
+      uuid: "f2cc1eadd681243467e4e11476c27df2",
+    }, {});
   }
 };

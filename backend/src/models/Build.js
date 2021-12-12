@@ -17,6 +17,7 @@ const Build = sequelize.define("build", {
 });
 
 Build.prototype.toJSON = async function () {
+    const creator = await this.getCreator();
     return {
         id: this.id,
         title: this.title,
@@ -25,7 +26,10 @@ Build.prototype.toJSON = async function () {
         images: this.images,
         downloads: this.downloads,
         totalFavorites: this.totalFavorites,
-        creatorId: this.creatorId,
+        creator: {
+            username: creator.username,
+            uuid: creator.uuid,
+        },
         category: await this.getCategory(),
         tags: await this.getTags(),
         collection: await this.getCollection(),

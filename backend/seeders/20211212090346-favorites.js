@@ -11,25 +11,31 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    await queryInterface.bulkInsert('collections',
+    await queryInterface.bulkInsert('userFavorites',
       [
         {
-          id: 1,
-          name: "New Town",
-          description: "A beautiful medieval town.",
-          ownerId: "f2cc1eadd681243467e4e11476c27df2",
+          userUuid: "f2cc1eadd681243467e4e11476c27df2",
+          buildId: 2,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: 2,
-          name: "Modern City",
-          description: "A thriving city filled with skyscrapers.",
-          ownerId: "f2cc1eadd681243467e4e11476c27df2",
+          userUuid: "f2cc1eadd681243467e4e11476c27df2",
+          buildId: 3,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          userUuid: "f2cc1eadd681243467e4e11476c27df2",
+          buildId: 4,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
       ], {});
+
+    await queryInterface.bulkUpdate('builds', {
+        totalFavorites: 1,
+    }, { id: [2, 3, 4] });
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -39,7 +45,9 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-
-    await queryInterface.bulkDelete('collections', null, {});
+    await queryInterface.bulkDelete('userFavorites', {
+        userUuid: "f2cc1eadd681243467e4e11476c27df2",
+        buildId: [2, 3, 4]
+    }, {});
   }
 };

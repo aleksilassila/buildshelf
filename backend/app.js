@@ -38,10 +38,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-api.get('/protected', auth, (req, res) => {
-    res.send("Authenticated!");
-});
-
 api.use('/files', express.static('uploads'));
 api.use(express.json());
 
@@ -51,15 +47,13 @@ api.post('/build/create', auth,
         { name: "images", maxCount: 4 }
     ]), buildsController.create);
 
-api.get('/user/:userId', optionalAuth, userController.getUser);
-api.get('/user/:userId/builds', userController.getUserBuilds);
-api.get('/user/:userId/favorites', userController.getUserFavorites);
-api.get('/user/:userId/saves', auth, userController.getUserSaves);
-api.get('/user/:userId/collections', userController.getUserCollections);
+api.get('/user/:uuid', optionalAuth, userController.getUser);
+api.get('/user/:uuid/builds', userController.getUserBuilds);
+api.get('/user/:uuid/favorites', userController.getUserFavorites);
+api.get('/user/:uuid/saves', auth, userController.getUserSaves);
+api.get('/user/:uuid/collections', userController.getUserCollections);
 
-api.get('/builds/new', buildsController.getNewBuilds);
-api.get('/builds/top', buildsController.getTopBuilds);
-api.get('/builds/search', buildsController.search);
+api.get('/builds/get', buildsController.getBuilds);
 
 api.get('/build/:buildId', buildsController.getBuild);
 api.post('/build/:buildId/favorite', auth, buildsController.favorite);

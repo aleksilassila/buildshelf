@@ -1,62 +1,122 @@
 import theme from "../../theme";
+import Dropdown from "../forms/Dropdown";
+import {useState} from "react";
 
-interface Params {
-    sortBy: string,
-    setSortBy: (string) => void,
-    category: string,
-    setCategory: (string) => void,
-    tags: string[],
-    setTags: (tags: string[]) => void,
+const SortDropdown = ({ setSortBy, sortBy}) => <div>
+    <Dropdown items={
+        ["Popular", "Top", "New"].map((el, i) =>
+            <span key={i} className="sort-list-item" onClick={() => setSortBy(el)}>{el}</span>)
+    }>
+        <span className="sort-button-content">{sortBy}</span>
+    </Dropdown>
+    <style jsx>{`
+      .sort-button-content {
+        font-weight: 600;
+        font-size: 0.9em;
+        color: ${theme.lowContrastDark};
+      }
+
+      .sort-list-item {
+        padding: 0.4em 1em;
+        font-size: 0.9em;
+      }
+      
+      .sort-list-item:hover {
+        cursor: pointer;
+        background-color: ${theme.lowContrastLight};
+      }
+      
+      .sort-list-item:first-child {
+          border-radius: 4px 4px 0 0;
+      }
+      
+      .sort-list-item:last-child {
+          border-radius: 0 0 4px 4px;
+      }
+    `}</style>
+</div>
+
+const SearchField = ({ doSearch }) => {
+    const [value, setValue] = useState("");
+    return <div className="container">
+        <input
+            type="text"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Search builds by title"
+            onBlur={() => doSearch(value)}
+            onKeyUp={(e) => e.key === "Enter" && doSearch(value)} />
+        <style jsx>{`
+          input {
+            border: 1px solid ${theme.lowContrastLight};
+            padding: 0.4em 1em;
+            font-size: 0.96em;
+            border-radius: 4px;
+            appearance: none;
+          }
+          
+          input:hover, input:focus {
+            background-color: ${theme.lowContrastLight};
+            color: ${theme.lowContrastDark};
+            outline: none;
+
+          }
+        `}</style>
+    </div>
 }
 
-const SortingBar = ({ sortBy = "Top", setSortBy, category, setCategory, tags, setTags }: Params) => {
+const FilterToggle = ({ toggled, setToggled }) => {
+    return <div className="container" onClick={() => setToggled(!toggled)}>
+        <span className="filter-button-content">Filters</span>
+        <style jsx>{`
+          .container {
+            border: 1px solid ${theme.lowContrastLight};
+            padding: 0.4em 1em;
+            font-size: 0.96em;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: ${toggled ? theme.lowContrastLight : theme.highContrastLight};
+          }
+          
+          .container:active {
+            //background-color: ${theme.lowContrastLight};
+            color: ${theme.lowContrastDark};
+            border: 1px solid ${theme.lowContrastDark};
+          }
+          
+          .filter-button-content {
+            
+          }
+        `}</style>
+    </div>
+}
+
+const SortingBar = ({ sortBy, setSortBy, filtersToggled, setFiltersToggled, doSearch }) => {
     return <div className="bar">
-        {/*<h2>Top: day | hot | new</h2>*/}
-        <div className="dropdowns">
-            <h4>Sort: {sortBy}</h4>
-            <h4>Category</h4>
-            <h4>Contains: tag</h4>
+        <div className="left">
+            <div className="space"><SortDropdown setSortBy={setSortBy} sortBy={sortBy} /></div>
+            <SearchField doSearch={doSearch} />
         </div>
-        <h4 className="search">
-            Search
-        </h4>
+        <FilterToggle toggled={filtersToggled} setToggled={setFiltersToggled} />
         <style jsx>
             {`
-                .bar {
-                    background-color: ${theme.highContrastLight};
-                    color: ${theme.lowContrastDark};
-                    border-radius: 8px;
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-                    box-shadow: 0 0 30px 6px #00000044;
-                    align-items: center;
-                }
-                
-                .dropdowns {
-                    display: flex;
-                    flex-direction: row;
-                }
-                
-                .dropdowns > h4 {
-                    padding: 0.8em 1.2em;
-                    margin: 0 0.5em;
-                    border-left: 1px solid ${theme.highContrastDark};
-                    font-size: 0.9em;
-                    cursor: pointer;
-                }
-                
-                .dropdowns > h4:first-child {
-                    border: none;
-                }
-                
-                .search {
-                    margin: 0 0.5em;
-                    padding: 0.4em 1.2em;
-                    background-color: ${theme.layout};
-                    border-radius: 4px;
-                    color: ${theme.highContrastLight};
-                }
+              .bar {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1em;
+              }
+              
+              .space {
+                margin-right: 0.5em;
+              }
+              
+              .left {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+              }
             `}
         </style>
     </div>;

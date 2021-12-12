@@ -1,13 +1,60 @@
+import Link from 'next/link';
 import TitleBar from "../components/TitleBar";
-import theme from "../theme";
 import useAxios from "axios-hooks";
 import BuildsRow from "../containers/BuildsRow";
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 const Home = () => {
-    const [{ data, loading, error }, refetch] = useAxios(process.env.BACKEND_ENDPOINT + '/builds/top');
+    const [topData, setTopData] = useState(null);
+    const [newData, setNewData] = useState(null);
+
+    useEffect(() => {
+        console.log("Fetching builds...");
+
+        axios.get(process.env.BACKEND_ENDPOINT + "/builds/get?sort=top&")
+            .then(res => setTopData(res.data || []))
+            .catch(err => {});
+
+        axios.get(process.env.BACKEND_ENDPOINT + "/builds/get?sort=new&")
+            .then(res => setNewData(res.data || []))
+            .catch(err => {});
+    }, []);
+
+    /*
+    * TODO: follow people and have their new builds show here,
+    *  also favorite collections.
+    * */
+
+    const BuildsRowHeading = ({ text }) => {
+        return <div className="container">
+            <h3>{text}</h3>
+            <Link href="/builds"><a>Show All</a></Link>
+            <style jsx>{`
+                h3 {
+                    font-size: 1.4em;
+                }
+                
+                .container {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                }
+                
+                a {
+                    font-size: 0.9em;
+                }
+                
+                a:visited {
+                    color: unset;
+                }
+            `}</style>
+        </div>
+    }
+
     return (
         <div className={'background'}>
-            <TitleBar />
+            <TitleBar active="home" />
             <div className="introduction">
                 <h2 className="introduction-header">The most ambitious Minecraft build library at your hands</h2>
                 <span className="introduction-paragraph">
@@ -17,7 +64,8 @@ const Home = () => {
                     <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">here</a>.
                 </span>
             </div>
-            <BuildsRow builds={data || []} heading={<h3>Popular builds right now</h3>}/>
+            <BuildsRow builds={topData || []} heading={<BuildsRowHeading text="Popular builds right now" />}/>
+            <BuildsRow builds={newData || []} heading={<BuildsRowHeading text="New builds" />}/>
             <style jsx>{`
                 .background {
                     min-height: 100vh;
@@ -37,7 +85,7 @@ const Home = () => {
                 }
                 
                 .introduction-paragraph {
-                    
+                    line-height: 1.3em;
                 }
             `}</style>
         </div>

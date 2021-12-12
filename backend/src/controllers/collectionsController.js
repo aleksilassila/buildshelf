@@ -11,7 +11,7 @@ exports.findCollections = async function (req, res) {
 
     res.send(await Collection.findAll({
         where: {
-            ownerId: req.user.id,
+            ownerId: req.user.uuid,
             name: {
                 [Op.startsWith]: searchQuery,
             }
@@ -22,7 +22,7 @@ exports.findCollections = async function (req, res) {
 exports.getUserCollections = async function (req, res) {
     res.send(await Collection.findAll({
         where: {
-            ownerId: req.user.id,
+            ownerId: req.user.uuid,
         }
     }));
 }
@@ -38,7 +38,7 @@ exports.createCollection = async function (req, res) {
     const collection = await Collection.create({
         name,
         description,
-        ownerId: req.user.id,
+        ownerId: req.user.uuid,
     });
 
     res.send(`${collection.id}`);
@@ -56,7 +56,7 @@ exports.deleteCollection = async function (req, res) {
         where: { id: collectionId },
     });
 
-    if (collection?.ownerId === req.user.id) {
+    if (collection?.ownerId === req.user.uuid) {
         await collection.destroy();
     } else {
         res.status(401).send("You do not have permission to do that.");

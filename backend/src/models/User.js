@@ -6,11 +6,11 @@ const User = exports.User = sequelize.define("user", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    id: {
+    uuid: {
         type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false,
     },
-    uuid: DataTypes.STRING,
+    remoteId: DataTypes.STRING,
 });
 

@@ -4,14 +4,14 @@ const { Category } = require("./Category");
 const { User } = require("./User");
 const { Build } = require("./Build");
 
-User.belongsToMany(Build, { through: 'favorites', as: 'favorite' });
-Build.belongsToMany(User, { through: 'favorites', as: 'favorite' });
+User.belongsToMany(Build, { through: 'userFavorites', as: 'favorites' });
+Build.belongsToMany(User, { through: 'userFavorites', as: 'favorites' });
 
-User.hasOne(Build, { as: 'creator' });
-Build.belongsTo(User, { as: 'creator' })
+User.hasOne(Build, { as: 'creator', foreignKey: 'creatorId' });
+Build.belongsTo(User, { as: 'creator', foreignKey: 'creatorId' })
 
-User.belongsToMany(Build, { through: 'saves', as: 'save' });
-Build.belongsToMany(User, { through: 'saves', as: 'save' });
+User.belongsToMany(Build, { through: 'userSaves', as: 'saves' });
+Build.belongsToMany(User, { through: 'userSaves', as: 'saves' });
 
 Collection.hasMany(Build);
 Build.belongsTo(Collection);

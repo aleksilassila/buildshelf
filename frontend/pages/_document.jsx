@@ -11,10 +11,11 @@ class MyDocument extends Document {
         return (
             <Html>
                 <Head>
-                    {/*<link*/}
-                    {/*    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;800&display=swap"*/}
-                    {/*    rel="stylesheet"*/}
-                    {/*/>*/}
+                    <link rel="preconnect" href="https://fonts.googleapis.com" />
+                    <link
+                        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+                        rel="stylesheet"
+                    />
                 </Head>
                 <body>
                     <Main />
@@ -23,9 +24,9 @@ class MyDocument extends Document {
                 <style global>
                     {`
                         body {
-                            font-family: Avenir, Arial, sans-serif;
+                            font-family: Avenir, Montserrat, Arial, sans-serif;
                             color: ${theme.highContrastDark};
-                        }
+                        }                        
 
                         body, head, html {
                             margin: 0;
@@ -37,6 +38,10 @@ class MyDocument extends Document {
                             font-weight: 600;
                             margin: 0;
                             padding: 0;
+                        }
+
+                        input {
+                            font-family: Avenir, Montserrat, Arial, sans-serif;
                         }
                         
                         .uppercase {

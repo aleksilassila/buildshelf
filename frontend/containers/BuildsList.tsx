@@ -5,10 +5,10 @@ import {useState} from "react";
 
 interface Props {
     builds: Build[],
-    heading: JSX.Element | undefined,
+    heading?: JSX.Element,
 }
 
-const BuildsList = ({ builds, heading }: Props) => {
+const BuildsList = ({ builds, heading = null }: Props) => {
     const [buildId, setBuildId] = useState(undefined);
 
     return <div className="builds-list">
@@ -24,18 +24,18 @@ const BuildsList = ({ builds, heading }: Props) => {
         <style jsx>
             {`
                 .builds-list {
-                    padding: 3vh 3vw;
                 }
                 
                 .cards-container {
                     display: flex;
                     flex-direction: row;
                     flex-wrap: wrap;
-                    margin: 0 -1em;
+                    margin: -0.5em;
                 }
                 
                 .card {
                     flex: 1 1 auto;
+                    margin: 0.5em;
                 }
             `}
         </style>
