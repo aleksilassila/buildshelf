@@ -1,4 +1,4 @@
-import theme from "../../theme";
+import theme from "../../constants/theme";
 
 const FormInput = ({ value, setValue, placeholder, type = "text" }) => {
     return <>

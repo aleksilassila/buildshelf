@@ -33,6 +33,7 @@ Build.prototype.toJSON = async function () {
         category: await this.getCategory(),
         tags: await this.getTags(),
         collection: await this.getCollection(),
+        uploadedAt: this.createdAt,
     }
 }
 

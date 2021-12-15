@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 import {useState} from "react";
 import axios from "axios";
 import jwt from "jsonwebtoken";
-import theme from "../theme";
+import theme from "../constants/theme";
 import FormInput from "../components/forms/FormInput";
 import FormButton from "../components/forms/FormButton";
 

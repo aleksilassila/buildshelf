@@ -28,6 +28,7 @@ export interface Build {
     tags: Tag[],
     category: Category,
     collection: Collection,
+    uploadedAt: string;
 }
 
 export interface User {

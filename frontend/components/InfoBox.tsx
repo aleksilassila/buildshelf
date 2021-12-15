@@ -1,4 +1,4 @@
-import theme from "../theme";
+import theme from "../constants/theme";
 
 const InfoBox = ({ children }) => {
     return <div className="info-box">

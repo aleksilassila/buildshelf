@@ -1,7 +1,7 @@
 import Auth from "../../utils/auth";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import theme from "../../theme";
+import theme from "../../constants/theme";
 import {Collection} from "../../interfaces/Builds";
 
 const Container = ({ children, setShowMenu }) => <div className="container">

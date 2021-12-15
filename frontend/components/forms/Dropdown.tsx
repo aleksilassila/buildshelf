@@ -1,5 +1,5 @@
 import {useState} from "react";
-import theme from "../../theme";
+import theme from "../../constants/theme";
 
 interface Props {
     items: any[],

@@ -1,4 +1,4 @@
-import theme from "../theme";
+import theme from "../constants/theme";
 import Link from 'next/link';
 import Auth from "../utils/auth";
 
@@ -42,10 +42,11 @@ const TitleBar = ({ active = null, floating = false, dim = false }) => {
             }
             
             .separator {
+                background-color: ${theme.lowContrastLight}80;
                 height: 2px;
-                background-color: ${theme.highContrastDark}33;
                 border-radius: 20px;
                 margin: 0 1.2em;
+                flex-shrink: 0;
             }
             
             ul {

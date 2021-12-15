@@ -1,4 +1,4 @@
-import theme from "../../theme";
+import theme from "../../constants/theme";
 
 const MultipleButton = ({ children, active }) => {
     return <div className="container">

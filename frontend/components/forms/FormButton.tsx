@@ -1,4 +1,4 @@
-import theme from "../../theme";
+import theme from "../../constants/theme";
 
 const FormButton = ({ children, onClick }) => {
     return <button onClick={onClick} >

@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import BuildsList from "../../containers/BuildsList";
 import {Build, User} from "../../interfaces/Builds";
-import theme from "../../theme";
+import theme from "../../constants/theme";
 import MultipleButton from "../../components/forms/MultipleButton";
 import Separator from "../../components/icons/Separator";
 

@@ -1,4 +1,4 @@
-import theme from "../../theme";
+import theme from "../../constants/theme";
 import Dropdown from "../forms/Dropdown";
 import {useState} from "react";
 

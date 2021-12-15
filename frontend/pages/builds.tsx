@@ -1,10 +1,13 @@
 import TitleBar from "../components/TitleBar";
-import theme from "../theme";
+import theme from "../constants/theme";
 import SortingBar from "../components/builds/SortingBar";
 import BuildsList from "../containers/BuildsList";
 import useAxios from "axios-hooks";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import ErrorText from "../components/statuses/ErrorText";
+import messages from "../constants/messages";
+import SplashText from "../components/statuses/SplashText";
 
 const Empty = () => <span>
     It's quite empty here.
@@ -23,6 +26,7 @@ const Builds = () => {
     const [filtersToggled, setFiltersToggled] = useState(false);
 
     const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         console.log("Fetching builds...");
@@ -37,7 +41,7 @@ const Builds = () => {
 
         axios.get(process.env.BACKEND_ENDPOINT + "/builds/get", { params })
             .then(res => setData(res.data || []))
-            .catch(err => {});
+            .catch(setError);
     }, [sortBy, searchTerm]);
 
     const doSearch = (term: string) => {
@@ -56,7 +60,11 @@ const Builds = () => {
                     filtersToggled={filtersToggled}
                     setFiltersToggled={setFiltersToggled}
                     doSearch={doSearch} />
-                {data?.length === 0 ? <Empty /> : <BuildsList builds={data || []} heading={null} />}
+                <div className="content">
+                    {error ? <ErrorText><h2>{messages.errorTitle}</h2><p>{messages.errorFetch("builds")}</p></ErrorText> :
+                        !data ? <SplashText><p>{messages.loading}</p></SplashText> :
+                            data?.length === 0 ? <Empty /> : <BuildsList builds={data} heading={null} />}
+                </div>
             </div>
             <style jsx>
                 {`
@@ -64,10 +72,22 @@ const Builds = () => {
                         background-color: ${theme.highContrastLight};
                         height: 100vh;
                         width: 100vw;
+                        display: flex;
+                        flex-direction: column;
                     }
                     
                     .container {
-                        margin: 2em;
+                        padding: 2em;
+                        flex-grow: 1;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    
+                    .content {
+                      flex-grow: 1;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
                     }
                 `}
             </style>

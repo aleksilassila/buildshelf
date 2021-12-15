@@ -2,7 +2,7 @@ import BuildCard from "../components/builds/BuildCard";
 import {Build} from "../interfaces/Builds";
 import BuildPage from "../components/builds/BuildPage";
 import {useState} from "react";
-import theme from "../theme";
+import theme from "../constants/theme";
 
 interface Props {
     builds: Build[],

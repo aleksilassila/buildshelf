@@ -12,8 +12,3 @@ const theme = {
 };
 
 export default theme;
-
-// Dark text #2c2b2b
-// Layout #57f883
-// White #ffffff
-// dimmed #2c2b2b 22%

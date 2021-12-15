@@ -17,17 +17,24 @@ const ImageCollection = ({ images }: Props) => {
                     flex-direction: row;
                     overflow: scroll;
                     flex-wrap: nowrap;
-                    margin: 0 -1em;
                 }
                 
                 img {
                     max-height: 350px;
                     border-radius: 4px;
-                    margin: 1em;
+                }
+                
+                .images-container > img {
+                  margin-right: 2em;
+                }
+                 
+                .images-container > img:last-child {
+                  margin-right: 0;
                 }
                 
                 ::-webkit-scrollbar {
                     width: 0;
+                    display: none;
                 }
             `}
         </style>

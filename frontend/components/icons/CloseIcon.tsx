@@ -1,6 +1,6 @@
-import theme from "../../theme";
+import theme from "../../constants/theme";
 
-const CloseIcon = ({ setBuildPage }) => <div onClick={() => setBuildPage(undefined)}>
+const CloseIcon = ({ close }) => <div onClick={close}>
     <style jsx>
         {`
             div {

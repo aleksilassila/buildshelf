@@ -1,4 +1,4 @@
-import theme from "../../theme";
+import theme from "../../constants/theme";
 import {Build} from "../../interfaces/Builds";
 import Link from 'next/link';
 
@@ -30,7 +30,7 @@ const BuildCard = ({ build, openBuild }: Props) => {
                 <h3 className="title">{build.title}</h3>
             </div>
             <div className="stats">
-                <h3 className="saves"><div className="saves-icon" />{build.totalFavorites}</h3>
+                <h3 className="favorites"><div className="favorites-icon" />{build.totalFavorites}</h3>
             </div>
             <a href={"/user/" + build.creator.uuid} className="creator-container" onClick={e => e.stopPropagation()}>
                 <ProfilePicture uuid={build.creator.uuid} />
@@ -66,7 +66,7 @@ const BuildCard = ({ build, openBuild }: Props) => {
               background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.4) 90%);
             }
             
-            .title, .downloads, .saves {
+            .title, .downloads, .favorites {
                 display: inline-block;
                 margin-bottom: 0.4em;
                 padding: 0.2em 0.3em;
@@ -82,6 +82,15 @@ const BuildCard = ({ build, openBuild }: Props) => {
                 margin-right: 0.4em;
             }
             
+            .favorites {
+              border: 2px solid #ffffff00;
+            }
+            
+            .favorites:hover {
+              //background-color: ${theme.highContrastLight};
+              border: 2px solid #666;
+            }
+            
             .stats > img {
                 height: 1em;
                 width: 1em;
@@ -91,11 +100,11 @@ const BuildCard = ({ build, openBuild }: Props) => {
                 background-image: url("/downloads.svg");
             }
             
-            .saves-icon {
+            .favorites-icon {
                 background-image: url("/heart.svg");
             }
             
-            .downloads-icon, .saves-icon {
+            .downloads-icon, .favorites-icon {
                 background-position: center;
                 background-repeat: no-repeat;
                 background-size: contain;
