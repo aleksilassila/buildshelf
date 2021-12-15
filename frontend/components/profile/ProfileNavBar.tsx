@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Auth from "../../utils/auth";
 import theme from "../../constants/theme";
 import {User} from "../../interfaces/Builds";
 

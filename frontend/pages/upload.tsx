@@ -1,11 +1,9 @@
 import Auth from "../utils/auth";
 import TitleBar from "../components/TitleBar";
 import {useState} from "react";
-import FormInput from "../components/forms/FormInput";
 import theme from "../constants/theme";
 import axios from "axios";
 import ManageCollections from "../components/forms/ManageCollections";
-import {Collection} from "../interfaces/Builds";
 
 const CustomInput = ({ value, setValue, placeholder, type = "text" }) => {
     return <div>

@@ -2,7 +2,6 @@ import TitleBar from "../components/TitleBar";
 import theme from "../constants/theme";
 import SortingBar from "../components/builds/SortingBar";
 import BuildsList from "../containers/BuildsList";
-import useAxios from "axios-hooks";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import ErrorText from "../components/statuses/ErrorText";

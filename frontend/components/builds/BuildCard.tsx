@@ -1,6 +1,5 @@
 import theme from "../../constants/theme";
 import {Build} from "../../interfaces/Builds";
-import Link from 'next/link';
 
 interface Props {
     build: Build,
