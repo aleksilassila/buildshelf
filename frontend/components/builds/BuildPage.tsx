@@ -1,4 +1,3 @@
-import useAxios from "axios-hooks";
 import {Build} from "../../interfaces/Builds";
 import CloseIcon from "../icons/CloseIcon";
 import theme from "../../constants/theme";
@@ -7,6 +6,10 @@ import ImageCollection from "../ImageCollection";
 import Separator from "../icons/Separator";
 import SplashText from "../statuses/SplashText";
 import ErrorText from "../statuses/ErrorText";
+import MultipleButton from "../MultipleButton";
+import axios from "axios";
+import {useEffect, useState} from "react";
+import Auth from "../../utils/auth";
 
 interface Props {
     buildId: number,
@@ -14,8 +17,9 @@ interface Props {
     modal: boolean,
 }
 
-const Container = ({ children, close, splash = false }) => <div className="container">
-    <div className="content">
+const Container = ({ children, close, splash = false }) => <div className="container" onClick={close}>
+    <div className="content" onClick={(e) => e.stopPropagation()}>
+        {/*<div className="close"><Button onClick={close}>Back</Button></div>*/}
         {children}
         <div className="close"><CloseIcon close={close} /></div>
     </div>
@@ -39,6 +43,7 @@ const Container = ({ children, close, splash = false }) => <div className="conta
               padding: 2em;
               border-radius: 4px;
               backdrop-filter: blur(3px);
+              overflow: scroll;
               ${splash && `
                 display: flex;
                 flex-direction: column;
@@ -50,8 +55,8 @@ const Container = ({ children, close, splash = false }) => <div className="conta
             .close {
                 cursor: pointer;
                 position: absolute;
-                top: 1em;
-                right: 1em;
+                top: 0.2em;
+                right: 0.2em;
             }
         `}
     </style>
@@ -60,11 +65,42 @@ const Container = ({ children, close, splash = false }) => <div className="conta
 const BuildPage = ({ buildId, setBuildPage }: Props) => {
     if (buildId === undefined) return null;
 
-    const [{ data, loading, error }, refetch] = useAxios<Build>(process.env.BACKEND_ENDPOINT + `/build/${buildId}`);
+    const [favoriteButton, setFavoriteButton] = useState({
+        active: true,
+        isBuildFavorite: false,
+        favoriteCount: 0,
+    });
+
+    const userObject = Auth.getUser();
+
+    const [data, setData] = useState<Build>(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (userObject === undefined || error || data) return;
+
+        console.log("Fetching build page...");
+
+        axios.get<Build>(process.env.BACKEND_ENDPOINT + `/build/${buildId}`, {
+            params: {
+                token: userObject.token,
+            }
+        })
+            .then(res => {
+                setData(res.data);
+                console.log(res.data.isFavorite)
+                setFavoriteButton({
+                    favoriteCount: res.data.totalFavorites,
+                    active: false,
+                    isBuildFavorite: res.data.isFavorite,
+                });
+            })
+            .catch(setError);
+    }, [userObject]);
 
     const close = () => setBuildPage(undefined);
 
-    if (loading) {
+    if (!data) {
         return <Container close={close} splash>
             <SplashText>
                 <h2>{messages.loading}</h2>
@@ -81,12 +117,40 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
         </Container>
     }
 
+    const addToFavorites = () => {
+        if (favoriteButton.active) return;
+        setFavoriteButton({ active: true, ...favoriteButton });
+
+        axios.post(process.env.BACKEND_ENDPOINT + `/build/${buildId}/favorite`, {
+            favorite: !favoriteButton.isBuildFavorite,
+        }, { params: { token: userObject.token }})
+            .then(res => {
+                const newFavoriteCount = favoriteButton.favoriteCount + (!favoriteButton.isBuildFavorite ? 1 : -1);
+
+                setFavoriteButton({
+                    active: false,
+                    isBuildFavorite: res.status === 200 ?
+                        !favoriteButton.isBuildFavorite : favoriteButton.isBuildFavorite,
+                    favoriteCount: res.status === 200 ? newFavoriteCount : favoriteButton.favoriteCount,
+                });
+            })
+            .catch(err => setFavoriteButton({ active: false, ...favoriteButton }));
+    }
+
     return <Container close={close}>
         <div className="build-title">
-            <img src={"https://crafatar.com/avatars/" + data.creator.uuid} alt="" className="profile-picture"/>
-            <div className="build-title-content">
-                <h2>{data.title}</h2>
-                <span>By <a href={"/user/" + data.creator.uuid} className="username">{data.creator.username}</a></span>
+            <div className="creator-profile">
+                <img src={"https://crafatar.com/avatars/" + data.creator.uuid} alt="" className="profile-picture"/>
+                <div className="creator-profile-content">
+                    <h2>{data.title}</h2>
+                    <span>By <a href={"/user/" + data.creator.uuid} className="username">{data.creator.username}</a></span>
+                </div>
+            </div>
+            <div className="build-stats">
+                <MultipleButton inactive={0} active={favoriteButton.active ? 1 : -1}>
+                    <span>{favoriteButton.favoriteCount}</span>
+                    <span onClick={addToFavorites}>{favoriteButton.isBuildFavorite ? "Remove from favorites" : "Add to favorites"}</span>
+                </MultipleButton>
             </div>
         </div>
         {Separator}
@@ -103,6 +167,7 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
                 .build-title {
                   display: flex;
                   flex-direction: row;
+                  justify-content: space-between;
                 }
                 
                 .profile-picture {
@@ -110,10 +175,15 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
                   margin-right: 1em;
                 }
                 
-                .build-title-content {
+                .creator-profile {
+                  display: flex;
+                  flex-direction: row;
+                }
+                
+                .creator-profile-content {
                   display: flex;
                   flex-direction: column;
-                  
+                  justify-content: center;
                 }
                 .username {
                   font-weight: 600;
@@ -125,7 +195,12 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
                   color: inherit;
                 }
                 
-                
+                .build-stats {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: end;
+                  justify-content: end;
+                }
                 
                 .build-details {
                   display: flex;

@@ -1,7 +1,7 @@
 export interface UserObject {
     username: string,
     token: string,
-    id: string,
+    uuid: string,
     iat: number,
 }
 
@@ -10,7 +10,7 @@ class Auth {
         try {
             return JSON.parse(window.localStorage.getItem("user"));
         } catch {
-            return undefined;
+            return null;
         }
     }
 

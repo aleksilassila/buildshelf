@@ -49,6 +49,14 @@ class MyDocument extends Document {
                             text-transform: uppercase;
                         }
                         
+                        a {
+                            color: ${theme.highContrastDark}
+                        }
+                        
+                        a:visited {
+                            color: inherit;
+                        }
+                        
                         * {
                             box-sizing: border-box;
                         }

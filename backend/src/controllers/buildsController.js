@@ -131,7 +131,7 @@ exports.getBuilds = async function (req, res) {
         limit: isNaN(parseInt(req.query.amount)) ? 20 : Math.max(1, Math.min(parseInt(req.query.amount), 50)),
     });
 
-    res.send(await Promise.all(builds.map(build => build.toJSON())));
+    res.send(await Promise.all(builds.map(build => build.toJSON(req.user))));
 }
 
 exports.getBuild = async function (req, res) {
@@ -152,13 +152,13 @@ exports.getBuild = async function (req, res) {
         res.status(404).send('Build not found')
         return;
     }
-    res.send(await build.toJSON());
+    res.send(await build.toJSON(req.user));
 }
 
 exports.favorite = async function (req, res) {
     const user = req.user;
     const { buildId } = req.params;
-    const addFavorite = req.query.favorite === 'true';
+    const addFavorite = req.body.favorite;
 
     if (buildId === null || isNaN(parseInt(buildId))) {
         res.status(400).send('Bad request');
@@ -204,7 +204,7 @@ exports.search = function (req, res) {
 exports.save = async function (req, res) {
     const user = req.user;
     const { buildId } = req.params;
-    const addSave = req.query.save === 'true';
+    const addSave = req.body.save;
 
     if (buildId === null || isNaN(parseInt(buildId))) {
         res.status(400).send('Bad request');

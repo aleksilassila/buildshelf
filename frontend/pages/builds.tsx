@@ -1,12 +1,13 @@
 import TitleBar from "../components/TitleBar";
 import theme from "../constants/theme";
 import SortingBar from "../components/builds/SortingBar";
-import BuildsList from "../containers/BuildsList";
+import CardsGridView from "../containers/CardsGridView";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import ErrorText from "../components/statuses/ErrorText";
 import messages from "../constants/messages";
 import SplashText from "../components/statuses/SplashText";
+import Auth from "../utils/auth";
 
 const Empty = () => <span>
     It's quite empty here.
@@ -27,11 +28,18 @@ const Builds = () => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        console.log("Fetching builds...");
+    const [refetch, setRefetch] = useState(true);
 
-        const params = {
+    const userObject = Auth.getUser();
+
+    useEffect(() => {
+        if ((userObject === undefined || error || data) && !refetch) return;
+        console.log("Fetching builds...");
+        setRefetch(false);
+
+        const params: { sort: string, title?: string, token: string, } = {
             sort: sortBy === "Popular" ? "top" : sortBy.toLocaleLowerCase(),
+            token: userObject?.token,
         }
 
         if (searchTerm.length) {
@@ -41,11 +49,12 @@ const Builds = () => {
         axios.get(process.env.BACKEND_ENDPOINT + "/builds/get", { params })
             .then(res => setData(res.data || []))
             .catch(setError);
-    }, [sortBy, searchTerm]);
+    }, [sortBy, searchTerm, userObject]);
 
     const doSearch = (term: string) => {
         if (term !== searchTerm) {
             setSearchTerm(term);
+            setRefetch(true);
         }
     }
 
@@ -55,14 +64,14 @@ const Builds = () => {
             <div className="container">
                 <SortingBar
                     sortBy={sortBy}
-                    setSortBy={setSortBy}
+                    setSortBy={(value) => {setSortBy(value); setRefetch(true)}}
                     filtersToggled={filtersToggled}
                     setFiltersToggled={setFiltersToggled}
                     doSearch={doSearch} />
                 <div className="content">
                     {error ? <ErrorText><h2>{messages.errorTitle}</h2><p>{messages.errorFetch("builds")}</p></ErrorText> :
                         !data ? <SplashText><p>{messages.loading}</p></SplashText> :
-                            data?.length === 0 ? <Empty /> : <BuildsList builds={data} heading={null} />}
+                            data?.length === 0 ? <Empty /> : <CardsGridView builds={data} heading={null} />}
                 </div>
             </div>
             <style jsx>

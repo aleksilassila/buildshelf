@@ -1,5 +1,6 @@
 import theme from "../../constants/theme";
 import {Build} from "../../interfaces/Builds";
+import Heart from "../icons/Heart";
 
 interface Props {
     build: Build,
@@ -29,7 +30,10 @@ const BuildCard = ({ build, openBuild }: Props) => {
                 <h3 className="title">{build.title}</h3>
             </div>
             <div className="stats">
-                <h3 className="favorites"><div className="favorites-icon" />{build.totalFavorites}</h3>
+                <h3 className="favorites">
+                    <Heart height={1} color={build.isFavorite ? theme.highContrastLight : theme.highContrastDark} />
+                    <h4 className="favorites-count">{build.totalFavorites}</h4>
+                </h3>
             </div>
             <a href={"/user/" + build.creator.uuid} className="creator-container" onClick={e => e.stopPropagation()}>
                 <ProfilePicture uuid={build.creator.uuid} />
@@ -68,9 +72,20 @@ const BuildCard = ({ build, openBuild }: Props) => {
             .title, .downloads, .favorites {
                 display: inline-block;
                 margin-bottom: 0.4em;
-                padding: 0.2em 0.3em;
+                padding: 0.3em 0.6em;
                 background-color: ${theme.highContrastLight};
                 border-radius: 4px;
+            }
+            
+            .favorites {
+              background-color: ${build.isFavorite ? theme.layout : theme.highContrastLight};
+              color: ${build.isFavorite ? theme.highContrastLight : theme.highContrastDark};
+              display: flex;
+              align-items: center;
+            }
+            
+            .favorites-count {
+              margin-left: 0.2em;
             }
             
             .stats {
@@ -79,15 +94,6 @@ const BuildCard = ({ build, openBuild }: Props) => {
             
             .downloads {
                 margin-right: 0.4em;
-            }
-            
-            .favorites {
-              border: 2px solid #ffffff00;
-            }
-            
-            .favorites:hover {
-              //background-color: ${theme.highContrastLight};
-              border: 2px solid #666;
             }
             
             .stats > img {

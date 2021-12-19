@@ -41,7 +41,7 @@ exports.getUserBuilds = async function (req, res) {
 
     res.send({
         username: user.username,
-        builds,
+        builds: await Promise.all(builds.map(build => build.toJSON(req.user))),
     });
 }
 
@@ -59,7 +59,7 @@ exports.getUserFavorites = async function (req, res) {
         return;
     }
 
-    res.send(await Promise.all((await user.getFavorites()).map(build => build.toJSON())));
+    res.send(await Promise.all((await user.getFavorites()).map(build => build.toJSON(req.user))));
 }
 
 exports.getUserSaves = async function (req, res) {
@@ -81,7 +81,7 @@ exports.getUserSaves = async function (req, res) {
         return;
     }
 
-    res.send(await Promise.all((await user.getSaves()).map(build => build.toJSON())));
+    res.send(await Promise.all((await user.getSaves()).map(build => build.toJSON(req.user))));
 }
 
 exports.getProfile = async function (req, res) {

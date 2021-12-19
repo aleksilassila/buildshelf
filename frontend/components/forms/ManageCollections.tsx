@@ -29,7 +29,7 @@ const ManageCollections = ({ showMenu, setShowMenu, setCollection }) => {
 
     const fetchData = () => {
         axios.get(process.env.BACKEND_ENDPOINT +
-            `/user/${userObject?.id}/collections`)
+            `/user/${userObject?.uuid}/collections`)
             .then(res => {
                 setData(res.data || []);
             }).catch(err => {});

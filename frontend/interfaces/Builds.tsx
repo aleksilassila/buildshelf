@@ -28,7 +28,8 @@ export interface Build {
     tags: Tag[],
     category: Category,
     collection: Collection,
-    uploadedAt: string;
+    uploadedAt: string,
+    isFavorite: boolean | null,
 }
 
 export interface User {

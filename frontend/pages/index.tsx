@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import TitleBar from "../components/TitleBar";
-import BuildsRow from "../containers/BuildsRow";
+import CardsRowView from "../containers/CardsRowView";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import messages from "../constants/messages";
@@ -64,10 +64,10 @@ const Home = () => {
                     <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">here</a>.
                 </span>
             </div>
-            <BuildsRow builds={topData || []} heading={
+            <CardsRowView builds={topData || []} heading={
                 <BuildsRowHeading text={!!topData ? "Popular builds right now" : messages.loading} />
             }/>
-            <BuildsRow builds={newData || []} heading={
+            <CardsRowView builds={newData || []} heading={
                 <BuildsRowHeading text={!!topData ? "New builds" : messages.loading} />
             }/>
             <style jsx>{`

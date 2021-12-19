@@ -41,13 +41,15 @@ const upload = multer({ storage });
 api.use('/files', express.static('uploads'));
 api.use(express.json());
 
+api.use(optionalAuth);
+
 api.post('/build/create', auth,
     upload.fields([
         { name: "buildFile", maxCount: 1 },
         { name: "images", maxCount: 4 }
     ]), buildsController.create);
 
-api.get('/user/:uuid', optionalAuth, userController.getUser);
+api.get('/user/:uuid', userController.getUser);
 api.get('/user/:uuid/builds', userController.getUserBuilds);
 api.get('/user/:uuid/favorites', userController.getUserFavorites);
 api.get('/user/:uuid/saves', auth, userController.getUserSaves);

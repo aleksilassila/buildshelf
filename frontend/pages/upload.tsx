@@ -173,7 +173,9 @@ const Upload = () => {
 
     const userObject = Auth.getUser();
 
-    if (!userObject) {
+    if (userObject === undefined) return;
+
+    if (userObject === null) {
         return <div className="login-error">
             <span>You must be logged in to upload.</span>
         </div>

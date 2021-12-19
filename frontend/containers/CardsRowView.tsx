@@ -9,7 +9,7 @@ interface Props {
     heading: JSX.Element | undefined,
 }
 
-const BuildsRow = ({ builds, heading }: Props) => {
+const CardsRowView = ({ builds, heading }: Props) => {
     const [buildId, setBuildId] = useState(undefined);
     const [scrollIndex, setScrollIndex] = useState(0);
 
@@ -109,4 +109,4 @@ const BuildsRow = ({ builds, heading }: Props) => {
     </div>
 }
 
-export default BuildsRow;
+export default CardsRowView;

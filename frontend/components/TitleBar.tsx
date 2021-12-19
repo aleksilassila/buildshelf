@@ -15,7 +15,7 @@ const TitleBar = ({ active = null, floating = false, dim = false }) => {
                 {userObject?.username ?
                     <Link href="/upload"><a className={active === "upload" && "active"}>Upload</a></Link> : null}
                 {userObject?.username ?
-                    <a href={"/user/" + userObject.id} className={active === "profile" && "active"}>{userObject.username}</a> :
+                    <a href={"/user/" + userObject.uuid} className={active === "profile" && "active"}>{userObject.username}</a> :
                     <Link href="/login"><a className={active === "login" && "active"}>Log In</a></Link>}
             </ul>
         </div>

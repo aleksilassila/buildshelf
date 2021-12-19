@@ -4,10 +4,10 @@ import TitleBar from "../../components/TitleBar";
 import Auth from "../../utils/auth";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import BuildsList from "../../containers/BuildsList";
+import CardsGridView from "../../containers/CardsGridView";
 import {Build, User} from "../../interfaces/Builds";
 import theme from "../../constants/theme";
-import MultipleButton from "../../components/forms/MultipleButton";
+import MultipleButton from "../MultipleButton";
 import Separator from "../../components/icons/Separator";
 
 interface ProfileNavBarProps {
@@ -54,38 +54,41 @@ const ProfilePage = ({ tabName = "builds" }: { tabName: "builds" | "favorites" |
     const router = useRouter();
     const { uuid } = router.query;
     const userObject = Auth.getUser();
-    const isOwnProfile = userObject?.id === uuid;
+    const isOwnProfile = userObject?.uuid === uuid;
 
     useEffect(() => {
-        if (uuid !== undefined &&
-            userObject !== undefined &&
-            user === undefined &&
-            error === undefined) {
-            axios.get(process.env.BACKEND_ENDPOINT + `/user/${uuid}`).then(res => {
-                setUser(res.data);
-            }).catch(err => setError(err))
+        if (uuid === undefined || userObject === undefined || user !== undefined || error !== undefined)
+            return;
 
-            if (tabName === "favorites") {
-                axios.get(process.env.BACKEND_ENDPOINT + `/user/${uuid}/favorites`).then(res => {
-                    setBuilds(res.data);
-                }).catch(err => setError(err));
-            } else if (tabName === "saves") {
-                axios.get(process.env.BACKEND_ENDPOINT + `/user/${uuid}/saves`, {
-                    params: {
-                        token: userObject.token,
-                    }
-                }).then(res => {
-                    setBuilds(res.data);
-                }).catch(err => setError(err));
-            } else {
-                axios.get(process.env.BACKEND_ENDPOINT + `/builds/get`, {
-                    params: {
-                        uuid,
-                    }
-                }).then(res => {
-                    setBuilds(res.data);
-                }).catch(err => setError(err));
+        axios.get(process.env.BACKEND_ENDPOINT + `/user/${uuid}`).then(res => {
+            setUser(res.data);
+        }).catch(setError);
+
+        if (tabName === "favorites") {
+            axios.get(process.env.BACKEND_ENDPOINT + `/user/${uuid}/favorites`, {
+            params: {
+                token: userObject?.token,
             }
+            }).then(res => {
+                setBuilds(res.data);
+            }).catch(setError);
+        } else if (tabName === "saves") {
+            axios.get(process.env.BACKEND_ENDPOINT + `/user/${uuid}/saves`, {
+                params: {
+                    token: userObject.token,
+                }
+            }).then(res => {
+                setBuilds(res.data);
+            }).catch(setError);
+        } else {
+            axios.get(process.env.BACKEND_ENDPOINT + `/builds/get`, {
+                params: {
+                    uuid,
+                    token: userObject?.token,
+                }
+            }).then(res => {
+                setBuilds(res.data);
+            }).catch(setError);
         }
     }, [uuid, userObject]);
 
@@ -107,7 +110,7 @@ const ProfilePage = ({ tabName = "builds" }: { tabName: "builds" | "favorites" |
         </div>
         <div className="content">
             <ProfileNavBar user={user} tabName={tabName} isOwnProfile={isOwnProfile} />
-            <BuildsList builds={builds || []} />
+            <CardsGridView builds={builds || []} />
         </div>
         <style jsx>
             {`               

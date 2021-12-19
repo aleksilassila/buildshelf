@@ -3,14 +3,27 @@ const axios = require("axios");
 const { User } = require("../models/index");
 
 exports.auth = async function (req, res, next) {
+    if (!req.user) {
+        res.status(403).send('Unauthenticated');
+    } else {
+        next();
+    }
+}
+
+exports.optionalAuth = async function (req, res, next) {
     const token = req.query.token;
+
+    if (!token) {
+        next();
+        return;
+    }
 
     const decoded = verifyToken(token);
 
     if (decoded) {
         const user = await User.findOne({
             where: {
-                username: decoded.username,
+                uuid: decoded.uuid,
             }
         })
 
@@ -19,29 +32,6 @@ exports.auth = async function (req, res, next) {
             next();
         } else {
             res.status(404).send('User not found.');
-        }
-    } else {
-        res.status(403).send('Unauthenticated');
-    }
-}
-
-exports.optionalAuth = async function (req, res, next) {
-    const token = req.query.token;
-
-    const decoded = verifyToken(token);
-
-    if (decoded) {
-        const user = await User.findOne({
-            where: {
-                username: decoded.username,
-            }
-        })
-
-        if (user) {
-            req.user = user;
-            next();
-        } else {
-            res.status(500).send('Error occurred during authentication.');;
         }
     } else {
         next();
@@ -86,7 +76,7 @@ exports.login = async function (req, res) {
 
         res.send(signToken({
             username: profile.name,
-            id: profile.id,
+            uuid: profile.id,
         }))
     } else {
         res.status(403).send('Invalid credentials');

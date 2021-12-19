@@ -4,6 +4,9 @@ const theme = {
     highContrastLight: "#ffffff",
     highContrastDark: "#2c2b2b",
 
+    mediumContrastLight: "#eee",
+    mediumContrastDark: "#333",
+
     lowContrastLight: "#d3d3d5",
     lowContrastDark: "#363535",
 

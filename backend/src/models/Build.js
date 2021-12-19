@@ -16,8 +16,22 @@ const Build = sequelize.define("build", {
     },
 });
 
-Build.prototype.toJSON = async function () {
+Build.prototype.toJSON = async function (user = null) {
     const creator = await this.getCreator();
+
+    let isFavorite = null;
+
+    if (user) {
+        for (const favorite of await user.getFavorites({ attributes: ['id']})) {
+            if (favorite.id === this.id) {
+                isFavorite = true;
+                break;
+            }
+        }
+
+        isFavorite = isFavorite !== null;
+    }
+
     return {
         id: this.id,
         title: this.title,
@@ -34,6 +48,7 @@ Build.prototype.toJSON = async function () {
         tags: await this.getTags(),
         collection: await this.getCollection(),
         uploadedAt: this.createdAt,
+        isFavorite,
     }
 }
 

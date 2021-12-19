@@ -8,7 +8,7 @@ interface Props {
     heading?: JSX.Element,
 }
 
-const BuildsList = ({ builds, heading = null }: Props) => {
+const CardsGridView = ({ builds, heading = null }: Props) => {
     const [buildId, setBuildId] = useState(undefined);
 
     return <div className="builds-list">
@@ -42,4 +42,4 @@ const BuildsList = ({ builds, heading = null }: Props) => {
     </div>
 }
 
-export default BuildsList;
+export default CardsGridView;
