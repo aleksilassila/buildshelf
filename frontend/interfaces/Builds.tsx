@@ -1,38 +1,38 @@
 export interface Tag {
-    name: string,
+  name: string;
 }
 
 export interface Category {
-    name: string,
+  name: string;
 }
 
 export interface Collection {
-    id: number,
-    name: string,
-    description: string,
-    ownerId: string,
+  id: number;
+  name: string;
+  description: string;
+  ownerId: string;
 }
 
 export interface Build {
-    id: number,
-    title: string,
-    description: string,
-    buildFile: string,
-    images: string[],
-    downloads: number,
-    totalFavorites: number,
-    creator: {
-        username: string,
-        uuid: string,
-    },
-    tags: Tag[],
-    category: Category,
-    collection: Collection,
-    uploadedAt: string,
-    isFavorite: boolean | null,
+  id: number;
+  title: string;
+  description: string;
+  buildFile: string;
+  images: string[];
+  downloads: number;
+  totalFavorites: number;
+  creator: {
+    username: string;
+    uuid: string;
+  };
+  tags: Tag[];
+  category: Category;
+  collection: Collection;
+  uploadedAt: string;
+  isFavorite: boolean | null;
 }
 
 export interface User {
-    username: string,
-    uuid: string,
+  username: string;
+  uuid: string;
 }

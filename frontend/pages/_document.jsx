@@ -2,27 +2,27 @@ import Document, { Head, Html, Main, NextScript } from "next/document";
 import theme from "../constants/theme";
 
 class MyDocument extends Document {
-    // static async getInitialProps(ctx) {
-    //     const initialProps = await Document.getInitialProps(ctx);
-    //     return { ...initialProps };
-    // }
+  // static async getInitialProps(ctx) {
+  //     const initialProps = await Document.getInitialProps(ctx);
+  //     return { ...initialProps };
+  // }
 
-    render() {
-        return (
-            <Html>
-                <Head>
-                    <link rel="preconnect" href="https://fonts.googleapis.com" />
-                    <link
-                        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
-                        rel="stylesheet"
-                    />
-                </Head>
-                <body>
-                    <Main />
-                    <NextScript />
-                </body>
-                <style global>
-                    {`
+  render() {
+    return (
+      <Html>
+        <Head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+        <style global>
+          {`
                         body {
                             font-family: Avenir, Montserrat, Arial, sans-serif;
                             color: ${theme.highContrastDark};
@@ -65,10 +65,10 @@ class MyDocument extends Document {
                             color: ${theme.red};
                         }
                     `}
-                </style>
-            </Html>
-        );
-    }
+        </style>
+      </Html>
+    );
+  }
 }
 
 export default MyDocument;

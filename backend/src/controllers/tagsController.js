@@ -1,3 +1,1 @@
-exports.getTags = async function (req, res) {
-
-}
+exports.getTags = async function (req, res) {};

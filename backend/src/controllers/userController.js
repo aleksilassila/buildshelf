@@ -1,121 +1,128 @@
 const { User, Build, Collection } = require("../models/index");
 
 exports.getUser = async function (req, res) {
-    const { uuid } = req.params;
+  const { uuid } = req.params;
 
-    const user = await User.findOne({
-        where: {
-            uuid,
-        },
-        include: 'favorites',
-    });
+  const user = await User.findOne({
+    where: {
+      uuid,
+    },
+    include: "favorites",
+  });
 
-    if (!user) {
-        res.status(404).send('User not found')
-        return;
-    }
+  if (!user) {
+    res.status(404).send("User not found");
+    return;
+  }
 
-    res.send(user);
-}
+  res.send(user);
+};
 
 exports.getUserBuilds = async function (req, res) {
-    const { uuid } = req.params;
+  const { uuid } = req.params;
 
-    const user = await User.findOne({
-        where: {
-            uuid,
-        },
-    });
+  const user = await User.findOne({
+    where: {
+      uuid,
+    },
+  });
 
-    if (!user) {
-        res.status(404).send('User not found.');
-        return;
-    }
+  if (!user) {
+    res.status(404).send("User not found.");
+    return;
+  }
 
-    const builds = await Build.findAll({
-        where: {
-            creatorId: uuid,
-        },
-        order: [['createdAt', 'DESC']],
-    });
+  const builds = await Build.findAll({
+    where: {
+      creatorId: uuid,
+    },
+    order: [["createdAt", "DESC"]],
+  });
 
-    res.send({
-        username: user.username,
-        builds: await Promise.all(builds.map(build => build.toJSON(req.user))),
-    });
-}
+  res.send({
+    username: user.username,
+    builds: await Promise.all(builds.map((build) => build.toJSON(req.user))),
+  });
+};
 
 exports.getUserFavorites = async function (req, res) {
-    const { uuid } = req.params;
+  const { uuid } = req.params;
 
-    const user = await User.findOne({
-        where: {
-            uuid,
-        },
-    });
+  const user = await User.findOne({
+    where: {
+      uuid,
+    },
+  });
 
-    if (!user) {
-        res.status(404).send('User not found.');
-        return;
-    }
+  if (!user) {
+    res.status(404).send("User not found.");
+    return;
+  }
 
-    res.send(await Promise.all((await user.getFavorites()).map(build => build.toJSON(req.user))));
-}
+  res.send(
+    await Promise.all(
+      (await user.getFavorites()).map((build) => build.toJSON(req.user))
+    )
+  );
+};
 
 exports.getUserSaves = async function (req, res) {
-    const { uuid } = req.params;
+  const { uuid } = req.params;
 
-    if (uuid !== req.user.uuid) {
-        res.status(401).send("Unauthorized");
-        return;
-    }
+  if (uuid !== req.user.uuid) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
 
-    const user = await User.findOne({
-        where: {
-            uuid,
-        },
-    });
+  const user = await User.findOne({
+    where: {
+      uuid,
+    },
+  });
 
-    if (!user) {
-        res.status(404).send('User not found.');
-        return;
-    }
+  if (!user) {
+    res.status(404).send("User not found.");
+    return;
+  }
 
-    res.send(await Promise.all((await user.getSaves()).map(build => build.toJSON(req.user))));
-}
+  res.send(
+    await Promise.all(
+      (await user.getSaves()).map((build) => build.toJSON(req.user))
+    )
+  );
+};
 
 exports.getProfile = async function (req, res) {
-    const { uuid } = req.params;
+  const { uuid } = req.params;
 
-    const profileObject = {
+  const profileObject = {};
 
-    };
+  if (uuid === req.user?.id) {
+    const user = await User.findOne({
+      where: {
+        uuid,
+      },
+      include: "saved",
+    });
+  } else {
+  }
 
-    if (uuid === req.user?.id) {
-        const user = await User.findOne({
-            where: {
-                uuid,
-            },
-            include: 'saved',
-        });
-    } else {
-
-    }
-
-    res.send(profileObject);
-}
+  res.send(profileObject);
+};
 
 exports.getUserCollections = async function (req, res) {
-    const { userId } = req.params;
+  const { userId } = req.params;
 
-    if (!userId) {
-        res.status(400).send("User id not found.");
-        return;
-    }
+  if (!userId) {
+    res.status(400).send("User id not found.");
+    return;
+  }
 
-    res.send(await Collection.findAll({
-        where: {
-            ownerId: userId,
-        }
-    }));
-}
+  res.send(
+    await Collection.findAll({
+      where: {
+        ownerId: userId,
+      },
+    })
+  );
+};

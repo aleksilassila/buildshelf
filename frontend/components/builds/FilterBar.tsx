@@ -1,5 +1,3 @@
-const FilterBar = () => {
-
-}
+const FilterBar = () => {};
 
 export default FilterBar;
