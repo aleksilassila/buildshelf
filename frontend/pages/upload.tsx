@@ -1,37 +1,25 @@
 import Auth from "../utils/auth";
 import TitleBar from "../components/TitleBar";
 import {useState} from "react";
-import theme from "../constants/theme";
 import axios from "axios";
 import ManageCollections from "../components/forms/ManageCollections";
+import Separator from "../components/icons/Separator";
+import Input from "../components/Input";
 
-const CustomInput = ({ value, setValue, placeholder, type = "text" }) => {
-    return <div>
-        <input value={value} onChange={e => setValue(e.target.value)} placeholder={placeholder} type={type} />
-        <style jsx>
-            {`
-                input {
-                    
-                }
-            `}
-        </style>
-    </div>
-}
-
-const CustomFileInput = ({ setFiles, multiple = false }) => {
+const CustomFileInput = ({setFiles, multiple = false}) => {
     return <div>
         <input type="file" onChange={e => setFiles(e.target.files)} multiple={multiple}/>
         <style jsx>
             {`
-                input {
-                    
-                }
+              input {
+
+              }
             `}
         </style>
     </div>
 }
 
-const CollectionSearchInput = ({ placeholder, setCollection, type = "text" }) => {
+const CollectionSearchInput = ({placeholder, setCollection, type = "text"}) => {
     const [searchValue, setSearchValue] = useState("");
     const [showSearch, setShowSearch] = useState(false);
     const [typingTimeout, setTypingTimeout] = useState(null);
@@ -46,16 +34,17 @@ const CollectionSearchInput = ({ placeholder, setCollection, type = "text" }) =>
             `/collections/find?token=${userObject?.token}&searchQuery=${searchQuery}`)
             .then(res => {
                 setSearchData(res.data || []);
-            }).catch(err => {});
+            }).catch(err => {
+        });
     }
 
     return <div className="container"
-                // onFocus={() => setShowSearch(true)}
-                // onBlur={() => {
-                //     setShowSearch(false);
-                //     setSearchData([]);
-                // }}
-                >
+        // onFocus={() => setShowSearch(true)}
+        // onBlur={() => {
+        //     setShowSearch(false);
+        //     setSearchData([]);
+        // }}
+    >
         <input
             value={searchValue}
             onChange={e => {
@@ -66,7 +55,7 @@ const CollectionSearchInput = ({ placeholder, setCollection, type = "text" }) =>
                 setTypingTimeout(window.setTimeout(doSearch(e.target.value), 800));
             }}
             placeholder={placeholder}
-            type={type} />
+            type={type}/>
         {showSearch ? <div className="search">{
             searchData.map((collection, index) =>
                 <span key={index} onClick={() => {
@@ -75,14 +64,13 @@ const CollectionSearchInput = ({ placeholder, setCollection, type = "text" }) =>
                 }}>{collection?.name}</span>)
         }</div> : null}
         <style jsx>{`
-            .container {
-                
-            }
-            
-            input {
-                
-            }
-            
+          .container {
+
+          }
+
+          input {
+
+          }
         `}</style>
     </div>
 }
@@ -130,7 +118,7 @@ const Upload = () => {
             method: 'POST',
             url: process.env.BACKEND_ENDPOINT + `/build/create?token=${userObject?.token}`,
             data,
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: {"Content-Type": "multipart/form-data"},
         }).then(res => setResponse(res.data));
 
     }
@@ -182,67 +170,94 @@ const Upload = () => {
     }
 
     return <div className="container">
-        <TitleBar active="upload" />
+        <TitleBar active="upload"/>
         <form onSubmit={submitData}>
-            <h3>Upload a build</h3>
-            <label>Title</label>
-            <CustomInput
-                value={formData.title}
-                setValue={changeField("title")}
-                placeholder="Title" />
-            <label>Description</label>
-            <CustomInput
-                value={formData.description}
-                setValue={changeField("description")}
-                placeholder="Description" />
-            <label>Build File</label>
-            <CustomFileInput setFiles={files => changeField("buildFile")(files[0])} />
-            <label>Images</label>
-            <CustomFileInput multiple={true} setFiles={changeField("images")} />
-            <label>Tags</label>
-            <label>{formData.tags
-                .map((tag, index) => <span key={index} onClick={removeTag(tag)}>{tag}</span>)}</label>
-            <CustomInput
-                value={formData.tagsInput}
-                setValue={changeField("tagsInput")}
-                placeholder="Tag Name" />
-            <button onClick={addTag}>Add</button>
-            <label>Category</label>
-            <CustomInput
-                value={formData.category}
-                setValue={changeField("category")}
-                placeholder="Category Path" />
-            <label>Collection</label>
-            <CollectionSearchInput
-                placeholder="Search Collections"
-                setCollection={setCollection} />
-            <button type="button" onClick={() => setShowCollectionsManager(true)}>Manage Collections</button>
-            <ManageCollections
-                showMenu={showCollectionsManager}
-                setShowMenu={setShowCollectionsManager}
-                setCollection={setCollection} />
-            {formData.collectionName}
-            <button type="submit">Upload</button>
+            <h2>Upload a build</h2>
+            {Separator}
+            <div className="section">
+                <label>Title</label>
+                <Input
+                    value={formData.title}
+                    setValue={changeField("title")}
+                    placeholder="Title"/>
+            </div>
+            <div className="section">
+                <label>Description</label>
+                <Input
+                    value={formData.description}
+                    setValue={changeField("description")}
+                    placeholder="Description"
+                    textArea />
+            </div>
+            <div className="section">
+                <label>Build File</label>
+                <CustomFileInput setFiles={files => changeField("buildFile")(files[0])}/>
+            </div>
+            <div className="section">
+                <label>Images</label>
+                <CustomFileInput multiple={true} setFiles={changeField("images")}/>
+            </div>
+            <div className="section">
+                <label>Tags</label>
+                <label>{formData.tags
+                    .map((tag, index) => <span key={index} onClick={removeTag(tag)}>{tag}</span>)}</label>
+                <Input
+                    value={formData.tagsInput}
+                    setValue={changeField("tagsInput")}
+                    placeholder="Tag Name"/>
+                <button onClick={addTag}>Add</button>
+            </div>
+            <div className="section">
+                <label>Category</label>
+                <Input
+                    value={formData.category}
+                    setValue={changeField("category")}
+                    placeholder="Category Path"/>
+            </div>
+            <div className="section">
+                <label>Collection</label>
+                <CollectionSearchInput
+                    placeholder="Search Collections"
+                    setCollection={setCollection}/>
+                <button type="button" onClick={() => setShowCollectionsManager(true)}>Manage Collections</button>
+                <ManageCollections
+                    showMenu={showCollectionsManager}
+                    setShowMenu={setShowCollectionsManager}
+                    setCollection={setCollection}/>
+                {formData.collectionName}
+            </div>
+            <div className="section">
+                <button type="submit">Upload</button>
+            </div>
         </form>
         <div>{response}</div>
         <style jsx>
             {`
-                form {
-                    margin: 2em;
-                    padding: 1em;
-                    display: flex;
-                    flex-direction: column;
-                    border-radius: 4px;
-                    background-color: ${theme.lowContrastDark};
-                }
-                
-                form h3 {
-                    margin-bottom: 2em;
-                }
-                
-                label {
+              .container {
+                display: flex;
+                flex-direction: column;
+              }
 
-                }
+              form {
+                margin: 2em;
+                padding: 1em;
+                display: flex;
+                flex-direction: column;
+                min-width: 600px;
+                align-self: center;
+              }
+
+              form h3 {
+                margin-bottom: 2em;
+              }
+
+              label {
+                font-weight: 500;
+              }
+              
+              .section {
+                margin: 0.5em 0;
+              }
             `}
         </style>
     </div>;
