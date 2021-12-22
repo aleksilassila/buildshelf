@@ -7,7 +7,7 @@ import axios from "axios";
 import CardsGridView from "../../containers/CardsGridView";
 import { Build, User } from "../../interfaces/Builds";
 import theme from "../../constants/theme";
-import MultipleButton from "../MultipleButton";
+import MultipleButton from "../common/MultipleButton";
 import Separator from "../../components/icons/Separator";
 
 interface ProfileNavBarProps {

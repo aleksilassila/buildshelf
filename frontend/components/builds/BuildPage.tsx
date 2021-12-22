@@ -6,7 +6,7 @@ import ImageCollection from "../ImageCollection";
 import Separator from "../icons/Separator";
 import SplashText from "../statuses/SplashText";
 import ErrorText from "../statuses/ErrorText";
-import MultipleButton from "../MultipleButton";
+import MultipleButton from "../common/MultipleButton";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Auth from "../../utils/auth";

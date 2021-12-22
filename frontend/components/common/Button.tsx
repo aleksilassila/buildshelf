@@ -1,4 +1,4 @@
-import theme from "../constants/theme";
+import theme from "../../constants/theme";
 
 const Button = ({ children, onClick }) => {
   return (

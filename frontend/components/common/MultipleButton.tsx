@@ -1,4 +1,4 @@
-import theme from "../constants/theme";
+import theme from "../../constants/theme";
 
 const MultipleButton = ({ children, active = -1, inactive = -1 }) => {
   return (

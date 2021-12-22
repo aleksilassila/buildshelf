@@ -4,25 +4,8 @@ import { useState } from "react";
 import axios from "axios";
 import ManageCollections from "../components/forms/ManageCollections";
 import Separator from "../components/icons/Separator";
-import Input from "../components/Input";
-
-const CustomFileInput = ({ setFiles, multiple = false }) => {
-  return (
-    <div>
-      <input
-        type="file"
-        onChange={(e) => setFiles(e.target.files)}
-        multiple={multiple}
-      />
-      <style jsx>
-        {`
-          input {
-          }
-        `}
-      </style>
-    </div>
-  );
-};
+import Input from "../components/common/Input";
+import FileSelect from "../components/common/FileSelect";
 
 const CollectionSearchInput = ({
   placeholder,
@@ -214,18 +197,24 @@ const Upload = () => {
             value={formData.description}
             setValue={changeField("description")}
             placeholder="Description"
+            height="5em"
             textArea
           />
         </div>
         <div className="section">
           <label>Build File</label>
-          <CustomFileInput
+          <FileSelect
+            files={formData.buildFile}
             setFiles={(files) => changeField("buildFile")(files[0])}
           />
         </div>
         <div className="section">
           <label>Images</label>
-          <CustomFileInput multiple={true} setFiles={changeField("images")} />
+          <FileSelect
+            files={formData.images}
+            multiple={true}
+            setFiles={changeField("images")}
+          />
         </div>
         <div className="section">
           <label>Tags</label>
@@ -284,8 +273,9 @@ const Upload = () => {
             padding: 1em;
             display: flex;
             flex-direction: column;
-            min-width: 600px;
+            max-width: 700px;
             align-self: center;
+            width: 100%;
           }
 
           form h3 {
@@ -294,6 +284,8 @@ const Upload = () => {
 
           label {
             font-weight: 500;
+            margin-bottom: 0.3em;
+            display: inline-block;
           }
 
           .section {
