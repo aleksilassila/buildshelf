@@ -2,12 +2,15 @@ import Auth from "../utils/auth";
 import TitleBar from "../components/TitleBar";
 import { useState } from "react";
 import axios from "axios";
-import ManageCollections from "../components/forms/ManageCollections";
+import ManageCollections from "../components/modals/ManageCollections";
 import Separator from "../components/icons/Separator";
 import Input from "../components/common/Input";
 import FileSelect from "../components/common/FileSelect";
 import Table, { TableData } from "../components/common/Table";
 import Button from "../components/common/Button";
+import MultipleButton, {
+  MultipleButtonData,
+} from "../components/common/MultipleButton";
 
 const CollectionSearchInput = ({
   placeholder,
@@ -181,17 +184,30 @@ const Upload = () => {
 
   const tagsTableData: TableData = {
     rows: formData.tags.map((tag, index) => [
-      { content: <Button onClick={removeTag(tag)}>–</Button> },
+      { content: <Button onClick={removeTag(tag)}>Remove</Button> },
       { content: <span>{tag}</span> },
     ]),
     horizontalBorders: true,
     verticalBorders: true,
   };
 
+  const collectionsButtonData: MultipleButtonData[] = [
+    {
+      content: (
+        <span>{formData.collectionName || "No collection selected"}</span>
+      ),
+      active: true,
+    },
+    {
+      content: <span>Select a collection</span>,
+      onClick: () => setShowCollectionsManager(true),
+    },
+  ];
+
   return (
     <div className="container">
       <TitleBar active="upload" />
-      <form onSubmit={submitData}>
+      <form onSubmit={(e) => e.preventDefault()}>
         <h2>Upload a build</h2>
         {Separator}
         <div className="section">
@@ -235,6 +251,7 @@ const Upload = () => {
               value={formData.tagsInput}
               setValue={changeField("tagsInput")}
               placeholder="Tag Name"
+              onEnter={addTag}
             />
             <Button onClick={addTag}>Add</Button>
           </div>
@@ -249,22 +266,17 @@ const Upload = () => {
         </div>
         <div className="section">
           <label>Collection</label>
-          <CollectionSearchInput
-            placeholder="Search Collections"
-            setCollection={setCollection}
-          />
-          <button type="button" onClick={() => setShowCollectionsManager(true)}>
-            Manage Collections
-          </button>
+          <div>
+            <MultipleButton data={collectionsButtonData} />
+          </div>
           <ManageCollections
             showMenu={showCollectionsManager}
             setShowMenu={setShowCollectionsManager}
             setCollection={setCollection}
           />
-          {formData.collectionName}
         </div>
         <div className="section">
-          <button type="submit">Upload</button>
+          <Button onClick={submitData}>Upload</Button>
         </div>
       </form>
       <div>{response}</div>
@@ -297,9 +309,10 @@ const Upload = () => {
           .section {
             margin: 0.5em 0;
           }
-          
-          .tags > :global(table) {
+
+          .tags > :global(.table) {
             margin-bottom: 0.5em;
+            grid-template-columns: max-content 1fr;
           }
 
           .add-tags {

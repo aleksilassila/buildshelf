@@ -73,7 +73,7 @@ api.get("/categories", categoriesController.getCategories);
 
 api.get("/collections/find", auth, collectionsController.findCollections);
 // api.get('/collections/get', auth, collectionsController.getUserCollections);
-api.get("/collections/create", auth, collectionsController.createCollection);
+api.post("/collections/create", auth, collectionsController.createCollection);
 api.delete(
   "/collections/:collectionId/delete",
   auth,

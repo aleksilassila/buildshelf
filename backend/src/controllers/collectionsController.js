@@ -32,7 +32,7 @@ exports.getUserCollections = async function (req, res) {
 };
 
 exports.createCollection = async function (req, res) {
-  const { name, description } = req.query;
+  const { name, description } = req.body;
 
   if (!name || !description) {
     res.status(400).send("Name and description required.");

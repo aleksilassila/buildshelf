@@ -2,10 +2,10 @@ import theme from "../../constants/theme";
 
 const Button = ({ children, onClick }) => {
   return (
-    <div className="container" onClick={onClick}>
+    <div className="button" onClick={onClick}>
       {children}
       <style jsx>{`
-        .container {
+        .button {
           border: 1px solid ${theme.lowContrastLight};
           background-color: ${theme.highContrastLight};
           border-radius: 4px;
@@ -16,7 +16,7 @@ const Button = ({ children, onClick }) => {
           cursor: pointer;
         }
 
-        .container:active {
+        .button:active {
           background-color: ${theme.mediumContrastLight};
         }
 

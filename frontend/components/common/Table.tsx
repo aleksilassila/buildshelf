@@ -1,57 +1,67 @@
 import theme from "../../constants/theme";
+import {useEffect, useState} from "react";
 
 export interface TableData {
   rows: ({
     content: JSX.Element,
   } | null)[][],
-  horizontalBorders: boolean,
-  verticalBorders: boolean,
+  horizontalBorders?: boolean,
+  verticalBorders?: boolean,
 }
 
 const Table = ({ data }: { data: TableData }) => {
-  let width = 0;
-  data.rows.forEach((row, index) => {
-    data.rows[index] = row.filter((item) => item !== null);
-    width = data.rows[index].length > width ? data.rows[index].length : width;
-  });
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    let _width = 0;
+
+    data.rows.forEach((row, index) => {
+      data.rows[index] = row.filter((item) => item !== null);
+      _width = data.rows[index].length > _width ? data.rows[index].length : _width;
+    });
+
+    setWidth(_width);
+  }, [data]);
+
+  if (!data.rows?.length) return null;
 
   return (
-    <table className="container">
-      {data.rows.map((row, i) => (
-        <tr>
-          {row.map((item) => (
-            <td>{item.content}</td>
-          ))}
-        </tr>
-      ))}
+    <div className="table">
+      {data.rows.map((row, rowI) =>
+        row.map((item, columnI) => (
+            <div className="item" key={rowI + "" + columnI}>{item.content}</div>
+          ))
+      )}
       <style jsx>
         {`
-          table {
-            border: 1px solid ${theme.lowContrastLight};
-            background-color: ${theme.highContrastLight};
+          .table {
+            display: grid;
+            grid-template-columns: repeat(${width}, 1fr);
             border-radius: 4px;
             font-size: 0.9em;
-            border-spacing: 0;
             width: 100%;
-          }
-
-          tr > * {
-            padding: 0.4em 1em;
-            cursor: pointer;
-            border-bottom: ${data.horizontalBorders ? `1px solid ${theme.lowContrastLight}` : "none"};
-            border-right: ${data.verticalBorders ? `1px solid ${theme.lowContrastLight}` : "none"};
+            border: 1px solid ${theme.lowContrastLight};
           }
           
-          tr:last-child > * {
-            border-bottom: none;
+          .table > .item {
+            padding: 0.4em 1em;
+            display: flex;
+            align-items: center;
+            border-bottom: ${data.horizontalBorders !== false ? `1px solid ${theme.lowContrastLight}` : "none"};
+            border-right: ${data.verticalBorders !== false ? `1px solid ${theme.lowContrastLight}` : "none"};
+            overflow: hidden;
           }
-
-          tr > *:last-child {
-            border-right: none;
+          
+          .table > .item:nth-last-child(-n + ${width}) {
+            border-bottom: none !important;
+          }
+          
+          .item:nth-child(${width}n) {
+            border-right: none !important;
           }
         `}
       </style>
-    </table>
+    </div>
   );
 };
 

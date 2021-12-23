@@ -1,20 +1,42 @@
 import theme from "../../constants/theme";
 
+interface Props {
+  value: string;
+  setValue: (string) => void;
+  placeholder: string;
+  onEnter?: (e) => void | null;
+  height?: string;
+  type?: string;
+  textArea?: boolean;
+}
+
 const Input = ({
   value,
   setValue,
   placeholder,
+  onEnter = null,
   height = "2.2em",
   type = "text",
   textArea = false,
-}) => {
+}: Props) => {
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (onEnter) {
+        onEnter(e);
+      } else {
+        e.preventDefault();
+      }
+    }
+  };
+
   return (
-    <div>
+    <div className="input">
       {textArea ? (
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
+          onKeyDown={handleKeyDown}
         />
       ) : (
         <input
@@ -22,6 +44,7 @@ const Input = ({
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           type={type}
+          onKeyDown={handleKeyDown}
         />
       )}
       <style jsx>

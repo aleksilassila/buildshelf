@@ -1,6 +1,6 @@
 import BuildCard from "../components/builds/BuildCard";
 import { Build } from "../interfaces/Builds";
-import BuildPage from "../components/builds/BuildPage";
+import BuildPage from "../components/modals/BuildPage";
 import { useState } from "react";
 
 interface Props {

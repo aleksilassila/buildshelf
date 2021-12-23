@@ -9,7 +9,7 @@ export interface MultipleButtonData {
 
 const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
   return (
-    <div className="container">
+    <div className="multiple-button">
       {data
         .filter((i) => i !== null)
         .map((item, i) => (
@@ -23,7 +23,7 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
         ))}
       <style jsx>
         {`
-          .container {
+          .multiple-button {
             border: 1px solid ${theme.lowContrastLight};
             background-color: ${theme.highContrastLight};
             border-radius: 4px;
@@ -34,7 +34,7 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
             flex-direction: row;
           }
 
-          .container > * {
+          .multiple-button > * {
             padding: 0.4em 1em;
             border-right: 1px solid ${theme.lowContrastLight};
             cursor: pointer;
@@ -42,11 +42,11 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
             align-items: center;
           }
 
-          .container > *:active {
+          .multiple-button > *:active {
             background-color: ${theme.mediumContrastLight};
           }
 
-          .container > *:last-child {
+          .multiple-button > *:last-child {
             border: none;
           }
 

@@ -53,7 +53,7 @@ const FileSelect = ({ files, setFiles, multiple = false }: Props) => {
   ];
 
   return (
-    <div>
+    <div className="file-select">
       <MultipleButton data={multipleButtonData} />
     </div>
   );

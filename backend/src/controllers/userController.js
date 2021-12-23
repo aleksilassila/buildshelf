@@ -111,9 +111,9 @@ exports.getProfile = async function (req, res) {
 };
 
 exports.getUserCollections = async function (req, res) {
-  const { userId } = req.params;
+  const { uuid } = req.params;
 
-  if (!userId) {
+  if (!uuid) {
     res.status(400).send("User id not found.");
     return;
   }
@@ -121,7 +121,7 @@ exports.getUserCollections = async function (req, res) {
   res.send(
     await Collection.findAll({
       where: {
-        ownerId: userId,
+        ownerId: uuid,
       },
     })
   );
