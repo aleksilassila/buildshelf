@@ -6,6 +6,8 @@ import ManageCollections from "../components/forms/ManageCollections";
 import Separator from "../components/icons/Separator";
 import Input from "../components/common/Input";
 import FileSelect from "../components/common/FileSelect";
+import Table, { TableData } from "../components/common/Table";
+import Button from "../components/common/Button";
 
 const CollectionSearchInput = ({
   placeholder,
@@ -177,6 +179,15 @@ const Upload = () => {
     );
   }
 
+  const tagsTableData: TableData = {
+    rows: formData.tags.map((tag, index) => [
+      { content: <Button onClick={removeTag(tag)}>–</Button> },
+      { content: <span>{tag}</span> },
+    ]),
+    horizontalBorders: true,
+    verticalBorders: true,
+  };
+
   return (
     <div className="container">
       <TitleBar active="upload" />
@@ -216,21 +227,17 @@ const Upload = () => {
             setFiles={changeField("images")}
           />
         </div>
-        <div className="section">
+        <div className="section tags">
           <label>Tags</label>
-          <label>
-            {formData.tags.map((tag, index) => (
-              <span key={index} onClick={removeTag(tag)}>
-                {tag}
-              </span>
-            ))}
-          </label>
-          <Input
-            value={formData.tagsInput}
-            setValue={changeField("tagsInput")}
-            placeholder="Tag Name"
-          />
-          <button onClick={addTag}>Add</button>
+          <Table data={tagsTableData} />
+          <div className="add-tags">
+            <Input
+              value={formData.tagsInput}
+              setValue={changeField("tagsInput")}
+              placeholder="Tag Name"
+            />
+            <Button onClick={addTag}>Add</Button>
+          </div>
         </div>
         <div className="section">
           <label>Category</label>
@@ -269,12 +276,11 @@ const Upload = () => {
           }
 
           form {
-            margin: 2em;
+            margin: 2em auto;
             padding: 1em;
             display: flex;
             flex-direction: column;
             max-width: 700px;
-            align-self: center;
             width: 100%;
           }
 
@@ -290,6 +296,21 @@ const Upload = () => {
 
           .section {
             margin: 0.5em 0;
+          }
+          
+          .tags > :global(table) {
+            margin-bottom: 0.5em;
+          }
+
+          .add-tags {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+          }
+
+          .add-tags > :global(*:not(:last-child)) {
+            margin-right: 0.5em;
+            flex: 1 0 auto;
           }
         `}
       </style>
