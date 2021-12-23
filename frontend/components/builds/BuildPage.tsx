@@ -6,7 +6,7 @@ import ImageCollection from "../ImageCollection";
 import Separator from "../icons/Separator";
 import SplashText from "../statuses/SplashText";
 import ErrorText from "../statuses/ErrorText";
-import MultipleButton from "../common/MultipleButton";
+import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Auth from "../../utils/auth";
@@ -159,6 +159,24 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
       .catch((err) => setFavoriteButton({ active: false, ...favoriteButton }));
   };
 
+  const favoriteButtonData: MultipleButtonData[] = [
+    {
+      content: <span>{favoriteButton.favoriteCount}</span>,
+      unclickable: true,
+      active: favoriteButton.isBuildFavorite,
+    },
+    {
+      content: (
+        <span onClick={addToFavorites}>
+          {favoriteButton.isBuildFavorite
+            ? "Remove from favorites"
+            : "Add to favorites"}
+        </span>
+      ),
+      active: favoriteButton.active,
+    },
+  ];
+
   return (
     <Container close={close}>
       <div className="build-title">
@@ -179,14 +197,7 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
           </div>
         </div>
         <div className="build-stats">
-          <MultipleButton inactive={0} active={favoriteButton.active ? 1 : -1}>
-            <span>{favoriteButton.favoriteCount}</span>
-            <span onClick={addToFavorites}>
-              {favoriteButton.isBuildFavorite
-                ? "Remove from favorites"
-                : "Add to favorites"}
-            </span>
-          </MultipleButton>
+          <MultipleButton data={favoriteButtonData} />
         </div>
       </div>
       {Separator}
@@ -221,6 +232,7 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
             flex-direction: column;
             justify-content: center;
           }
+
           .username {
             font-weight: 600;
             cursor: pointer;

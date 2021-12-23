@@ -1,18 +1,24 @@
 import theme from "../../constants/theme";
 
-const MultipleButton = ({ children, active = -1, inactive = -1 }) => {
+export interface MultipleButtonData {
+  content: JSX.Element;
+  onClick?: () => void;
+  unclickable?: boolean;
+  active?: boolean;
+}
+
+const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
   return (
     <div className="container">
-      {children
+      {data
         .filter((i) => i !== null)
-        .map((c, i) => (
+        .map((item, i) => (
           <div
-            className={
-              i === active ? "active" : i === inactive ? "inactive" : null
-            }
+            className={`${item.unclickable && "unclickable"} ${item.active && "active"}`}
             key={i}
+            onClick={item.onClick}
           >
-            {c}
+            {item.content}
           </div>
         ))}
       <style jsx>
@@ -32,6 +38,8 @@ const MultipleButton = ({ children, active = -1, inactive = -1 }) => {
             padding: 0.4em 1em;
             border-right: 1px solid ${theme.lowContrastLight};
             cursor: pointer;
+            display: flex;
+            align-items: center;
           }
 
           .container > *:active {
@@ -42,17 +50,20 @@ const MultipleButton = ({ children, active = -1, inactive = -1 }) => {
             border: none;
           }
 
+          .unclickable, .active {
+            cursor: unset !important;
+          }
+
+          .unclickable:active {
+            background-color: unset !important;
+          }
+          
           .active {
-            cursor: unset !important;
-            background-color: ${theme.lowContrastLight};
+            background-color: ${theme.lowContrastLight} !important;
           }
-
-          .inactive {
-            cursor: unset !important;
-          }
-
-          .inactive:active {
-            background-color: ${theme.highContrastLight} !important;
+          
+          .active:active {
+            background-color: ${theme.lowContrastLight} !important;
           }
         `}
       </style>

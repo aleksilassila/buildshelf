@@ -7,7 +7,7 @@ import axios from "axios";
 import CardsGridView from "../../containers/CardsGridView";
 import { Build, User } from "../../interfaces/Builds";
 import theme from "../../constants/theme";
-import MultipleButton from "../common/MultipleButton";
+import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";
 import Separator from "../../components/icons/Separator";
 
 interface ProfileNavBarProps {
@@ -21,31 +21,39 @@ const ProfileNavBar = ({
   isOwnProfile,
   tabName = "builds",
 }: ProfileNavBarProps) => {
-  let active;
+  const tabButtonData: MultipleButtonData[] = [
+    {
+      content: (
+        <Link href={"/user/" + user.uuid}>
+          <span>Builds</span>
+        </Link>
+      ),
+      active: tabName === "builds",
+    },
+    {
+      content: (
+        <Link href={"/user/" + user.uuid + "/favorites"}>
+          <span>Favorites</span>
+        </Link>
+      ),
+      active: tabName === "favorites",
+    },
+  ];
 
-  if (tabName === "builds") {
-    active = 0;
-  } else if (tabName === "favorites") {
-    active = 1;
-  } else if (tabName === "saves") {
-    active = 2;
+  if (isOwnProfile) {
+    tabButtonData.push({
+      content: (
+        <Link href={"/user/" + user.uuid + "/saves"}>
+          <span>Saves</span>
+        </Link>
+      ),
+      active: tabName === "saves",
+    });
   }
 
   return (
     <div>
-      <MultipleButton active={active}>
-        <Link href={"/user/" + user.uuid}>
-          <span>Builds</span>
-        </Link>
-        <Link href={"/user/" + user.uuid + "/favorites"}>
-          <span>Favorites</span>
-        </Link>
-        {isOwnProfile ? (
-          <Link href={"/user/" + user.uuid + "/saves"}>
-            <span>Saves</span>
-          </Link>
-        ) : null}
-      </MultipleButton>
+      <MultipleButton data={tabButtonData} />
       {Separator}
       <style jsx>
         {`

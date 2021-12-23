@@ -1,49 +1,60 @@
-import MultipleButton from "./MultipleButton";
+import MultipleButton, { MultipleButtonData } from "./MultipleButton";
 
 interface Props {
-  files: FileList;
+  files: any;
   setFiles: (files: FileList) => void;
   multiple?: boolean;
 }
 
 const FileSelect = ({ files, setFiles, multiple = false }: Props) => {
   const fileDescription = (files): string => {
-    if (!files) {
+    if (!files || files?.length === 0) {
       return "No files selected";
-    }
-    else if (files?.length) {
-      return files.length > 1 ? files.length + " files selected" : "1 file selected";
+    } else if (files?.length) {
+      return files.length > 1
+        ? files.length + " files selected"
+        : "1 file selected";
     } else {
       return files?.name;
     }
-  }
+  };
 
-  return (
-    <div>
-      <MultipleButton inactive={0}>
-        {/*<span>{files?.item(0)?.name}</span>*/}
-        <span>{fileDescription(files)}</span>
+  const multipleButtonData: MultipleButtonData[] = [
+    {
+      content: <span>{fileDescription(files)}</span>,
+      active: true,
+    },
+    {
+      content: (
         <label>
-          {multiple ? "Upload files" : "Upload a file"}
+          {multiple ? "Select files" : "Select a file"}
           <input
             type="file"
             onChange={(e) => setFiles(e.target.files)}
             multiple={multiple}
           />
-        </label>
-      </MultipleButton>
-      <style jsx>
-        {`
-          input {
-            display: none;
-          }
+          <style jsx>
+            {`
+              input {
+                display: none;
+              }
 
-          label {
-            display: inline-block;
-            cursor: pointer;
-          }
-        `}
-      </style>
+              label {
+              display: inline-block;
+                cursor: pointer;
+                margin: -0.4em -1em;
+                padding: 0.4em 1em;
+              }
+            `}
+          </style>
+        </label>
+      ),
+    },
+  ];
+
+  return (
+    <div>
+      <MultipleButton data={multipleButtonData} />
     </div>
   );
 };
