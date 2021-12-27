@@ -170,6 +170,10 @@ const BuildCard = ({ build, openBuild }: Props) => {
           .card:hover .creator-container {
             opacity: 1;
           }
+          
+          a {
+            text-decoration: none;
+          }
         `}
       </style>
     </div>

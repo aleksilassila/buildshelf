@@ -57,13 +57,13 @@ api.post(
 );
 
 api.get("/user/:uuid", userController.getUser);
-api.get("/user/:uuid/builds", userController.getUserBuilds);
 api.get("/user/:uuid/favorites", userController.getUserFavorites);
 api.get("/user/:uuid/saves", auth, userController.getUserSaves);
 api.get("/user/:uuid/collections", userController.getUserCollections);
 api.post("/user/:uuid/follow", auth, userController.follow);
 
 api.get("/builds/get", buildsController.getBuilds);
+api.get("/builds/get/followed", auth, buildsController.getFollowedBuilds);
 
 api.get("/build/:buildId", buildsController.getBuild);
 api.post("/build/:buildId/favorite", auth, buildsController.favorite);

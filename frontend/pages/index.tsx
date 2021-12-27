@@ -4,13 +4,18 @@ import CardsRowView from "../containers/CardsRowView";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import messages from "../constants/messages";
+import CardsGridView from "../containers/CardsGridView";
+import Auth from "../utils/auth";
 
 const Home = () => {
   const [topData, setTopData] = useState(null);
   const [newData, setNewData] = useState(null);
+  const [followedData, setFollowedData] = useState(null);
+
+  const userObject = Auth.getUser();
 
   useEffect(() => {
-    console.log("Fetching builds...");
+    if (userObject === undefined) return;
 
     axios
       .get(process.env.BACKEND_ENDPOINT + "/builds/get?sort=top&")
@@ -21,6 +26,17 @@ const Home = () => {
       .get(process.env.BACKEND_ENDPOINT + "/builds/get?sort=new&")
       .then((res) => setNewData(res.data || []))
       .catch((err) => {});
+
+    if (userObject?.token) {
+      axios
+        .get(process.env.BACKEND_ENDPOINT + "/builds/get/followed", {
+          params: {
+            token: userObject.token,
+          },
+        })
+        .then((res) => setFollowedData(res.data || []))
+        .catch((err) => {});
+    }
   }, []);
 
   /*
@@ -31,15 +47,11 @@ const Home = () => {
   const BuildsRowHeading = ({ text }) => {
     return (
       <div className="container">
-        <h3>{text}</h3>
+        <h2>{text}</h2>
         <Link href="/builds">
           <a>Show All</a>
         </Link>
         <style jsx>{`
-          h3 {
-            font-size: 1.4em;
-          }
-
           .container {
             display: flex;
             justify-content: space-between;
@@ -86,10 +98,18 @@ const Home = () => {
         builds={newData || []}
         heading={
           <BuildsRowHeading
-            text={!!topData ? "New builds" : messages.loading}
+            text={!!newData ? "New builds" : messages.loading}
           />
         }
       />
+      <div className="follows-grid">
+        <CardsGridView
+          heading={
+            <h2>{!!followedData ? "Followed creators" : messages.loading}</h2>
+          }
+          builds={followedData || []}
+        />
+      </div>
       <style jsx>{`
         .background {
           min-height: 100vh;
@@ -110,6 +130,10 @@ const Home = () => {
 
         .introduction-paragraph {
           line-height: 1.3em;
+        }
+
+        .follows-grid {
+          padding: 3vh 3vw;
         }
       `}</style>
     </div>

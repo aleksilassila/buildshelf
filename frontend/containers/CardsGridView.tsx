@@ -34,6 +34,7 @@ const CardsGridView = ({ builds, heading = null }: Props) => {
             flex-direction: row;
             flex-wrap: wrap;
             margin: -0.5em;
+            ${!!heading ? "margin-top: 0;" : ""}
           }
 
           .card {

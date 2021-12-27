@@ -8,7 +8,7 @@ const { UserFollower } = require("./UserFollower");
 User.belongsToMany(Build, { through: "userFavorites", as: "favorites" });
 Build.belongsToMany(User, { through: "userFavorites", as: "favorites" });
 
-User.hasOne(Build, { as: "creator", foreignKey: "creatorId" });
+User.hasMany(Build, { as: "builds", foreignKey: "creatorId" });
 Build.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
 
 User.belongsToMany(Build, { through: "userSaves", as: "saves" });

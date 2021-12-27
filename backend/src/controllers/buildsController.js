@@ -151,6 +151,25 @@ exports.getBuilds = async function (req, res) {
   res.send(await Promise.all(builds.map((build) => build.toJSON(req.user))));
 };
 
+exports.getFollowedBuilds = async function (req, res) {
+  const user = req.user;
+
+  let builds = [];
+
+  (
+    await user.getFollowings({
+      attributes: [],
+      include: ["builds"],
+    })
+  ).map((user) => (builds = builds.concat(user.builds)));
+
+  builds = builds.sort(function(b1, b2) {
+    return (b1.uploadedAt < b2.uploadedAt) ? -1 : ((b1.uploadedAt > b2.uploadedAt) ? 1 : 0);
+});
+
+  res.send(await Promise.all(builds.map((build) => build.toJSON(req.user))));
+};
+
 exports.getBuild = async function (req, res) {
   const { buildId } = req.params;
 

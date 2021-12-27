@@ -19,33 +19,6 @@ exports.getUser = async function (req, res) {
   res.send(await user.toJSON());
 };
 
-exports.getUserBuilds = async function (req, res) {
-  const { uuid } = req.params;
-
-  const user = await User.findOne({
-    where: {
-      uuid,
-    },
-  });
-
-  if (!user) {
-    res.status(404).send("User not found.");
-    return;
-  }
-
-  const builds = await Build.findAll({
-    where: {
-      creatorId: uuid,
-    },
-    order: [["createdAt", "DESC"]],
-  });
-
-  res.send({
-    username: user.username,
-    builds: await Promise.all(builds.map((build) => build.toJSON(req.user))),
-  });
-};
-
 exports.getUserFavorites = async function (req, res) {
   const { uuid } = req.params;
 
