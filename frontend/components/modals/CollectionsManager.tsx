@@ -1,7 +1,6 @@
 import Auth from "../../utils/auth";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import theme from "../../constants/theme";
 import { Collection } from "../../interfaces/Builds";
 import ModalContainer from "../../containers/ModalContainer";
 import messages from "../../constants/messages";
@@ -11,22 +10,7 @@ import Button from "../common/Button";
 import Separator from "../icons/Separator";
 import Input from "../common/Input";
 
-const Container = ({ children, setShowMenu }) => (
-  <ModalContainer close={() => setShowMenu(false)}>
-    <div className="title-bar">
-      <span>Manage Collections</span>
-      <span onClick={() => setShowMenu(false)}>close</span>
-    </div>
-    {children}
-    <style jsx>{`
-      .title-bar {
-        //background-color: ${theme.lowContrastDark};
-      }
-    `}</style>
-  </ModalContainer>
-);
-
-const ManageCollections = ({ showMenu, setShowMenu, setCollection }) => {
+const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
   const [data, setData] = useState<Collection[] | null>(null);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [newCollectionDescription, setNewCollectionDescription] = useState("");
@@ -83,13 +67,13 @@ const ManageCollections = ({ showMenu, setShowMenu, setCollection }) => {
       .catch((err) => {});
   };
 
-  const stopPropagation = (e) => e.stopPropagation();
-
   const selectCollection = (collection: Collection) => (e) => {
     e.preventDefault();
     setCollection(collection);
     setShowMenu(false);
   };
+
+  if (!showMenu) return null;
 
   if (!data) {
     return (
@@ -101,18 +85,27 @@ const ManageCollections = ({ showMenu, setShowMenu, setCollection }) => {
     );
   }
 
-  if (!showMenu) return null;
-
   const tableData = {
     rows: data.map((collection: Collection, index) => [
       {
         content: <Button onClick={selectCollection(collection)}>Select</Button>,
       },
       {
-        content: <span className="collection-name">{collection.name}</span>,
+        content: (
+          <span title={collection.name} className="collection-name">
+            {collection.name}
+          </span>
+        ),
       },
       {
-        content: <span className="collection-description">{collection.description}</span>,
+        content: (
+          <span
+            title={collection.description}
+            className="collection-description"
+          >
+            {collection.description}
+          </span>
+        ),
       },
       {
         content: (
@@ -132,12 +125,12 @@ const ManageCollections = ({ showMenu, setShowMenu, setCollection }) => {
         <div className="section">
           <label>Collection Details</label>
           <Input
-            placeholder="Collection Name"
+            placeholder="Name"
             value={newCollectionName}
             setValue={setNewCollectionName}
           />
           <Input
-            placeholder="Collection Description"
+            placeholder="Description"
             value={newCollectionDescription}
             setValue={setNewCollectionDescription}
             height="5em"
@@ -145,7 +138,11 @@ const ManageCollections = ({ showMenu, setShowMenu, setCollection }) => {
           />
         </div>
         <div className="section">
-          <Button onClick={createCollection}>Create</Button>
+          <div className="create">
+            <Button onClick={createCollection} highlighted>
+              Create
+            </Button>
+          </div>
         </div>
       </form>
 
@@ -172,18 +169,23 @@ const ManageCollections = ({ showMenu, setShowMenu, setCollection }) => {
           margin: 0.5em 0;
         }
 
-        .section > :global(.input):first-of-type{
+        .section > :global(.input):first-of-type {
           margin-bottom: 0.5em;
         }
-        
+
         :global(.collection-description) {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+        }
+
+        .create {
+          max-width: 150px;
+          margin: 1em 0;
         }
       `}</style>
     </ModalContainer>
   );
 };
 
-export default ManageCollections;
+export default CollectionsManager;

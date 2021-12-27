@@ -1,4 +1,4 @@
-const SplashText = ({ children }) => {
+const SplashText = ({ children, fullscreen = false }) => {
   return (
     <div className="splash-text-container">
       {children}
@@ -8,6 +8,12 @@ const SplashText = ({ children }) => {
           flex-direction: column;
           justify-content: center;
           align-items: center;
+
+          ${fullscreen ?
+          `
+            height: 100vh;
+            width: 100vw;
+          ` : ""}
         }
       `}</style>
     </div>

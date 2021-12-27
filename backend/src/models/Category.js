@@ -9,6 +9,7 @@ const Category = sequelize.define("category", {
 });
 
 Category.getOrCreateCategory = async function (categoryString) {
+  categoryString = categoryString?.toLowerCase();
   const parts = categoryString.split("/");
 
   for (let i = 1; i < parts.length; i++) {

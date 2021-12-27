@@ -9,6 +9,9 @@ import { Build, User } from "../../interfaces/Builds";
 import theme from "../../constants/theme";
 import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";
 import Separator from "../../components/icons/Separator";
+import SplashText from "../statuses/SplashText";
+import messages from "../../constants/messages";
+import Button from "../common/Button";
 
 interface ProfileNavBarProps {
   user: User;
@@ -74,6 +77,7 @@ const ProfilePage = ({
 }) => {
   const [user, setUser] = useState<User>();
   const [error, setError] = useState();
+  const [followed, setFollowed] = useState(false);
 
   const [builds, setBuilds] = useState<Build[]>(null);
 
@@ -95,6 +99,7 @@ const ProfilePage = ({
       .get(process.env.BACKEND_ENDPOINT + `/user/${uuid}`)
       .then((res) => {
         setUser(res.data);
+        setFollowed(res.data?.followers?.indexOf(uuid) !== -1);
       })
       .catch(setError);
 
@@ -135,8 +140,31 @@ const ProfilePage = ({
     }
   }, [uuid, userObject]);
 
+  const follow = () => {
+    axios
+      .post(
+        process.env.BACKEND_ENDPOINT + `/user/${uuid}/follow`,
+        {
+          follow: !followed,
+        },
+        {
+          params: {
+            token: userObject.token,
+          },
+        }
+      )
+      .then((res) => {
+        setFollowed(!followed);
+      })
+      .catch((err) => {});
+  };
+
   if (!user) {
-    return <div>Loading...</div>;
+    return (
+      <SplashText fullscreen>
+        <h2>{messages.loading}</h2>
+      </SplashText>
+    );
   }
 
   return (
@@ -150,6 +178,9 @@ const ProfilePage = ({
             <div className="avatar" />
             <h2 className="username">{user.username}</h2>
           </div>
+          <Button onClick={follow} highlighted={!followed}>
+            {followed ? "Unfollow" : "Follow"}
+          </Button>
         </div>
         {/*<div className="profile-mask" />*/}
       </div>
@@ -186,7 +217,12 @@ const ProfilePage = ({
             );
             min-height: 200px;
           }
-
+          
+          .profile-banner-content > :global(.button) {
+            align-self: end;
+            justify-self: right;
+          }
+          
           .user-info {
             display: flex;
             flex-direction: row;
@@ -211,6 +247,7 @@ const ProfilePage = ({
 
           .content {
             padding: 2em;
+            border-top: 3px solid ${theme.lowContrastLight};
           }
         `}
       </style>

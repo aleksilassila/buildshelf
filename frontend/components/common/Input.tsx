@@ -19,7 +19,7 @@ const Input = ({
   type = "text",
   textArea = false,
 }: Props) => {
-  const handleKeyDown = (e) => {
+  const handleEnterKeyDown = (e) => {
     if (e.key === "Enter") {
       if (onEnter) {
         onEnter(e);
@@ -36,7 +36,6 @@ const Input = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          onKeyDown={handleKeyDown}
         />
       ) : (
         <input
@@ -44,7 +43,7 @@ const Input = ({
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           type={type}
-          onKeyDown={handleKeyDown}
+          onKeyDown={handleEnterKeyDown}
         />
       )}
       <style jsx>

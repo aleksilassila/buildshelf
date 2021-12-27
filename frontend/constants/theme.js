@@ -10,7 +10,7 @@ const theme = {
   lowContrastLight: "#d3d3d5",
   lowContrastDark: "#363535",
 
-  green: "#7dd745",
+  green: "#43c967",
   red: "#d74a45",
 };
 

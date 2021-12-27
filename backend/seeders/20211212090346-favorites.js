@@ -15,19 +15,19 @@ module.exports = {
       [
         {
           userUuid: "f2cc1eadd681243467e4e11476c27df2",
-          buildId: 2,
+          buildId: 99991,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           userUuid: "f2cc1eadd681243467e4e11476c27df2",
-          buildId: 3,
+          buildId: 99992,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           userUuid: "f2cc1eadd681243467e4e11476c27df2",
-          buildId: 4,
+          buildId: 99993,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -35,7 +35,7 @@ module.exports = {
 
     await queryInterface.bulkUpdate('builds', {
         totalFavorites: 1,
-    }, { id: [2, 3, 4] });
+    }, { id: [99991, 99992, 99993] });
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -47,7 +47,7 @@ module.exports = {
      */
     await queryInterface.bulkDelete('userFavorites', {
         userUuid: "f2cc1eadd681243467e4e11476c27df2",
-        buildId: [2, 3, 4]
+        buildId: [99991, 99992, 99993]
     }, {});
   }
 };

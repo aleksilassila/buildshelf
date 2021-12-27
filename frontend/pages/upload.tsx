@@ -1,8 +1,8 @@
 import Auth from "../utils/auth";
 import TitleBar from "../components/TitleBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import ManageCollections from "../components/modals/ManageCollections";
+import CollectionsManager from "../components/modals/CollectionsManager";
 import Separator from "../components/icons/Separator";
 import Input from "../components/common/Input";
 import FileSelect from "../components/common/FileSelect";
@@ -11,96 +11,57 @@ import Button from "../components/common/Button";
 import MultipleButton, {
   MultipleButtonData,
 } from "../components/common/MultipleButton";
+import theme from "../constants/theme";
+import CategoryBrowser from "../components/modals/CategoryBrowser";
+import Localstorage from "../utils/localstorage";
+import Message from "../components/common/Message";
 
-const CollectionSearchInput = ({
-  placeholder,
-  setCollection,
-  type = "text",
-}) => {
-  const [searchValue, setSearchValue] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState(null);
-  const [searchData, setSearchData] = useState([]);
+interface FormData {
+  title: string,
+  description: string,
+  buildFile: File | null,
+  tags: string[],
+  tagsInput: string,
+  images: File[],
+  category: string,
+  collectionSearch: string,
+  collectionName: string,
+  collectionId: string,
+  collectionDescription: string,
+}
 
-  const userObject = Auth.getUser();
-
-  const doSearch = (searchQuery) => () => {
-    if (!searchQuery) return;
-
-    axios
-      .get(
-        process.env.BACKEND_ENDPOINT +
-          `/collections/find?token=${userObject?.token}&searchQuery=${searchQuery}`
-      )
-      .then((res) => {
-        setSearchData(res.data || []);
-      })
-      .catch((err) => {});
-  };
-
-  return (
-    <div
-      className="container"
-      // onFocus={() => setShowSearch(true)}
-      // onBlur={() => {
-      //     setShowSearch(false);
-      //     setSearchData([]);
-      // }}
-    >
-      <input
-        value={searchValue}
-        onChange={(e) => {
-          setSearchValue(e.target.value);
-          if (typingTimeout !== null) {
-            window.clearTimeout(typingTimeout);
-          }
-          setTypingTimeout(window.setTimeout(doSearch(e.target.value), 800));
-        }}
-        placeholder={placeholder}
-        type={type}
-      />
-      {showSearch ? (
-        <div className="search">
-          {searchData.map((collection, index) => (
-            <span
-              key={index}
-              onClick={() => {
-                setCollection(collection);
-                setShowSearch(false);
-              }}
-            >
-              {collection?.name}
-            </span>
-          ))}
-        </div>
-      ) : null}
-      <style jsx>{`
-        .container {
-        }
-
-        input {
-        }
-      `}</style>
-    </div>
-  );
+const initialFormData = {
+  title: "",
+  description: "",
+  buildFile: null,
+  tags: [],
+  tagsInput: "",
+  images: [],
+  category: "",
+  collectionSearch: "",
+  collectionName: "",
+  collectionId: "",
+  collectionDescription: "",
 };
 
 const Upload = () => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    buildFile: null,
-    tags: [],
-    tagsInput: "",
-    images: [],
-    category: "",
-    collectionSearch: "",
-    collectionName: "",
-    collectionId: "",
-    collectionDescription: "",
-  });
-  const [response, setResponse] = useState("");
+  const [formData, setFormData] = useState<FormData>(
+    Localstorage.get("uploadFormData") || initialFormData
+  );
+
   const [showCollectionsManager, setShowCollectionsManager] = useState(false);
+  const [showCategoryBrowser, setShowCategoryBrowser] = useState(false);
+
+  const [response, setResponse] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    Localstorage.set("uploadFormData", {
+      ...formData,
+      buildFile: initialFormData.buildFile,
+      images: initialFormData.images,
+    });
+  }, [formData]);
 
   const changeField = (field) => (value) => {
     setFormData({
@@ -131,12 +92,19 @@ const Upload = () => {
         `/build/create?token=${userObject?.token}`,
       data,
       headers: { "Content-Type": "multipart/form-data" },
-    }).then((res) => setResponse(res.data));
+    })
+      .then((res) => {
+        setResponse(res.data);
+        setFormData(initialFormData);
+      })
+      .catch((err) => setError(err));
   };
 
   const addTag = (e) => {
     e.preventDefault();
     const tags = formData.tags;
+
+    if (formData.tagsInput.length === 0) return;
 
     if (tags.length < 3 && !tags.includes(formData.tagsInput)) {
       tags.push(formData.tagsInput);
@@ -170,6 +138,21 @@ const Upload = () => {
     });
   };
 
+  const setCategory = (category) => {
+    setFormData({
+      ...formData,
+      category,
+    });
+  };
+
+  // const validate = () => {
+  //   const errors = [];
+  //
+  //   if (!formData.title) {
+  //     err
+  //   }
+  // }
+
   const userObject = Auth.getUser();
 
   if (userObject === undefined) return;
@@ -184,8 +167,8 @@ const Upload = () => {
 
   const tagsTableData: TableData = {
     rows: formData.tags.map((tag, index) => [
-      { content: <Button onClick={removeTag(tag)}>Remove</Button> },
       { content: <span>{tag}</span> },
+      { content: <Button onClick={removeTag(tag)}>Remove</Button> },
     ]),
     horizontalBorders: true,
     verticalBorders: true,
@@ -234,6 +217,7 @@ const Upload = () => {
             files={formData.buildFile}
             setFiles={(files) => changeField("buildFile")(files[0])}
           />
+          <span className="tip">Supported extensions: .litematica</span>
         </div>
         <div className="section">
           <label>Images</label>
@@ -246,7 +230,7 @@ const Upload = () => {
         <div className="section tags">
           <label>Tags</label>
           <Table data={tagsTableData} />
-          <div className="add-tags">
+          <div className="input-button-container">
             <Input
               value={formData.tagsInput}
               setValue={changeField("tagsInput")}
@@ -255,31 +239,54 @@ const Upload = () => {
             />
             <Button onClick={addTag}>Add</Button>
           </div>
+          <span className="tip">Add up to three tags.</span>
         </div>
         <div className="section">
           <label>Category</label>
-          <Input
-            value={formData.category}
-            setValue={changeField("category")}
-            placeholder="Category Path"
+          <div className="input-button-container">
+            <Input
+              value={formData.category}
+              setValue={changeField("category")}
+              placeholder="Category"
+            />
+            <Button onClick={() => setShowCategoryBrowser(true)}>
+              Browse Categories
+            </Button>
+          </div>
+          <CategoryBrowser
+            show={showCategoryBrowser}
+            setShow={setShowCategoryBrowser}
+            setCategory={setCategory}
           />
+          <span className="tip">A word describing the type of the build.</span>
         </div>
         <div className="section">
-          <label>Collection</label>
+          <label>Add to a Build Collection</label>
           <div>
             <MultipleButton data={collectionsButtonData} />
           </div>
-          <ManageCollections
+          <CollectionsManager
             showMenu={showCollectionsManager}
             setShowMenu={setShowCollectionsManager}
             setCollection={setCollection}
           />
         </div>
-        <div className="section">
-          <Button onClick={submitData}>Upload</Button>
+        <Message visible={!!response} close={() => setResponse(null)} success>
+          <span>Build created.</span>
+        </Message>
+        <Message visible={!!error} close={() => setError(null)} danger>
+          <h3>An error occurred</h3>
+          {error?.message}
+        </Message>
+        <div className="section upload">
+          <Button onClick={submitData} highlighted>
+            Upload
+          </Button>
+          <Button onClick={() => setFormData(initialFormData)} danger>
+            Clear
+          </Button>
         </div>
       </form>
-      <div>{response}</div>
       <style jsx>
         {`
           .container {
@@ -296,10 +303,6 @@ const Upload = () => {
             width: 100%;
           }
 
-          form h3 {
-            margin-bottom: 2em;
-          }
-
           label {
             font-weight: 500;
             margin-bottom: 0.3em;
@@ -310,20 +313,36 @@ const Upload = () => {
             margin: 0.5em 0;
           }
 
-          .tags > :global(.table) {
-            margin-bottom: 0.5em;
-            grid-template-columns: max-content 1fr;
+          .tip {
+            font-size: 0.7em;
+            color: ${theme.lowContrastDark};
           }
 
-          .add-tags {
+          .tags > :global(.table) {
+            margin-bottom: 0.5em;
+            grid-template-columns: 1fr max-content;
+          }
+
+          .input-button-container {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
           }
 
-          .add-tags > :global(*:not(:last-child)) {
+          .input-button-container > :global(*:not(:last-child)) {
             margin-right: 0.5em;
             flex: 1 0 auto;
+          }
+
+          .upload {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+          }
+
+          .upload > :global(*:first-child) {
+            width: 100%;
+            max-width: 150px;
           }
         `}
       </style>

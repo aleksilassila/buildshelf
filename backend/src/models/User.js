@@ -1,7 +1,7 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Op } = require("sequelize");
 const { sequelize } = require("../database");
 
-const User = (exports.User = sequelize.define("user", {
+const User = sequelize.define("user", {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -12,4 +12,17 @@ const User = (exports.User = sequelize.define("user", {
     allowNull: false,
   },
   remoteId: DataTypes.STRING,
-}));
+});
+
+User.prototype.toJSON = async function () {
+  return {
+    username: this.username,
+    uuid: this.uuid,
+    remoteId: this.remoteId,
+    favorites: await Promise.all((await this.getFavorites()).map(f => f.toJSON())),
+    followers: (await this.getFollowers({ attributes: ["uuid"] })).map(f => f.uuid),
+    followings: (await this.getFollowings({ attributes: ["uuid"] })).map(f => f.uuid),
+  };
+};
+
+module.exports = { User };

@@ -11,6 +11,7 @@ const collectionsController = require("./src/controllers/collectionsController")
 const { auth, optionalAuth, login } = require("./src/controllers/auth");
 
 const { sequelize } = require("./src/database");
+const errorMiddleware = require("./src/client-error").middleware;
 
 const app = express();
 const api = express.Router();
@@ -42,6 +43,7 @@ const upload = multer({ storage });
 api.use("/files", express.static("uploads"));
 api.use(express.json());
 
+app.use(errorMiddleware);
 api.use(optionalAuth);
 
 api.post(
@@ -59,6 +61,7 @@ api.get("/user/:uuid/builds", userController.getUserBuilds);
 api.get("/user/:uuid/favorites", userController.getUserFavorites);
 api.get("/user/:uuid/saves", auth, userController.getUserSaves);
 api.get("/user/:uuid/collections", userController.getUserCollections);
+api.post("/user/:uuid/follow", auth, userController.follow);
 
 api.get("/builds/get", buildsController.getBuilds);
 

@@ -3,6 +3,7 @@ const { Tag } = require("./Tag");
 const { Category } = require("./Category");
 const { User } = require("./User");
 const { Build } = require("./Build");
+const { UserFollower } = require("./UserFollower");
 
 User.belongsToMany(Build, { through: "userFavorites", as: "favorites" });
 Build.belongsToMany(User, { through: "userFavorites", as: "favorites" });
@@ -24,6 +25,9 @@ Build.belongsTo(Category, { as: "category" });
 
 Build.belongsToMany(Tag, { through: "postTags" });
 Tag.belongsToMany(Build, { through: "postTags", as: "tags" });
+
+User.belongsToMany(User, { through: UserFollower, as: "followings", foreignKey: "followerUuid" });
+User.belongsToMany(User, { through: UserFollower, as: "followers", foreignKey: "followedUuid" });
 
 module.exports = {
   Build,
