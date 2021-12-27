@@ -5,6 +5,27 @@ import Auth from "../utils/auth";
 const TitleBar = ({ active = null, floating = false, dim = false }) => {
   const userObject = Auth.getUser();
 
+  const ProfileDropdown = ({ children }) => {
+    return (
+      <div className="profile-dropdown">
+        {children}
+        <style jsx>{`
+          .profile-dropdown {
+            background-color: ${theme.layout};
+            border-radius: 999px;
+            margin: 0 0.6em;
+            cursor: pointer;
+          }
+          
+          .profile-dropdown :global(span) {
+            color: ${theme.highContrastLight} !important;
+            padding: 0.2em 0.4em;
+          }
+        `}</style>
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="title-bar">
@@ -27,12 +48,11 @@ const TitleBar = ({ active = null, floating = false, dim = false }) => {
             </Link>
           ) : null}
           {userObject?.username ? (
-            <a
-              href={"/user/" + userObject.uuid}
-              className={active === "profile" && "active"}
-            >
-              {userObject.username}
-            </a>
+            <ProfileDropdown>
+              <span>
+                v {userObject.username}
+              </span>
+            </ProfileDropdown>
           ) : (
             <Link href="/login">
               <a className={active === "login" && "active"}>Log In</a>
@@ -103,5 +123,4 @@ const TitleBar = ({ active = null, floating = false, dim = false }) => {
     </>
   );
 };
-
 export default TitleBar;

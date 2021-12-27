@@ -40,8 +40,25 @@ const Home = () => {
   }, []);
 
   /*
-   * TODO: follow people and have their new builds show here,
-   *  also favorite collections.
+   * TODO:
+   *  - Browse and favorite collections
+   *  - Finish builds page filters, search and cards design
+   *  - Redesign frontpage?
+   *  - Finish dropdowns
+   *  - Improve buttons and create multiplebutton variation
+   *  - Multiplebutton click bug
+   *  - Redesign inputs
+   *  - Improve title bar
+   *    - Dropdown with logout and more links there
+   *  - Administration tools
+   *  - header tag css
+   *  - General styling changes
+   *  - Api documentation
+   *  - Api proper error handling
+   *  - Infinite scroll
+   *  - Update card row behavior
+   *  - New dedicated search page?
+   *  - ICONS
    * */
 
   const BuildsRowHeading = ({ text }) => {

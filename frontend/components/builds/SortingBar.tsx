@@ -60,6 +60,7 @@ const SearchField = ({ doSearch }) => {
           font-size: 0.96em;
           border-radius: 4px;
           appearance: none;
+          height: 2.2rem;
         }
 
         input:hover,

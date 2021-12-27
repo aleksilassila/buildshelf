@@ -19,12 +19,14 @@ const Button = ({children, onClick, highlighted = false, danger = false}) => {
 
   return (
     <div
-      className="button"
+      className={`button ${danger ? "danger" : ""}`}
       onBlur={() => setIsFocused(false)}
       onClick={handleClick}
       tabIndex={0}
     >
-      {children}
+      <div className="content">
+        {children}
+      </div>
       <style jsx>{`
         .button {
           border: 1px solid ${theme.lowContrastLight};
@@ -37,24 +39,23 @@ const Button = ({children, onClick, highlighted = false, danger = false}) => {
           font-weight: ${highlighted ? 500 : 400};
           text-align: ${highlighted ? "center" : "left"};
           border-radius: 4px;
-          height: 2.3em;
+          height: 2.2rem;
           font-size: 0.9em;
 
           padding: 0.4em 1em;
           cursor: pointer;
           transition: background-color 100ms linear;
+          display: flex;
+          align-items: center;
         }
 
-        .button:active {
+        .button:not(.danger):hover {
           background-color: ${theme.mediumContrastLight};
         }
 
-        .button:focus {
-          ${danger &&
-      `
+        .danger:focus {
           background-color: ${theme.red};
           color: ${theme.highContrastLight};
-          `}
         }
       `}</style>
     </div>

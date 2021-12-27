@@ -15,7 +15,7 @@ const Input = ({
   setValue,
   placeholder,
   onEnter = null,
-  height = "2.2em",
+  height = "2.2rem",
   type = "text",
   textArea = false,
 }: Props) => {

@@ -12,6 +12,7 @@ const User = sequelize.define("user", {
     allowNull: false,
   },
   remoteId: DataTypes.STRING,
+
 });
 
 User.prototype.toJSON = async function () {

@@ -14,7 +14,9 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
         .filter((i) => i !== null)
         .map((item, i) => (
           <div
-            className={`${item.unclickable && "unclickable"} ${item.active && "active"}`}
+            className={`${item.unclickable && "unclickable"} ${
+              item.active && "active"
+            }`}
             key={i}
             onClick={item.onClick}
           >
@@ -27,11 +29,12 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
             border: 1px solid ${theme.lowContrastLight};
             background-color: ${theme.highContrastLight};
             border-radius: 4px;
-            height: 2.3em;
+            height: 2.2rem;
             font-size: 0.9em;
 
             display: inline-flex;
             flex-direction: row;
+            overflow: hidden;
           }
 
           .multiple-button > * {
@@ -42,7 +45,7 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
             align-items: center;
           }
 
-          .multiple-button > *:active {
+          .multiple-button > *:hover {
             background-color: ${theme.mediumContrastLight};
           }
 
@@ -50,18 +53,19 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
             border: none;
           }
 
-          .unclickable, .active {
+          .unclickable,
+          .active {
             cursor: unset !important;
           }
 
           .unclickable:active {
             background-color: unset !important;
           }
-          
+
           .active {
             background-color: ${theme.lowContrastLight} !important;
           }
-          
+
           .active:active {
             background-color: ${theme.lowContrastLight} !important;
           }
