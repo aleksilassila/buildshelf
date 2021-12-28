@@ -2,7 +2,7 @@ import theme from "../constants/theme";
 import Link from "next/link";
 import Auth from "../utils/auth";
 
-const TitleBar = ({ active = null, floating = false, dim = false }) => {
+const TitleBar = ({ active = null, dim = false }) => {
   const userObject = Auth.getUser();
 
   const ProfileDropdown = ({ children }) => {
@@ -18,7 +18,7 @@ const TitleBar = ({ active = null, floating = false, dim = false }) => {
           }
           
           .profile-dropdown :global(span) {
-            color: ${theme.highContrastLight} !important;
+            color: ${theme.lightHighContrast} !important;
             padding: 0.2em 0.4em;
           }
         `}</style>
@@ -60,30 +60,25 @@ const TitleBar = ({ active = null, floating = false, dim = false }) => {
           )}
         </ul>
       </div>
-      {!floating && <div className="separator" />}
       <style jsx>{`
         .title-bar {
-          background-color: ${theme.highContrastLight}${dim ? "77" : "ff"};
-          color: ${theme.highContrastDark};
+          background-color: ${theme.lightHighContrast}${dim ? "77" : "ff"};
+          color: ${theme.darkHighContrast};
           display: flex;
           justify-content: space-between;
           padding: 1em 1.2em;
           position: sticky;
           transition: background-color 80ms linear;
-        }
-
-        .title-bar:hover {
-          background-color: ${theme.highContrastLight}ff;
+          border-bottom: 2px solid ${theme.lightMediumContrast};
         }
 
         .title {
           text-transform: uppercase;
-          font-weight: bold;
           cursor: pointer;
         }
 
         .separator {
-          background-color: ${theme.lowContrastLight}80;
+          background-color: ${theme.lightLowContrast}80;
           height: 2px;
           border-radius: 20px;
           margin: 0 1.2em;
@@ -105,9 +100,7 @@ const TitleBar = ({ active = null, floating = false, dim = false }) => {
           text-transform: capitalize;
           font-size: 0.9em;
           font-weight: 500;
-          color: inherit;
           text-decoration: none;
-          color: ${theme.lowContrastDark};
         }
 
         ul a:hover {

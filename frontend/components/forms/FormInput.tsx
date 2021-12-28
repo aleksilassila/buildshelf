@@ -12,9 +12,9 @@ const FormInput = ({ value, setValue, placeholder, type = "text" }) => {
       <style jsx>
         {`
           input {
-            background-color: ${theme.highContrastDark};
-            color: ${theme.lowContrastLight};
-            border: 2px solid ${theme.highContrastDark};
+            background-color: ${theme.darkHighContrast};
+            color: ${theme.lightLowContrast};
+            border: 2px solid ${theme.darkHighContrast};
             width: 250px;
 
             font-family: "Avenir", Arial, sans-serif;

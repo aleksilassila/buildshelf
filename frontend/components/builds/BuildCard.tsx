@@ -37,8 +37,8 @@ const BuildCard = ({ build, openBuild }: Props) => {
               height={1}
               color={
                 build.isFavorite
-                  ? theme.highContrastLight
-                  : theme.highContrastDark
+                  ? theme.lightHighContrast
+                  : theme.darkHighContrast
               }
             />
             <h4 className="favorites-count">{build.totalFavorites}</h4>
@@ -78,6 +78,7 @@ const BuildCard = ({ build, openBuild }: Props) => {
             grid-template-rows: 1fr 1fr;
             transition: background;
             cursor: pointer;
+            box-shadow: ${theme.shadow};
           }
 
           .card:hover {
@@ -95,17 +96,18 @@ const BuildCard = ({ build, openBuild }: Props) => {
             display: inline-block;
             margin-bottom: 0.4em;
             padding: 0.3em 0.6em;
-            background-color: ${theme.highContrastLight};
+            background-color: ${theme.lightHighContrast};
             border-radius: 4px;
+            box-shadow: ${theme.shadow};
           }
 
           .favorites {
             background-color: ${build.isFavorite
               ? theme.layout
-              : theme.highContrastLight};
+              : theme.lightHighContrast};
             color: ${build.isFavorite
-              ? theme.highContrastLight
-              : theme.highContrastDark};
+              ? theme.lightHighContrast
+              : theme.darkHighContrast};
             display: flex;
             align-items: center;
           }
@@ -149,7 +151,7 @@ const BuildCard = ({ build, openBuild }: Props) => {
           .info,
           .creator {
             font-weight: 600;
-            color: ${theme.highContrastLight};
+            color: ${theme.lightHighContrast};
           }
 
           .creator-container {

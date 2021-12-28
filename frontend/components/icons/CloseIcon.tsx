@@ -16,7 +16,7 @@ const CloseIcon = ({ close }) => (
           content: " ";
           height: 33px;
           width: 3px;
-          background-color: ${theme.lowContrastLight};
+          background-color: ${theme.lightLowContrast};
           border-radius: 3px;
         }
         div:before {

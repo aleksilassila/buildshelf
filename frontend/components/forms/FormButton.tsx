@@ -8,7 +8,7 @@ const FormButton = ({ children, onClick }) => {
         {`
           button {
             background-color: ${theme.layout};
-            color: ${theme.highContrastLight};
+            color: ${theme.lightHighContrast};
             border: 2px solid ${theme.layout};
             font-weight: 600;
             cursor: pointer;

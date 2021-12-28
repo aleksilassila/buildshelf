@@ -278,6 +278,7 @@ const Upload = () => {
           <h3>An error occurred</h3>
           {error?.message}
         </Message>
+        {Separator}
         <div className="section upload">
           <Button onClick={submitData} highlighted>
             Upload
@@ -295,8 +296,10 @@ const Upload = () => {
           }
 
           form {
+            padding: 2em;
+            border-radius: 4px;
+            border: 1px solid ${theme.lightMediumContrast};
             margin: 2em auto;
-            padding: 1em;
             display: flex;
             flex-direction: column;
             max-width: 700px;
@@ -315,7 +318,7 @@ const Upload = () => {
 
           .tip {
             font-size: 0.7em;
-            color: ${theme.lowContrastDark};
+            color: ${theme.darkLowContrast};
           }
 
           .tags > :global(.table) {

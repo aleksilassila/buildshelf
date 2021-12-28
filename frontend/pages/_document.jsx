@@ -23,48 +23,56 @@ class MyDocument extends Document {
         </body>
         <style global>
           {`
-                        body {
-                            font-family: Avenir, Montserrat, Arial, sans-serif;
-                            color: ${theme.highContrastDark};
-                        }                        
+            body {
+                font-family: Avenir, Montserrat, Arial, sans-serif;
+                color: ${theme.darkHighContrast};
+            }                        
 
-                        body, head, html {
-                            margin: 0;
-                            padding: 0;
-                            background-color: ${theme.highContrastLight};
-                        }
+            body, head, html {
+                margin: 0;
+                padding: 0;
+                background-color: ${theme.lightHighContrast};
+            }
 
-                        h1, h2, h3, h4, h5, h6 {
-                            font-weight: 600;
-                            margin: 0;
-                            padding: 0;
-                        }
-
-                        input {
-                            font-family: Avenir, Montserrat, Arial, sans-serif;
-                        }
-                        
-                        .uppercase {
-                            font-weight: 100;
-                            text-transform: uppercase;
-                        }
-                        
-                        a {
-                            color: ${theme.highContrastDark}
-                        }
-                        
-                        a:visited {
-                            color: inherit;
-                        }
-                        
-                        * {
-                            box-sizing: border-box;
-                        }
-                        
-                        .error {
-                            color: ${theme.red};
-                        }
-                    `}
+            h1, h2, h3, h4, h5, h6 {
+                font-weight: 600;
+                color: ${theme.dark};
+                margin: 0;
+            }
+            
+            p, span {
+                color: ${theme.darkLowContrast};
+            }
+            
+            p {
+                margin: 0.5rem 0;
+            }
+            
+            input {
+                font-family: Avenir, Montserrat, Arial, sans-serif;
+            }
+            
+            .uppercase {
+                font-weight: 100;
+                text-transform: uppercase;
+            }
+            
+            a {
+                color: ${theme.darkHighContrast}
+            }
+            
+            a:visited {
+                color: inherit;
+            }
+            
+            * {
+                box-sizing: border-box;
+            }
+            
+            .no-margin {
+                margin: 0;
+            }
+          `}
         </style>
       </Html>
     );

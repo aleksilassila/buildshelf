@@ -40,15 +40,15 @@ const Table = ({ data }: { data: TableData }) => {
             border-radius: 4px;
             font-size: 0.9em;
             width: 100%;
-            border: 1px solid ${theme.lowContrastLight};
+            border: 1px solid ${theme.lightLowContrast};
           }
           
           .table > .item {
             padding: 0.4em 1em;
             display: flex;
             align-items: center;
-            border-bottom: ${data.horizontalBorders !== false ? `1px solid ${theme.lowContrastLight}` : "none"};
-            border-right: ${data.verticalBorders !== false ? `1px solid ${theme.lowContrastLight}` : "none"};
+            border-bottom: ${data.horizontalBorders !== false ? `1px solid ${theme.lightLowContrast}` : "none"};
+            border-right: ${data.verticalBorders !== false ? `1px solid ${theme.lightLowContrast}` : "none"};
             overflow: hidden;
           }
           

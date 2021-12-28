@@ -25,8 +25,8 @@ const Dropdown = ({ items, children }: Props) => {
         }
 
         .button:hover {
-          background-color: ${theme.lowContrastLight};
-          border: 1px solid ${theme.lowContrastLight}00;
+          background-color: ${theme.lightLowContrast};
+          border: 1px solid ${theme.lightLowContrast}00;
           cursor: pointer;
         }
 
@@ -34,8 +34,8 @@ const Dropdown = ({ items, children }: Props) => {
           display: ${visible ? "flex" : "none"};
           position: absolute;
           z-index: 2;
-          background-color: ${theme.highContrastLight};
-          border: 1px solid ${theme.lowContrastLight};
+          background-color: ${theme.lightHighContrast};
+          border: 1px solid ${theme.lightLowContrast};
           border-radius: 4px;
           margin-top: 0.5em;
           min-width: 150px;

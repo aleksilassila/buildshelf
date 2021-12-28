@@ -26,8 +26,8 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
       <style jsx>
         {`
           .multiple-button {
-            border: 1px solid ${theme.lowContrastLight};
-            background-color: ${theme.highContrastLight};
+            border: 1px solid ${theme.lightLowContrast};
+            background-color: ${theme.lightHighContrast};
             border-radius: 4px;
             height: 2.2rem;
             font-size: 0.9em;
@@ -39,14 +39,14 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
 
           .multiple-button > * {
             padding: 0.4em 1em;
-            border-right: 1px solid ${theme.lowContrastLight};
+            border-right: 1px solid ${theme.lightLowContrast};
             cursor: pointer;
             display: flex;
             align-items: center;
           }
 
           .multiple-button > *:hover {
-            background-color: ${theme.mediumContrastLight};
+            background-color: ${theme.lightMediumContrast};
           }
 
           .multiple-button > *:last-child {
@@ -63,11 +63,11 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
           }
 
           .active {
-            background-color: ${theme.lowContrastLight} !important;
+            background-color: ${theme.lightLowContrast} !important;
           }
 
           .active:active {
-            background-color: ${theme.lowContrastLight} !important;
+            background-color: ${theme.lightLowContrast} !important;
           }
         `}
       </style>

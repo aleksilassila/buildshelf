@@ -231,7 +231,7 @@ const ProfilePage = ({
           }
 
           .username {
-            color: ${theme.highContrastLight};
+            color: ${theme.lightHighContrast};
           }
 
           .avatar {
@@ -247,7 +247,7 @@ const ProfilePage = ({
 
           .content {
             padding: 2em;
-            border-top: 3px solid ${theme.lowContrastLight};
+            border-top: 3px solid ${theme.lightLowContrast};
           }
         `}
       </style>

@@ -1,17 +1,22 @@
 const theme = {
-  layout: "#43c967",
+  layoutLight: "hsl(136deg 55% 60%)",
+  layout: "hsl(136deg 55% 50%)", // #43c967
+  layoutDark: "hsl(136deg 55% 40%)",
 
-  highContrastLight: "#ffffff",
-  highContrastDark: "#2c2b2b",
+  lightHighContrast: "#ffffff",
+  light: "#f0f5f2", // hsl(150deg 20% 95%)
+  lightMediumContrast: "#eee",
+  lightLowContrast: "#d3d3d5",
 
-  mediumContrastLight: "#eee",
-  mediumContrastDark: "#333",
+  darkHighContrast: "#2c2b2b",
+  dark: "#2c2b2b",
+  darkMediumContrast: "#333",
+  darkLowContrast: "#363535",
 
-  lowContrastLight: "#d3d3d5",
-  lowContrastDark: "#363535",
-
-  green: "#43c967",
   red: "#d74a45",
+  redLight: "#ff5f5a",
+
+  shadow: "0 0 0rem 0 #00000040", // "0 0 0.5rem 0 #00000040"
 };
 
 export default theme;

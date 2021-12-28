@@ -81,7 +81,7 @@ const CardsRowView = ({ builds, heading }: Props) => {
           .forward {
             background-size: 1em;
             background-repeat: no-repeat;
-            background-color: ${theme.highContrastLight};
+            background-color: ${theme.lightHighContrast};
             height: 3em;
             width: 3em;
             border-radius: 1000px;

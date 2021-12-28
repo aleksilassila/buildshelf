@@ -9,7 +9,7 @@ const InfoBox = ({ children }) => {
           .info-box {
             margin: 2em;
             padding: 1em;
-            background-color: ${theme.lowContrastDark};
+            background-color: ${theme.darkLowContrast};
             border-radius: 4px;
           }
         `}

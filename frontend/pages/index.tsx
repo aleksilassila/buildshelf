@@ -6,6 +6,7 @@ import axios from "axios";
 import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
 import Auth from "../utils/auth";
+import theme from "../constants/theme";
 
 const Home = () => {
   const [topData, setTopData] = useState(null);
@@ -46,13 +47,11 @@ const Home = () => {
    *  - Redesign frontpage?
    *  - Finish dropdowns
    *  - Improve buttons and create multiplebutton variation
-   *  - Multiplebutton click bug
-   *  - Redesign inputs
    *  - Improve title bar
    *    - Dropdown with logout and more links there
    *  - Administration tools
-   *  - header tag css
    *  - General styling changes
+   *    - Boring gray
    *  - Api documentation
    *  - Api proper error handling
    *  - Infinite scroll
@@ -64,7 +63,7 @@ const Home = () => {
   const BuildsRowHeading = ({ text }) => {
     return (
       <div className="container">
-        <h2>{text}</h2>
+        <h3>{text}</h3>
         <Link href="/builds">
           <a>Show All</a>
         </Link>
@@ -88,44 +87,44 @@ const Home = () => {
   };
 
   return (
-    <div className={"background"}>
+    <div className="background">
       <TitleBar active="home" />
       <div className="introduction">
-        <h2 className="introduction-header">
-          The most ambitious Minecraft build library at your hands
-        </h2>
-        <span className="introduction-paragraph">
+        <h2>The most ambitious Minecraft build library at your hands</h2>
+        <p>
           Litematica Library is a place to store, share and browse all kinds on
           Minecraft builds and projects. You can download Litematica mod{" "}
           <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">
             here
           </a>
           .
-        </span>
+        </p>
       </div>
-      <CardsRowView
-        builds={topData || []}
-        heading={
-          <BuildsRowHeading
-            text={!!topData ? "Popular builds right now" : messages.loading}
-          />
-        }
-      />
-      <CardsRowView
-        builds={newData || []}
-        heading={
-          <BuildsRowHeading
-            text={!!newData ? "New builds" : messages.loading}
-          />
-        }
-      />
-      <div className="follows-grid">
-        <CardsGridView
+      <div className="content">
+        <CardsRowView
+          builds={topData || []}
           heading={
-            <h2>{!!followedData ? "Followed creators" : messages.loading}</h2>
+            <BuildsRowHeading
+              text={!!topData ? "Popular builds right now" : messages.loading}
+            />
           }
-          builds={followedData || []}
         />
+        <CardsRowView
+          builds={newData || []}
+          heading={
+            <BuildsRowHeading
+              text={!!newData ? "New builds" : messages.loading}
+            />
+          }
+        />
+        <div className="follows-grid">
+          <CardsGridView
+            heading={
+              <h2>{!!followedData ? "Followed creators" : messages.loading}</h2>
+            }
+            builds={followedData || []}
+          />
+        </div>
       </div>
       <style jsx>{`
         .background {
@@ -133,20 +132,8 @@ const Home = () => {
           width: 100vw;
         }
 
-        .banner span {
-          font-size: 0.9em;
-        }
-
         .introduction {
           margin: 6em 5vw;
-        }
-
-        .introduction-header {
-          margin-bottom: 0.2em;
-        }
-
-        .introduction-paragraph {
-          line-height: 1.3em;
         }
 
         .follows-grid {

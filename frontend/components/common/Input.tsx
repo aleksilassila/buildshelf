@@ -54,22 +54,24 @@ const Input = ({
             appearance: none;
             font-family: inherit;
             border-radius: 4px;
-            border: 1px solid ${theme.lowContrastLight};
+            border: 1px solid ${theme.lightLowContrast};
             padding: 0.4em 1em;
             font-size: 0.96em;
-            color: ${theme.highContrastDark};
+            color: ${theme.darkHighContrast};
             font-weight: 400;
             height: ${height};
             width: 100%;
             resize: vertical;
-            //box-shadow: inset 0 1px 2px ${theme.lowContrastLight};
+            //box-shadow: inset 0 1px 2px ${theme.lightLowContrast};
           }
 
           input:focus-visible,
-          textarea:focus-visible {
+          textarea:focus-visible,
+          input:hover,
+          textarea:hover {
             //border: 1px solid ${theme.layout};
-            background-color: ${theme.lowContrastLight};
-            color: ${theme.lowContrastDark};
+            background-color: ${theme.lightMediumContrast};
+            color: ${theme.darkLowContrast};
           }
         `}
       </style>

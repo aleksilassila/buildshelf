@@ -8,13 +8,14 @@ import ErrorText from "../components/statuses/ErrorText";
 import messages from "../constants/messages";
 import SplashText from "../components/statuses/SplashText";
 import Auth from "../utils/auth";
+import Separator from "../components/icons/Separator";
 
 const Empty = () => (
   <span>
     It's quite empty here.
     <style jsx>{`
       span {
-        color: ${theme.lowContrastDark}88;
+        color: ${theme.darkLowContrast}88;
         font-size: 0.9em;
       }
     `}</style>
@@ -74,6 +75,7 @@ const Builds = () => {
           setFiltersToggled={setFiltersToggled}
           doSearch={doSearch}
         />
+        {Separator}
         <div className="content">
           {error ? (
             <ErrorText>
@@ -94,7 +96,7 @@ const Builds = () => {
       <style jsx>
         {`
           .builds {
-            background-color: ${theme.highContrastLight};
+            background-color: ${theme.lightHighContrast};
             height: 100vh;
             width: 100vw;
             display: flex;

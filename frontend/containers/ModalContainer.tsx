@@ -24,7 +24,7 @@ const ModalContainer = ({children, close, splash = false}) => (
       .content {
         height: calc(100vh - 3em);
         width: calc(100vw - 3em);
-        background-color: ${theme.highContrastLight}dd;
+        background-color: ${theme.lightHighContrast}dd;
         margin: 1.5em;
         padding: 2em;
         border-radius: 4px;

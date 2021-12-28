@@ -20,12 +20,12 @@ const Message = ({
           background-color: ${danger
             ? theme.red
             : success
-            ? theme.green
-            : theme.highContrastLight};
+            ? theme.layout
+            : theme.lightHighContrast};
           color: ${danger || success
-            ? theme.highContrastLight
-            : theme.highContrastDark};
-          border: 1px solid ${theme.mediumContrastLight};
+            ? theme.lightHighContrast
+            : theme.darkHighContrast};
+          border: 1px solid ${theme.lightMediumContrast};
           border-radius: 4px;
           padding: 0.4em 1em;
           font-size: 0.9em;

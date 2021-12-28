@@ -17,7 +17,7 @@ const SortDropdown = ({ setSortBy, sortBy }) => (
       .sort-button-content {
         font-weight: 600;
         font-size: 0.9em;
-        color: ${theme.lowContrastDark};
+        color: ${theme.darkLowContrast};
       }
 
       .sort-list-item {
@@ -27,7 +27,7 @@ const SortDropdown = ({ setSortBy, sortBy }) => (
 
       .sort-list-item:hover {
         cursor: pointer;
-        background-color: ${theme.lowContrastLight};
+        background-color: ${theme.lightLowContrast};
       }
 
       .sort-list-item:first-child {
@@ -55,7 +55,7 @@ const SearchField = ({ doSearch }) => {
       />
       <style jsx>{`
         input {
-          border: 1px solid ${theme.lowContrastLight};
+          border: 1px solid ${theme.lightLowContrast};
           padding: 0.4em 1em;
           font-size: 0.96em;
           border-radius: 4px;
@@ -65,8 +65,8 @@ const SearchField = ({ doSearch }) => {
 
         input:hover,
         input:focus {
-          background-color: ${theme.lowContrastLight};
-          color: ${theme.lowContrastDark};
+          background-color: ${theme.lightLowContrast};
+          color: ${theme.darkLowContrast};
           outline: none;
         }
       `}</style>
@@ -80,20 +80,20 @@ const FilterToggle = ({ toggled, setToggled }) => {
       <span className="filter-button-content">Filters</span>
       <style jsx>{`
         .container {
-          border: 1px solid ${theme.lowContrastLight};
+          border: 1px solid ${theme.lightLowContrast};
           padding: 0.4em 1em;
           font-size: 0.96em;
           border-radius: 4px;
           cursor: pointer;
           background-color: ${toggled
-            ? theme.lowContrastLight
-            : theme.highContrastLight};
+            ? theme.lightLowContrast
+            : theme.lightHighContrast};
         }
 
         .container:active {
-          //background-color: ${theme.lowContrastLight};
-          color: ${theme.lowContrastDark};
-          border: 1px solid ${theme.lowContrastDark};
+          //background-color: ${theme.lightLowContrast};
+          color: ${theme.darkLowContrast};
+          border: 1px solid ${theme.darkLowContrast};
         }
 
         .filter-button-content {
@@ -111,7 +111,7 @@ const SortingBar = ({
   doSearch,
 }) => {
   return (
-    <div className="bar">
+    <div className="sorting-bar">
       <div className="left">
         <div className="space">
           <SortDropdown setSortBy={setSortBy} sortBy={sortBy} />
@@ -121,12 +121,11 @@ const SortingBar = ({
       <FilterToggle toggled={filtersToggled} setToggled={setFiltersToggled} />
       <style jsx>
         {`
-          .bar {
+          .sorting-bar {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1em;
           }
 
           .space {

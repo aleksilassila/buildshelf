@@ -1,7 +1,7 @@
 import theme from "../../constants/theme";
 import {useState} from "react";
 
-const Button = ({children, onClick, highlighted = false, danger = false}) => {
+const Button = ({children, onClick, highlighted: primary = false, danger = false}) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleClick = (e) => {
@@ -19,7 +19,7 @@ const Button = ({children, onClick, highlighted = false, danger = false}) => {
 
   return (
     <div
-      className={`button ${danger ? "danger" : ""}`}
+      className={`button ${danger && "danger"} ${primary && "primary"}`}
       onBlur={() => setIsFocused(false)}
       onClick={handleClick}
       tabIndex={0}
@@ -29,15 +29,10 @@ const Button = ({children, onClick, highlighted = false, danger = false}) => {
       </div>
       <style jsx>{`
         .button {
-          border: 1px solid ${theme.lowContrastLight};
-          background-color: ${highlighted
-        ? theme.layout
-        : theme.highContrastLight};
-          color: ${highlighted
-        ? theme.highContrastLight
-        : theme.highContrastDark};
-          font-weight: ${highlighted ? 500 : 400};
-          text-align: ${highlighted ? "center" : "left"};
+          border: 1px solid ${theme.lightLowContrast};
+          background-color: ${theme.lightHighContrast};
+          color: ${theme.darkHighContrast};
+          font-weight: 400;
           border-radius: 4px;
           height: 2.2rem;
           font-size: 0.9em;
@@ -48,14 +43,26 @@ const Button = ({children, onClick, highlighted = false, danger = false}) => {
           display: flex;
           align-items: center;
         }
-
-        .button:not(.danger):hover {
-          background-color: ${theme.mediumContrastLight};
+        
+        .button:hover {
+          background-color: ${theme.lightMediumContrast};
+        }
+        
+        .primary {
+          background-color: ${theme.layout};
+          color: ${theme.lightHighContrast};
+          font-weight: 500;
+          text-align: center;
+          border: 1px solid ${theme.layoutLight};
+        }
+        .primary:hover {
+          background-color: ${theme.layoutDark};
         }
 
         .danger:focus {
           background-color: ${theme.red};
-          color: ${theme.highContrastLight};
+          color: ${theme.lightHighContrast};
+          border: 1px solid ${theme.redLight};
         }
       `}</style>
     </div>

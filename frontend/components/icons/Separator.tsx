@@ -5,7 +5,7 @@ const Separator = (
     <style jsx>
       {`
         .separator {
-          background-color: ${theme.lowContrastLight}80;
+          background-color: ${theme.lightLowContrast}80;
           height: 2px;
           margin: 1em 0;
           border-radius: 20px;

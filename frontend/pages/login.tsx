@@ -80,12 +80,12 @@ const Login = () => {
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          background-color: ${theme.mediumContrastLight};
+          background-color: ${theme.lightMediumContrast};
           padding: 2em;
         }
 
         .login {
-          background-color: ${theme.highContrastLight};
+          background-color: ${theme.lightHighContrast};
           padding: 3em 2em;
           border-radius: 4px;
           width: 100%;
@@ -120,7 +120,7 @@ const Login = () => {
           top: 1.5rem;
           left: 2rem;
           font-size: 0.8em;
-          color: ${theme.lowContrastDark};
+          color: ${theme.darkLowContrast};
         }
       `}</style>
     </div>

@@ -33,12 +33,12 @@ const ProfileNavBar = ({ user, isOwnProfile }: Props) => {
       <style jsx>
         {`
           .profile-nav-bar {
-            color: ${theme.highContrastDark};
+            color: ${theme.darkHighContrast};
             display: flex;
             justify-content: space-between;
             padding: 1em;
             margin: 2em;
-            border-bottom: 1px solid ${theme.lowContrastLight};
+            border-bottom: 1px solid ${theme.lightLowContrast};
           }
 
           .user-info {
