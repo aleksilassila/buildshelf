@@ -34,7 +34,7 @@ module.exports = {
       ], {});
 
     await queryInterface.bulkUpdate('builds', {
-        totalFavorites: 1,
+        _totalFavorites: 1,
     }, { id: [99991, 99992, 99993] });
   },
 

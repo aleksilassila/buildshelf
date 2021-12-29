@@ -1,20 +1,34 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, fn, col } = require("sequelize");
 const { sequelize } = require("../database");
 
 const Build = sequelize.define("build", {
-  title: DataTypes.STRING,
-  description: DataTypes.STRING,
-  buildFile: DataTypes.STRING,
+  title: { type: DataTypes.STRING, allowNull: false },
+  description: { type: DataTypes.TEXT, allowNull: false },
+  buildFile: { type: DataTypes.STRING, allowNull: false },
   images: DataTypes.ARRAY(DataTypes.STRING),
   downloads: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
-  totalFavorites: {
+  // This acts as a kind of cache for sorting the queries
+  _totalFavorites: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
 });
+
+Build.prototype.countTotalFavorites = function () {
+  return sequelize.model("userFavorites").count({
+    where: {
+      buildId: this.id,
+    },
+  });
+};
+
+Build.prototype.updateTotalFavorites = async function () {
+  this._totalFavorites = await this.countTotalFavorites();
+  await this.save();
+};
 
 Build.prototype.toJSON = async function (user = null) {
   const creator = await this.getCreator();
@@ -39,7 +53,7 @@ Build.prototype.toJSON = async function (user = null) {
     thisFile: this.thisFile,
     images: this.images,
     downloads: this.downloads,
-    totalFavorites: this.totalFavorites,
+    totalFavorites: await this.countTotalFavorites(),
     creator: {
       username: creator.username,
       uuid: creator.uuid,

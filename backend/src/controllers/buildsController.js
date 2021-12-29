@@ -128,7 +128,7 @@ exports.getBuilds = async function (req, res) {
   if (sort === "new") {
     order = [["createdAt", "DESC"]];
   } else if (sort === "top") {
-    order = [["totalFavorites", "DESC"]];
+    order = [["_totalFavorites", "DESC"]];
   }
 
   const builds = await Build.findAll({
@@ -216,13 +216,13 @@ exports.favorite = async function (req, res) {
 
   if (addFavorite && !inFavorites) {
     await user.addFavorite(build);
-    build.totalFavorites += 1;
   } else if (!addFavorite && inFavorites) {
     await user.removeFavorite(build);
-    build.totalFavorites -= 1;
   }
 
-  await build.save();
+  // await build.save();
+
+  await build.updateTotalFavorites();
 
   res
     .status(200)

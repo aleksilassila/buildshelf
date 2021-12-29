@@ -1,6 +1,5 @@
 import theme from "../../constants/theme";
 import { Build } from "../../interfaces/Builds";
-import Heart from "../icons/Heart";
 
 interface Props {
   build: Build;
@@ -31,17 +30,11 @@ const BuildCard = ({ build, openBuild }: Props) => {
         <div>
           <h3 className="title">{build.title}</h3>
         </div>
-        <div className="stats">
-          <h3 className="favorites">
-            <Heart
-              height={1}
-              color={
-                build.isFavorite
-                  ? theme.lightHighContrast
-                  : theme.darkHighContrast
-              }
-            />
-            <h4 className="favorites-count">{build.totalFavorites}</h4>
+        <div>
+          <h3 className="details">
+            {[build.category?.name]
+              .concat(build?.tags?.map((tag) => "#" + tag.name))
+              .join(", ")}
           </h3>
         </div>
         <a
@@ -49,10 +42,19 @@ const BuildCard = ({ build, openBuild }: Props) => {
           className="creator-container"
           onClick={(e) => e.stopPropagation()}
         >
+          {" "}
+          {/*Fixme: Do the same for the top that is done for bottom rn*/}
           <ProfilePicture uuid={build.creator.uuid} />
           <span className="creator">{build.creator.username}</span>
         </a>
-        <span className="info">houses, #medieval</span>
+        <span className="favorites">Favorites: {build.totalFavorites}</span>
+        <div className="description-container">
+          <span className="description">
+            {build.description.length > 200
+              ? build.description.substring(0, 200) + "..."
+              : build.description}
+          </span>
+        </div>
       </div>
       <style jsx>
         {`
@@ -79,81 +81,53 @@ const BuildCard = ({ build, openBuild }: Props) => {
             transition: background;
             cursor: pointer;
             box-shadow: ${theme.shadow};
-          }
-
-          .card:hover {
             background: linear-gradient(
-              180deg,
+              0deg,
               rgba(0, 0, 0, 0) 0%,
               rgba(0, 0, 0, 0) 70%,
               rgba(0, 0, 0, 0.4) 90%
             );
           }
 
-          .title,
-          .downloads,
-          .favorites {
-            display: inline-block;
-            margin-bottom: 0.4em;
-            padding: 0.3em 0.6em;
-            background-color: ${theme.lightHighContrast};
-            border-radius: 4px;
-            box-shadow: ${theme.shadow};
+          .card:hover {
+            background: linear-gradient(
+              0deg,
+              rgba(0, 0, 0, 0.4) 0%,
+              rgba(0, 0, 0, 0.4) 100%
+            );
           }
 
-          .favorites {
-            background-color: ${build.isFavorite
-              ? theme.layout
-              : theme.lightHighContrast};
-            color: ${build.isFavorite
-              ? theme.lightHighContrast
-              : theme.darkHighContrast};
-            display: flex;
-            align-items: center;
-          }
-
-          .favorites-count {
-            margin-left: 0.2em;
-          }
-
-          .stats {
+          .card > *:nth-child(2) {
             justify-self: right;
           }
 
-          .downloads {
-            margin-right: 0.4em;
-          }
-
-          .stats > img {
-            height: 1em;
-            width: 1em;
-          }
-
-          .downloads-icon {
-            background-image: url("/downloads.svg");
-          }
-
-          .favorites-icon {
-            background-image: url("/heart.svg");
-          }
-
-          .downloads-icon,
-          .favorites-icon {
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: contain;
-            height: 0.7em;
-            width: 0.7em;
-            display: inline-block;
-            margin-right: 0.15em;
-          }
-
-          .info,
-          .creator {
+          .title, .creator {
             font-weight: 600;
             color: ${theme.lightHighContrast};
           }
 
+          .details, .favorites {
+            font-weight: 500;
+            color: ${theme.lightLowContrast};
+          }
+
+          .description {
+            font-weight: 500;
+            color: ${theme.lightLowContrast};
+          }
+          
+          .description-container {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            justify-content: center;
+            top: 3.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            bottom: 3.5rem;
+            opacity: 0;
+          }
+          
           .creator-container {
             display: flex;
             flex-direction: row;
@@ -162,17 +136,18 @@ const BuildCard = ({ build, openBuild }: Props) => {
             opacity: 0;
           }
 
-          .info {
+          .favorites {
             opacity: 0;
             justify-self: flex-end;
             align-self: flex-end;
           }
 
-          .card:hover .info,
-          .card:hover .creator-container {
+          .card:hover .favorites,
+          .card:hover .creator-container,
+          .card:hover .description-container {
             opacity: 1;
           }
-          
+
           a {
             text-decoration: none;
           }
