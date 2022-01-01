@@ -1,6 +1,4 @@
 import { Build } from "../../interfaces/Builds";
-import CloseIcon from "../icons/CloseIcon";
-import theme from "../../constants/theme";
 import messages from "../../constants/messages";
 import ImageCollection from "../ImageCollection";
 import Separator from "../icons/Separator";
@@ -11,6 +9,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Auth from "../../utils/auth";
 import ModalContainer from "../../containers/ModalContainer";
+import Heart from "../icons/Heart";
 
 interface Props {
   buildId: number;
@@ -112,7 +111,11 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
 
   const favoriteButtonData: MultipleButtonData[] = [
     {
-      content: <span>{favoriteButton.favoriteCount}</span>,
+      content: (
+        <span style={{ fontWeight: 600 }}>
+          <Heart /> {favoriteButton.favoriteCount}
+        </span>
+      ),
       unclickable: true,
       active: favoriteButton.isBuildFavorite,
     },

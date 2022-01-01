@@ -23,6 +23,8 @@ const Empty = () => (
 );
 
 const Builds = () => {
+  const [page, setPage] = useState(0);
+
   const [sortBy, setSortBy] = useState<"Popular" | "Top" | "New">("Top");
   const [searchTerm, setSearchTerm] = useState("");
   const [filtersToggled, setFiltersToggled] = useState(false);

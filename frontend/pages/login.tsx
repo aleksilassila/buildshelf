@@ -46,7 +46,7 @@ const Login = () => {
     <div className="container">
       <div className="login">
         <Link href="/">
-          <a className="back">Back</a>
+          <a className="back">〈 Back</a>
         </Link>
         <h2 className="title">Log in with your Minecraft account</h2>
         <span className="disclosure">
@@ -117,10 +117,11 @@ const Login = () => {
 
         .back {
           position: absolute;
-          top: 1.5rem;
-          left: 2rem;
+          top: 1.4rem;
+          left: 1.6rem;
           font-size: 0.8em;
           color: ${theme.darkLowContrast};
+          text-decoration: none;
         }
       `}</style>
     </div>

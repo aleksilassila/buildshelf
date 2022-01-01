@@ -29,6 +29,9 @@ Tag.belongsToMany(Build, { through: "postTags", as: "tags" });
 User.belongsToMany(User, { through: UserFollower, as: "followings", foreignKey: "followerUuid" });
 User.belongsToMany(User, { through: UserFollower, as: "followers", foreignKey: "followedUuid" });
 
+User.belongsToMany(Collection, { through: "userFavoriteCollections", as: "favoriteCollections" });
+Collection.belongsToMany(User, { through: "userFavoriteCollections", as: "favoriteCollections" });
+
 module.exports = {
   Build,
   User,

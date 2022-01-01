@@ -1,10 +1,11 @@
 const { Collection } = require("../models");
 const { Op } = require("sequelize");
+const { searchQueryBuilder } = require("../utils");
 
-exports.findCollections = async function (req, res) {
-  const { searchQuery } = req.query;
+exports.getCollections = async function (req, res) {
+  const { name, uuid } = req.query;
 
-  if (!searchQuery) {
+  if (!name) {
     res.status(400).send("Search query required.");
     return;
   }
@@ -14,9 +15,11 @@ exports.findCollections = async function (req, res) {
       where: {
         ownerId: req.user.uuid,
         name: {
-          [Op.startsWith]: searchQuery,
+          [Op.iLike]: "%" + name + "%",
+          ownerId: uuid,
         },
       },
+      limit: 20,
     })
   );
 };
@@ -57,13 +60,13 @@ exports.deleteCollection = async function (req, res) {
   }
 
   const collection = await Collection.findOne({
-    where: { id: collectionId },
+    where: { id: collectionId, ownerId: req.user.uuid },
   });
 
-  if (collection?.ownerId === req.user.uuid) {
+  if (collection) {
     await collection.destroy();
   } else {
-    res.status(401).send("You do not have permission to do that.");
+    res.status(404).send("Collection not found.");
     return;
   }
 

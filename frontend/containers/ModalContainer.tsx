@@ -6,8 +6,8 @@ const ModalContainer = ({children, close, splash = false}) => (
     <div className="content" onClick={(e) => e.stopPropagation()}>
       {/*<div className="close"><Button onClick={close}>Back</Button></div>*/}
       {children}
-      <div className="close">
-        <CloseIcon close={close}/>
+      <div className="close" onClick={close}>
+        <CloseIcon />
       </div>
     </div>
     <style jsx>{`
@@ -42,8 +42,10 @@ const ModalContainer = ({children, close, splash = false}) => (
       .close {
         cursor: pointer;
         position: absolute;
-        top: 0.2em;
-        right: 0.2em;
+        top: 0.4em;
+        right: 0.5em;
+        color: ${theme.lightLowContrast};
+        font-size: 1.3em;
       }
     `}</style>
   </div>

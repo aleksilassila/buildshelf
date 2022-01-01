@@ -1,5 +1,6 @@
 import theme from "../../constants/theme";
 import { Build } from "../../interfaces/Builds";
+import Heart from "../icons/Heart";
 
 interface Props {
   build: Build;
@@ -47,7 +48,9 @@ const BuildCard = ({ build, openBuild }: Props) => {
           <ProfilePicture uuid={build.creator.uuid} />
           <span className="creator">{build.creator.username}</span>
         </a>
-        <span className="favorites">Favorites: {build.totalFavorites}</span>
+        <span className="favorites">
+          <Heart /> {build.totalFavorites}
+        </span>
         <div className="description-container">
           <span className="description">
             {build.description.length > 200
@@ -101,21 +104,23 @@ const BuildCard = ({ build, openBuild }: Props) => {
             justify-self: right;
           }
 
-          .title, .creator {
+          .title,
+          .creator {
             font-weight: 600;
             color: ${theme.lightHighContrast};
           }
 
-          .details, .favorites {
-            font-weight: 500;
-            color: ${theme.lightLowContrast};
-          }
-
+          .details,
           .description {
             font-weight: 500;
             color: ${theme.lightLowContrast};
           }
-          
+
+          .favorites {
+            font-weight: 600;
+            color: ${theme.lightLowContrast};
+          }
+
           .description-container {
             display: flex;
             align-items: center;
@@ -127,7 +132,7 @@ const BuildCard = ({ build, openBuild }: Props) => {
             bottom: 3.5rem;
             opacity: 0;
           }
-          
+
           .creator-container {
             display: flex;
             flex-direction: row;

@@ -58,6 +58,7 @@ const Home = () => {
    *  - Update card row behavior
    *  - New dedicated search page?
    *  - ICONS
+   *  - EDIT BUILDS
    * */
 
   const BuildsRowHeading = ({ text }) => {

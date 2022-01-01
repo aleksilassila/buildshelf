@@ -2,24 +2,34 @@ import theme from "../constants/theme";
 import Link from "next/link";
 import Auth from "../utils/auth";
 
-const TitleBar = ({ active = null, dim = false }) => {
+const TitleBar = ({active = null, dim = false}) => {
   const userObject = Auth.getUser();
 
-  const ProfileDropdown = ({ children }) => {
+  const ProfileDropdown = ({children}) => {
     return (
-      <div className="profile-dropdown">
+      <div className="profile-dropdown" tabIndex={0}>
         {children}
         <style jsx>{`
           .profile-dropdown {
-            background-color: ${theme.layout};
+            border: 1px solid ${theme.darkLowContrast};
             border-radius: 999px;
             margin: 0 0.6em;
             cursor: pointer;
           }
-          
+
           .profile-dropdown :global(span) {
             color: ${theme.lightHighContrast} !important;
             padding: 0.2em 0.4em;
+            color: ${theme.darkLowContrast} !important;
+          }
+
+          .profile-dropdown:focus {
+            border: 1px solid ${theme.layout};
+            background-color: ${theme.layout};
+          }
+
+          .profile-dropdown:focus :global(span) {
+            color: ${theme.lightHighContrast} !important;
           }
         `}</style>
       </div>
@@ -49,9 +59,7 @@ const TitleBar = ({ active = null, dim = false }) => {
           ) : null}
           {userObject?.username ? (
             <ProfileDropdown>
-              <span>
-                v {userObject.username}
-              </span>
+              <span>▾ {userObject.username}</span>
             </ProfileDropdown>
           ) : (
             <Link href="/login">

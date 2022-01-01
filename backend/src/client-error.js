@@ -1,12 +1,17 @@
-const errors = require("./constants/errors");
+const ClientError = function (
+  code = "INTERNAL_ERROR",
+  status = 500,
+  info = ""
+) {
+  this.code = code;
+  this.status = status;
+  this.info = info;
+};
 
-const ClientError = (module.exports = function (code, status, info) {
-  this.code = code || errors.USER_ERROR;
-  this.status = status || 400;
-  this.info = info || "";
-});
+ClientError.prototype.send = function (res) {
+  res.status(this.status).send(this.toString());
+};
 
-ClientError.prototype = Object.create(Error.prototype);
 ClientError.prototype.toString = function () {
   const obj = Object(this);
   if (obj !== this) {
@@ -16,32 +21,28 @@ ClientError.prototype.toString = function () {
   return `Error ${this.code}: ${this.status} ${this.info}`;
 };
 
-module.exports.middleware = async (req, res, next) => {
-  try {
-    await next();
-  } catch (err) {
-    await next(err)
-    if (err instanceof ClientError) {
-      res.body = {
-        status: err.status,
-        userMessage: err.code,
-        errorCode: err.code,
-        moreInfo: err.info,
-      };
-      res.status = err.status;
-    } else {
-      res.status =
-        err.status && Number.isInteger(err.status) ? err.status : 500;
-      res.body = {
-        status: err.status && Number.isInteger(err.status) ? err.status : 500,
-        userMessage: "Internal server error",
-        errorCode: errors.SERVER_ERROR,
-        moreInfo: "",
-      };
-    }
+const middleware = (req, res, next) => {
+  res.sendError = (code, status, info) => {
+    new ClientError(code, status, info).send(res);
+  };
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log(err);
-    }
-  }
+  next();
+};
+
+const errors = {
+  SERVER_ERROR: new ClientError("INTERNAL_ERROR", 500, ""),
+  ROUTE_NOT_FOUND: new ClientError(
+    "ROUTE_NOT_FOUND",
+    404,
+    "This route does not exist."
+  ),
+  USER_NOT_FOUND: new ClientError("USER_NOT_FOUND", 404, ""),
+  NOT_FOUND: new ClientError("NOT_FOUND", 404, ""),
+  BAD_REQUEST: new ClientError("BAD_REQUEST", 400, ""),
+};
+
+module.exports = {
+  ClientError,
+  errors,
+  middleware,
 };

@@ -1,6 +1,7 @@
 const { Category, User } = require("../models");
 const { Op } = require("sequelize");
 const { Build, Collection, Tag } = require("../models/index");
+const { searchQueryBuilder } = require("../utils");
 
 exports.create = async function (req, res) {
   if (req.files?.buildFile === undefined) {
@@ -79,14 +80,13 @@ exports.create = async function (req, res) {
 };
 
 exports.getBuilds = async function (req, res) {
-  const { timespan, tags, collection, category, title, sort, uuid } = req.query;
+  const { tags, collection, category, title, sort, uuid } = req.query;
+  const searchQuery = searchQueryBuilder(req.query);
 
-  const where = {};
   let tagsWhere = undefined;
-  let order = undefined;
 
   // Tags
-  if (tags && tags.length !== 0) {
+  if (tags) {
     tagsWhere = {
       name: {
         [Op.in]: tags.split(",").map((i) => i.toLowerCase()),
@@ -94,58 +94,44 @@ exports.getBuilds = async function (req, res) {
     };
   }
 
-  // Date
-  if (!isNaN(parseFloat(timespan))) {
-    where.createdAt = {
-      [Op.gte]: new Date(new Date().getTime() - timespan),
-    };
-  }
-
   // Collection
-  if (!isNaN(parseInt(collection))) {
-    where.collectionId = parseInt(collection);
+  if (collection) {
+    searchQuery.where.collectionId = parseInt(collection);
   }
 
   // Category
   if (category) {
-    where.categoryName = {
+    searchQuery.where.categoryName = {
       [Op.startsWith]: category,
     };
   }
 
   // Title
   if (title) {
-    where.title = {
+    searchQuery.where.title = {
       [Op.iLike]: "%" + title + "%",
     };
   }
 
   if (uuid) {
-    where.creatorId = uuid;
+    searchQuery.where.creatorId = uuid;
   }
 
   // Sorting order
   if (sort === "new") {
-    order = [["createdAt", "DESC"]];
+    searchQuery.order = [["createdAt", "DESC"]];
   } else if (sort === "top") {
-    order = [["_totalFavorites", "DESC"]];
+    searchQuery.order = [["_totalFavorites", "DESC"]];
   }
 
   const builds = await Build.findAll({
-    where,
+    ...searchQuery,
     include: [
       {
         model: Tag,
         where: tagsWhere,
       },
     ],
-    order,
-    offset: isNaN(parseInt(req.query.offset))
-      ? 0
-      : Math.max(0, parseInt(req.query.offset)),
-    limit: isNaN(parseInt(req.query.amount))
-      ? 20
-      : Math.max(1, Math.min(parseInt(req.query.amount), 50)),
   });
 
   res.send(await Promise.all(builds.map((build) => build.toJSON(req.user))));

@@ -45,7 +45,7 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
             align-items: center;
           }
 
-          .multiple-button > *:hover {
+          .multiple-button > *:not(.unclickable):hover {
             background-color: ${theme.lightMediumContrast};
           }
 

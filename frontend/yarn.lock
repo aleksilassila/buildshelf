@@ -50,6 +50,32 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
+"@fortawesome/fontawesome-common-types@^0.2.36":
+  version "0.2.36"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.36.tgz#b44e52db3b6b20523e0c57ef8c42d315532cb903"
+  integrity sha512-a/7BiSgobHAgBWeN7N0w+lAhInrGxksn13uK7231n2m8EDPE3BMCl9NZLTGrj9ZXfCmC6LM0QLqXidIizVQ6yg==
+
+"@fortawesome/fontawesome-svg-core@^1.2.36":
+  version "1.2.36"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-1.2.36.tgz#4f2ea6f778298e0c47c6524ce2e7fd58eb6930e3"
+  integrity sha512-YUcsLQKYb6DmaJjIHdDWpBIGCcyE/W+p/LMGvjQem55Mm2XWVAP5kWTMKWLv9lwpCVjpLxPyOMOyUocP1GxrtA==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.36"
+
+"@fortawesome/free-solid-svg-icons@^5.15.4":
+  version "5.15.4"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.15.4.tgz#2a68f3fc3ddda12e52645654142b9e4e8fbb6cc5"
+  integrity sha512-JLmQfz6tdtwxoihXLg6lT78BorrFyCf59SAwBM6qV/0zXyVeDygJVb3fk+j5Qat+Yvcxp1buLTY5iDh1ZSAQ8w==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.36"
+
+"@fortawesome/react-fontawesome@^0.1.16":
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/@fortawesome/react-fontawesome/-/react-fontawesome-0.1.16.tgz#ce7665490214e20f929368d6b65f68884a99276a"
+  integrity sha512-aLmzDwC9rEOAJv2UJdMns89VZR5Ry4IHu5dQQh24Z/lWKEm44lfQr1UNalZlkUaQN8d155tNh+CS7ntntj1VMA==
+  dependencies:
+    prop-types "^15.7.2"
+
 "@hapi/accept@5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@hapi/accept/-/accept-5.0.2.tgz#ab7043b037e68b722f93f376afb05e85c0699523"
@@ -1199,7 +1225,7 @@ lodash.sortby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
   integrity sha1-7dFMgk4sycHgsKG0K7UhBRakJDg=
 
-loose-envify@^1.1.0:
+loose-envify@^1.1.0, loose-envify@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
@@ -1545,6 +1571,15 @@ process@0.11.10, process@^0.11.10:
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha1-czIwDoQBYb2j5podHZGn1LwW8YI=
 
+prop-types@^15.7.2:
+  version "15.8.0"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.0.tgz#d237e624c45a9846e469f5f31117f970017ff588"
+  integrity sha512-fDGekdaHh65eI3lMi5OnErU6a8Ighg2KjcjQxO7m8VHyWjcPyj5kiOgV1LQDOOOgVy3+5FgjXvdSSX7B8/5/4g==
+  dependencies:
+    loose-envify "^1.4.0"
+    object-assign "^4.1.1"
+    react-is "^16.13.1"
+
 public-encrypt@^4.0.0:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/public-encrypt/-/public-encrypt-4.0.3.tgz#4fcc9d77a07e48ba7527e7cbe0de33d0701331e0"
@@ -1632,6 +1667,11 @@ react-is@17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
+
+react-is@^16.13.1:
+  version "16.13.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
+  integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-refresh@0.8.3:
   version "0.8.3"
