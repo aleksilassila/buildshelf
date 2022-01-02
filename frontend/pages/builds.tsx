@@ -91,7 +91,7 @@ const Builds = () => {
           ) : data?.length === 0 ? (
             <Empty />
           ) : (
-            <CardsGridView builds={data} heading={null} />
+            <CardsGridView builds={data} />
           )}
         </div>
       </div>

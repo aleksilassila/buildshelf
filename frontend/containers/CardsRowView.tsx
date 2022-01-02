@@ -3,13 +3,15 @@ import { Build } from "../interfaces/Builds";
 import BuildPage from "../components/modals/BuildPage";
 import { useState } from "react";
 import theme from "../constants/theme";
+import ArrowLeft from "../components/icons/ArrowLeft";
+import ArrowRight from "../components/icons/ArrowRight";
 
 interface Props {
   builds: Build[];
-  heading: JSX.Element | undefined;
+  children: JSX.Element | undefined;
 }
 
-const CardsRowView = ({ builds, heading }: Props) => {
+const CardsRowView = ({ builds, children }: Props) => {
   const [buildId, setBuildId] = useState(undefined);
   const [scrollIndex, setScrollIndex] = useState(0);
 
@@ -37,27 +39,40 @@ const CardsRowView = ({ builds, heading }: Props) => {
   };
 
   return (
-    <div className="builds-list">
+    <div className="cards-row-view">
       <BuildPage buildId={buildId} setBuildPage={setBuildId} modal={true} />
-      {heading}
-      <div className="buttons-container">
-        <div className="cards-container">
-          {getBuildList(builds).map((build: Build, index) => {
-            return (
-              <div className="card" key={index}>
-                <BuildCard build={build} openBuild={setBuildId} />
-              </div>
-            );
-          })}
+      <div className="heading-container">
+        <div className="heading">{children}</div>
+        <div className="heading-controls">
+          <div onClick={onClickPrevious} style={{ marginRight: "0.5em" }}>
+            <ArrowLeft />
+          </div>
+          <div onClick={onClickNext}>
+            <ArrowRight />
+          </div>
         </div>
-        <div className="back" onClick={onClickPrevious} />
-        <div className="forward" onClick={onClickNext} />
+      </div>
+      <div className="cards-container">
+        {getBuildList(builds).map((build: Build, index) => {
+          return (
+            <div className="card" key={index}>
+              <BuildCard build={build} openBuild={setBuildId} />
+            </div>
+          );
+        })}
       </div>
       <style jsx>
         {`
-          .builds-list {
-            padding: 3vh 3vw;
+          .cards-row-view {
+            padding: 2rem 5vw;
             position: relative;
+          }
+
+          .heading-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
           }
 
           .cards-container {
@@ -68,44 +83,30 @@ const CardsRowView = ({ builds, heading }: Props) => {
             margin: 0 -0.5em;
           }
 
-          .buttons-container {
-            position: relative;
-          }
-
           .card {
             flex: 1 1 auto;
             margin: 0.5em 0.5em;
           }
 
-          .back,
-          .forward {
-            background-size: 1em;
-            background-repeat: no-repeat;
-            background-color: ${theme.lightHighContrast};
-            height: 3em;
-            width: 3em;
-            border-radius: 1000px;
-            box-shadow: 0 0 10px 5px #00000022;
+          .heading-controls {
+            display: flex;
+            opacity: 0;
+          }
+
+          .heading-controls > * {
+            border-radius: 50%;
+            text-align: center;
+            width: 2.5em;
+            line-height: 2.5em;
+          }
+
+          .heading-controls > *:hover {
             cursor: pointer;
-            position: absolute;
-            top: calc(50% - 1.5em);
+            background-color: ${theme.lightHighContrast};
           }
-
-          .back:hover,
-          .forward:hover {
-            background-color: #eeeeee;
-          }
-
-          .back {
-            left: -1.5em;
-            background-image: url("/angle-left.svg");
-            background-position: 45% center;
-          }
-
-          .forward {
-            right: -1.5em;
-            background-image: url("/angle-right.svg");
-            background-position: 55% center;
+          
+          .cards-row-view:hover .heading-controls {
+            opacity: 1;
           }
         `}
       </style>

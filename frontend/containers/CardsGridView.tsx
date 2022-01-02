@@ -5,16 +5,16 @@ import { useState } from "react";
 
 interface Props {
   builds: Build[];
-  heading?: JSX.Element;
+  children?: JSX.Element;
 }
 
-const CardsGridView = ({ builds, heading = null }: Props) => {
+const CardsGridView = ({ builds, children = null }: Props) => {
   const [buildId, setBuildId] = useState(undefined);
 
   return (
     <div className="builds-list">
       <BuildPage buildId={buildId} setBuildPage={setBuildId} modal={true} />
-      {heading}
+      {children}
       <div className="cards-container">
         {builds.map((build: Build, index) => {
           return (
@@ -34,7 +34,7 @@ const CardsGridView = ({ builds, heading = null }: Props) => {
             flex-direction: row;
             flex-wrap: wrap;
             margin: -0.5em;
-            ${!!heading ? "margin-top: 0;" : ""}
+            ${!!children ? "margin-top: 0;" : ""}
           }
 
           .card {

@@ -102,29 +102,24 @@ const Home = () => {
         </p>
       </div>
       <div className="content">
-        <CardsRowView
-          builds={topData || []}
-          heading={
-            <BuildsRowHeading
-              text={!!topData ? "Popular builds right now" : messages.loading}
-            />
-          }
-        />
-        <CardsRowView
-          builds={newData || []}
-          heading={
-            <BuildsRowHeading
-              text={!!newData ? "New builds" : messages.loading}
-            />
-          }
-        />
+        <CardsRowView builds={topData || []}>
+          <Link href="/builds">
+            <h2 className="row-heading-link">
+              {!!topData ? "Popular builds right now" : messages.loading}
+            </h2>
+          </Link>
+        </CardsRowView>
+        <CardsRowView builds={newData || []}>
+          <Link href="/builds">
+            <h2 className="row-heading-link">
+              {!!newData ? "New builds" : messages.loading}
+            </h2>
+          </Link>
+        </CardsRowView>
         <div className="follows-grid">
-          <CardsGridView
-            heading={
-              <h2>{!!followedData ? "Followed creators" : messages.loading}</h2>
-            }
-            builds={followedData || []}
-          />
+          <CardsGridView builds={followedData || []}>
+            <h2>{!!followedData ? "Followed creators" : messages.loading}</h2>
+          </CardsGridView>
         </div>
       </div>
       <style jsx>{`
@@ -138,7 +133,16 @@ const Home = () => {
         }
 
         .follows-grid {
-          padding: 3vh 3vw;
+          padding: 2rem 5vw;
+        }
+        
+        .content {
+          background-color: ${theme.light}; //hsl(147deg 21% 95%)
+        }
+        
+        .row-heading-link:hover {
+          cursor: pointer;
+          text-decoration: underline;
         }
       `}</style>
     </div>

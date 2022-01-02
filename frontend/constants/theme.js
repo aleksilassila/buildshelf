@@ -9,7 +9,7 @@ const theme = {
   lightLowContrast: "#d3d3d5",
 
   darkHighContrast: "#2c2b2b",
-  dark: "#2c2b2b",
+  dark: "hsl(125deg 5% 20%)", // Old "#2c2b2b",
   darkMediumContrast: "#333",
   darkLowContrast: "#363535",
 
