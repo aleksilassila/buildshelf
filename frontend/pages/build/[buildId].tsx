@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import TitleBar from "../../components/TitleBar";
+import TitleBar from "../../components/bars/TitleBar";
 
 const Build = ({}) => {
   const router = useRouter();

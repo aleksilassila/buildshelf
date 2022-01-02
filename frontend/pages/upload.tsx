@@ -1,5 +1,5 @@
 import Auth from "../utils/auth";
-import TitleBar from "../components/TitleBar";
+import TitleBar from "../components/bars/TitleBar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CollectionsManager from "../components/modals/CollectionsManager";
@@ -293,12 +293,15 @@ const Upload = () => {
           .container {
             display: flex;
             flex-direction: column;
+            background-color: ${theme.light};
+
           }
 
           form {
             padding: 2em;
             border-radius: 4px;
             border: 1px solid ${theme.lightMediumContrast};
+            background-color: ${theme.lightHighContrast};
             margin: 2em auto;
             display: flex;
             flex-direction: column;

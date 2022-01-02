@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import TitleBar from "../../components/TitleBar";
+import TitleBar from "../bars/TitleBar";
 import Auth from "../../utils/auth";
 import { useEffect, useState } from "react";
 import axios from "axios";

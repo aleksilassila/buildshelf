@@ -1,5 +1,5 @@
 import Link from "next/link";
-import TitleBar from "../components/TitleBar";
+import TitleBar from "../components/bars/TitleBar";
 import CardsRowView from "../containers/CardsRowView";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -42,53 +42,24 @@ const Home = () => {
 
   /*
    * TODO:
+   *  - Edit and manage own builds
    *  - Browse and favorite collections
-   *  - Finish builds page filters, search and cards design
-   *  - Redesign frontpage?
-   *  - Finish dropdowns
+   *  - Browse and follow creators
+   *  - Finish builds page filters, search
+   *  - Markdown in build description
+   *  - Finish dropdowns?
    *  - Improve buttons and create multiplebutton variation
    *  - Improve title bar
    *    - Dropdown with logout and more links there
    *  - Administration tools
-   *  - General styling changes
-   *    - Boring gray
    *  - Api documentation
-   *  - Api proper error handling
    *  - Infinite scroll
-   *  - Update card row behavior
+   *  - Update card row behavior?
    *  - New dedicated search page?
-   *  - ICONS
-   *  - EDIT BUILDS
    * */
 
-  const BuildsRowHeading = ({ text }) => {
-    return (
-      <div className="container">
-        <h3>{text}</h3>
-        <Link href="/builds">
-          <a>Show All</a>
-        </Link>
-        <style jsx>{`
-          .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-          }
-
-          a {
-            font-size: 0.9em;
-          }
-
-          a:visited {
-            color: unset;
-          }
-        `}</style>
-      </div>
-    );
-  };
-
   return (
-    <div className="background">
+    <div className="container">
       <TitleBar active="home" />
       <div className="introduction">
         <h2>The most ambitious Minecraft build library at your hands</h2>
@@ -123,7 +94,7 @@ const Home = () => {
         </div>
       </div>
       <style jsx>{`
-        .background {
+        .container {
           min-height: 100vh;
           width: 100vw;
         }

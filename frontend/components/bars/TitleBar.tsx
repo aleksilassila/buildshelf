@@ -1,6 +1,6 @@
-import theme from "../constants/theme";
+import theme from "../../constants/theme";
 import Link from "next/link";
-import Auth from "../utils/auth";
+import Auth from "../../utils/auth";
 
 const TitleBar = ({active = null, dim = false}) => {
   const userObject = Auth.getUser();
@@ -48,6 +48,12 @@ const TitleBar = ({active = null, dim = false}) => {
           </Link>
           <Link href="/builds">
             <a className={active === "builds" && "active"}>Builds</a>
+          </Link>
+          <Link href="/collections">
+            <a className={active === "collections" && "active"}>Collections</a>
+          </Link>
+          <Link href="/creators">
+            <a className={active === "creators" && "active"}>Creators</a>
           </Link>
           <Link href="/about">
             <a className={active === "about" && "active"}>About</a>
@@ -113,11 +119,12 @@ const TitleBar = ({active = null, dim = false}) => {
 
         ul a:hover {
           cursor: pointer;
-          text-decoration: underline;
+          //text-decoration: underline;
         }
 
         .active {
           color: ${theme.layout} !important;
+          cursor: unset !important;
           //font-weight: 600;
         }
       `}</style>

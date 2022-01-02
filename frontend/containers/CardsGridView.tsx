@@ -1,4 +1,4 @@
-import BuildCard from "../components/builds/BuildCard";
+import BuildCard from "../components/BuildCard";
 import { Build } from "../interfaces/Builds";
 import BuildPage from "../components/modals/BuildPage";
 import { useState } from "react";
@@ -8,6 +8,7 @@ interface Props {
   children?: JSX.Element;
 }
 
+// TODO: splash as a prop, if no splash then render content
 const CardsGridView = ({ builds, children = null }: Props) => {
   const [buildId, setBuildId] = useState(undefined);
 

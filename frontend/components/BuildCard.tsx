@@ -1,6 +1,6 @@
-import theme from "../../constants/theme";
-import { Build } from "../../interfaces/Builds";
-import Heart from "../icons/Heart";
+import theme from "../constants/theme";
+import { Build } from "../interfaces/Builds";
+import Heart from "./icons/Heart";
 
 interface Props {
   build: Build;

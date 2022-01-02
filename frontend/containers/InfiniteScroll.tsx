@@ -4,6 +4,12 @@ const InfiniteScroll = ({ children, page, setPage }) => {
   const loader = useRef(null);
 
   useEffect(() => {
+    const handleObserver = (entities) => {
+      if (entities[0].isIntersecting) {
+        setPage(page + 1);
+      }
+    };
+
     const observer = new IntersectionObserver(handleObserver, {
       root: null,
       rootMargin: "20px",
@@ -14,12 +20,6 @@ const InfiniteScroll = ({ children, page, setPage }) => {
       observer.observe(loader.current);
     }
   }, []);
-
-  const handleObserver = (entities) => {
-    if (entities[0].isIntersecting) {
-      setPage(page + 1);
-    }
-  };
 
   return (
     <div>
