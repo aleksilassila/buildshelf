@@ -1,6 +1,6 @@
-import TitleBar from "../components/TitleBar";
+import TitleBar from "../components/bars/TitleBar";
 import theme from "../constants/theme";
-import SortingBar from "../components/builds/SortingBar";
+import SortingBar from "../components/bars/SortingBar";
 import CardsGridView from "../containers/CardsGridView";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -9,6 +9,7 @@ import messages from "../constants/messages";
 import SplashText from "../components/statuses/SplashText";
 import Auth from "../utils/auth";
 import Separator from "../components/icons/Separator";
+import InfiniteScroll from "../containers/InfiniteScroll";
 
 const Empty = () => (
   <span>
@@ -23,42 +24,44 @@ const Empty = () => (
 );
 
 const Builds = () => {
-  const [page, setPage] = useState(0);
+  const [params, setParams] = useState({
+    page: 0,
+    sort: "Top",
+    title: "",
+  });
 
-  const [sortBy, setSortBy] = useState<"Popular" | "Top" | "New">("Top");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filtersToggled, setFiltersToggled] = useState(false);
-
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [error, setError] = useState(null);
-
   const [refetch, setRefetch] = useState(true);
+
+  const [filtersToggled, setFiltersToggled] = useState(false);
 
   const userObject = Auth.getUser();
 
   useEffect(() => {
-    if ((userObject === undefined || error || data) && !refetch) return;
-    console.log("Fetching builds...");
-    setRefetch(false);
-
-    const params: { sort: string; title?: string; token: string } = {
-      sort: sortBy === "Popular" ? "top" : sortBy.toLocaleLowerCase(),
-      token: userObject?.token,
-    };
-
-    if (searchTerm.length) {
-      params.title = searchTerm;
-    }
+    if (userObject === undefined || error || !refetch) return;
 
     axios
-      .get(process.env.BACKEND_ENDPOINT + "/builds/get", { params })
-      .then((res) => setData(res.data || []))
+      .get(process.env.BACKEND_ENDPOINT + "/builds/get", {
+        params: {
+          offset: data.length ? 50 + (params.page - 1) * 20 : 0,
+          amount: data.length ? 20 : 50,
+          sort: params.sort.toLowerCase(),
+          title: params.title,
+          token: userObject?.token,
+        },
+      })
+      .then((res) => {
+        setData([...data, ...res.data]);
+        setRefetch(false);
+      })
       .catch(setError);
-  }, [sortBy, searchTerm, userObject]);
+  }, [refetch, userObject]);
 
   const doSearch = (term: string) => {
-    if (term !== searchTerm) {
-      setSearchTerm(term);
+    if (term !== params.title) {
+      setData([]);
+      setParams({ ...params, title: term, page: 0 });
       setRefetch(true);
     }
   };
@@ -68,9 +71,9 @@ const Builds = () => {
       <TitleBar active="builds" />
       <div className="container">
         <SortingBar
-          sortBy={sortBy}
+          sortBy={params.sort}
           setSortBy={(value) => {
-            setSortBy(value);
+            setParams({ ...params, sort: value });
             setRefetch(true);
           }}
           filtersToggled={filtersToggled}
@@ -84,14 +87,22 @@ const Builds = () => {
               <h2>{messages.errorTitle}</h2>
               <p>{messages.errorFetch("builds")}</p>
             </ErrorText>
-          ) : !data ? (
+          ) : !data.length && refetch ? (
             <SplashText>
               <p>{messages.loading}</p>
             </SplashText>
-          ) : data?.length === 0 ? (
+          ) : !data?.length && !refetch ? (
             <Empty />
           ) : (
-            <CardsGridView builds={data} />
+            <InfiniteScroll
+              page={params.page}
+              incrementPage={() => {
+                setParams((l) => ({ ...l, page: l.page + 1 }));
+                setRefetch(true);
+              }}
+            >
+              <CardsGridView builds={data} />
+            </InfiniteScroll>
           )}
         </div>
       </div>

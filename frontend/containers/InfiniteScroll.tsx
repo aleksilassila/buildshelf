@@ -1,15 +1,15 @@
 import { useEffect, useRef } from "react";
 
-const InfiniteScroll = ({ children, page, setPage }) => {
+const InfiniteScroll = ({ children, page, incrementPage }) => {
   const loader = useRef(null);
 
-  useEffect(() => {
-    const handleObserver = (entities) => {
-      if (entities[0].isIntersecting) {
-        setPage(page + 1);
-      }
-    };
+  const handleObserver = (entities) => {
+    if (entities[0].isIntersecting) {
+      incrementPage();
+    }
+  };
 
+  useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, {
       root: null,
       rootMargin: "20px",

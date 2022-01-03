@@ -6,7 +6,7 @@ const { validateQuery } = require("../utils");
 
 
 
-collectionRoutes.get("/collectionRoutes/get", auth, collectionsController.getCollections);
+collectionRoutes.get("/collectionRoutes/get", collectionsController.getCollections);
 collectionRoutes.post(
   "/collectionRoutes/create",
   auth,

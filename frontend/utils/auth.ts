@@ -6,6 +6,10 @@ export interface UserObject {
 }
 
 class Auth {
+  /**
+   * Get user object if logged in.
+   * @return UserObject or null
+   */
   static getUser = function (): UserObject {
     try {
       return JSON.parse(window.localStorage.getItem("user"));
