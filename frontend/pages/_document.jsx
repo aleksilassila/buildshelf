@@ -72,6 +72,16 @@ class MyDocument extends Document {
             .no-margin {
                 margin: 0;
             }
+            
+            
+            
+            .page-container {
+                padding: 2rem 5vw;
+            }
+            
+            .large-page-container {
+                padding: 6rem 5vw;
+            }
           `}
         </style>
       </Html>

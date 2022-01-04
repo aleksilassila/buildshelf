@@ -1,15 +1,16 @@
 import TitleBar from "../components/bars/TitleBar";
 import ListView from "../containers/ListView";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Auth from "../utils/auth";
 import axios from "axios";
 import CollectionCard from "../components/CollectionCard";
+import theme from "../constants/theme";
 
 const Collections = () => {
   const [params, setParams] = useState({
     page: 0,
     sort: "Top",
-    title: "",
+    name: "",
   });
 
   const [data, setData] = useState([]);
@@ -27,7 +28,7 @@ const Collections = () => {
           offset: params.page * 20,
           amount: 20,
           sort: params.sort.toLowerCase(),
-          title: params.title,
+          name: params.name,
           token: userObject?.token,
         },
       })
@@ -38,16 +39,29 @@ const Collections = () => {
       .catch(setError);
   }, [refetch, userObject]);
 
-  return <div className="container">
-    <TitleBar active="collections" />
-    <div className="content">
-      <ListView>
-        {
-          data.map((item) => <CollectionCard collection={item} />)
-        }
-      </ListView>
+  return (
+    <div className="container">
+      <TitleBar active="collections" />
+      <div className="large-page-container">
+        <h1>Collections</h1>
+        <p>Browse popular build collections</p>
+      </div>
+      <div className="page-container">
+        <ListView>
+          {data.map((item) => (
+            <CollectionCard collection={item} />
+          ))}
+        </ListView>
+      </div>
+      <style jsx>
+        {`
+          .page-container {
+            background-color: ${theme.light};
+          }
+        `}
+      </style>
     </div>
-  </div>
-}
+  );
+};
 
 export default Collections;

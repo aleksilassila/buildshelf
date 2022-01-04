@@ -66,6 +66,9 @@ const Builds = () => {
     }
   };
 
+  const loading = !data.length && refetch;
+  const empty = !data?.length && !refetch;
+
   return (
     <div className="builds">
       <TitleBar active="builds" />
@@ -85,15 +88,16 @@ const Builds = () => {
           {error ? (
             <ErrorText>
               <h2>{messages.errorTitle}</h2>
-              <p>{messages.errorFetch("builds")}</p>
+              <p>Could not fetch builds.</p>
             </ErrorText>
-          ) : !data.length && refetch ? (
+          ) : null}
+          {loading ? (
             <SplashText>
               <p>{messages.loading}</p>
             </SplashText>
-          ) : !data?.length && !refetch ? (
-            <Empty />
-          ) : (
+          ) : null}
+          {empty ? <Empty /> : null}
+          {!error && !loading && !empty ? (
             <InfiniteScroll
               page={params.page}
               incrementPage={() => {
@@ -103,7 +107,7 @@ const Builds = () => {
             >
               <CardsGridView builds={data} />
             </InfiniteScroll>
-          )}
+          ) : null}
         </div>
       </div>
       <style jsx>
@@ -126,8 +130,8 @@ const Builds = () => {
           .content {
             flex-grow: 1;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: ${empty || loading || error ? "center" : "start"};
+            justify-content: ${empty || loading || error ? "center" : "start"};
           }
         `}
       </style>

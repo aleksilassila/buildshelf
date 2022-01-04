@@ -169,7 +169,7 @@ const ProfilePage = ({
 
   return (
     <div>
-      <TitleBar active={isOwnProfile ? "profile" : null} floating={true} />
+      <TitleBar active={isOwnProfile ? "profile" : null} />
       <div className="profile-banner">
         <div className="profile-banner-content">
           <div />

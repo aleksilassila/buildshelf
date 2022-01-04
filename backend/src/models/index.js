@@ -23,6 +23,9 @@ Collection.belongsTo(User, { as: "owner", foreignKey: "ownerId" });
 Category.hasMany(Build, { as: "category" });
 Build.belongsTo(Category, { as: "category" });
 
+Category.hasMany(Collection);
+Collection.belongsTo(Category);
+
 Build.belongsToMany(Tag, { through: "postTags" });
 Tag.belongsToMany(Build, { through: "postTags", as: "tags" });
 

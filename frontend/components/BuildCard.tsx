@@ -43,8 +43,6 @@ const BuildCard = ({ build, openBuild }: Props) => {
           className="creator-container"
           onClick={(e) => e.stopPropagation()}
         >
-          {" "}
-          {/*Fixme: Do the same for the top that is done for bottom rn*/}
           <ProfilePicture uuid={build.creator.uuid} />
           <span className="creator">{build.creator.username}</span>
         </a>

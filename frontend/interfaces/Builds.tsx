@@ -11,6 +11,9 @@ export interface Collection {
   name: string;
   description: string;
   ownerId: string;
+  categoryName: string;
+  image: string | null;
+  builds: Build[];
 }
 
 export interface Build {

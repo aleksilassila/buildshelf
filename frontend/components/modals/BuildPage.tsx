@@ -71,7 +71,7 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
       <ModalContainer close={close} splash>
         <ErrorText>
           <h2>{messages.errorTitle}</h2>
-          <p>{messages.errorFetch("the build")}</p>
+          <p>Could not fetch the build.</p>
         </ErrorText>
       </ModalContainer>
     );

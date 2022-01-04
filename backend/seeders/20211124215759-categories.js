@@ -12,9 +12,9 @@ module.exports = {
      * }], {});
     */
 
-    const categories = ["houses", "decoration", "castles", "bases", "traps", "xp-farms",
+    const categories = ["houses", "decorations", "castles", "bases", "traps", "xp-farms",
       "temples", "statues", "redstone", "pixel-art", "boats", "megabuilds", "floating-islands",
-      "spawns", "tree", "world-prefab", "other"];
+      "spawns", "tree", "world-prefab", "nether-portals", "bridges", "other"];
 
     await queryInterface.bulkInsert('categories', categories.map(category => {
       return { name: category, createdAt: new Date(), updatedAt: new Date() };

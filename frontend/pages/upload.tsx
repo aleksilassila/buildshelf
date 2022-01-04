@@ -17,17 +17,17 @@ import Localstorage from "../utils/localstorage";
 import Message from "../components/common/Message";
 
 interface FormData {
-  title: string,
-  description: string,
-  buildFile: File | null,
-  tags: string[],
-  tagsInput: string,
-  images: File[],
-  category: string,
-  collectionSearch: string,
-  collectionName: string,
-  collectionId: string,
-  collectionDescription: string,
+  title: string;
+  description: string;
+  buildFile: File | null;
+  tags: string[];
+  tagsInput: string;
+  images: File[];
+  category: string;
+  collectionSearch: string;
+  collectionName: string;
+  collectionId: string;
+  collectionDescription: string;
 }
 
 const initialFormData = {
@@ -239,7 +239,10 @@ const Upload = () => {
             />
             <Button onClick={addTag}>Add</Button>
           </div>
-          <span className="tip">Add up to three tags.</span>
+          <span className="tip">
+            Add up to three tags. Tags should be adjectives that describe your
+            building. For example: diagonal, medieval, easy
+          </span>
         </div>
         <div className="section">
           <label>Category</label>
@@ -258,7 +261,7 @@ const Upload = () => {
             setShow={setShowCategoryBrowser}
             setCategory={setCategory}
           />
-          <span className="tip">A word describing the type of the build.</span>
+          <span className="tip">A noun describing the type of the build.</span>
         </div>
         <div className="section">
           <label>Add to a Build Collection</label>
@@ -294,7 +297,6 @@ const Upload = () => {
             display: flex;
             flex-direction: column;
             background-color: ${theme.light};
-
           }
 
           form {

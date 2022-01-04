@@ -3,7 +3,7 @@ const { Router } = require("express");
 const { auth } = require("../controllers/auth");
 const multer = require("multer");
 const config = require("../config");
-const { validateQuery } = require("../utils");
+const { validateQuery, validateBody } = require("../utils");
 
 const buildRoutes = Router();
 
@@ -63,7 +63,18 @@ buildRoutes.get(
 );
 
 buildRoutes.get("/build/:buildId", buildsController.getBuild);
-buildRoutes.post("/build/:buildId/favorite", auth, buildsController.favorite);
+buildRoutes.post(
+  "/build/:buildId/favorite",
+  auth,
+  validateBody({
+    type: "object",
+    properties: {
+      favorite: { type: "boolean" },
+    },
+    required: ["favorite"],
+  }),
+  buildsController.favorite
+);
 buildRoutes.post("/build/:buildId/save", auth, buildsController.save);
 buildRoutes.get("/build/:buildId/download", auth, buildsController.download);
 

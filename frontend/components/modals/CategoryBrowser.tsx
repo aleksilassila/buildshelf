@@ -38,7 +38,7 @@ const CategoryBrowser = ({show, setShow, setCategory}) => {
       <ModalContainer close={() => setShow(false)} splash>
         <ErrorText>
           <h2>{messages.errorTitle}</h2>
-          <p>{messages.errorFetch("categories")}</p>
+          <p>Could not fetch categories.</p>
         </ErrorText>
       </ModalContainer>
     );

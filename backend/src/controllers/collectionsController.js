@@ -1,37 +1,42 @@
-const { Collection } = require("../models");
+const { Collection, Build } = require("../models/index");
 const { Op } = require("sequelize");
 const { searchQueryBuilder } = require("../utils");
 
 exports.getCollections = async function (req, res) {
-  const { name, uuid } = req.query;
+  const { category, name, sort, uuid } = req.query;
+  const searchQuery = searchQueryBuilder(req.query);
 
-  if (!name) {
-    res.status(400).send("Search query required.");
-    return;
+  // Category
+  if (category) {
+    searchQuery.where.categoryName = {
+      [Op.startsWith]: category,
+    };
   }
 
-  res.send(
-    await Collection.findAll({
-      where: {
-        ownerId: req.user.uuid,
-        name: {
-          [Op.iLike]: "%" + name + "%",
-          ownerId: uuid,
-        },
-      },
-      limit: 20,
-    })
-  );
-};
+  // Title
+  if (name) {
+    searchQuery.where.name = {
+      [Op.iLike]: "%" + name + "%",
+    };
+  }
 
-exports.getUserCollections = async function (req, res) {
-  res.send(
-    await Collection.findAll({
-      where: {
-        ownerId: req.user.uuid,
-      },
-    })
-  );
+  if (uuid) {
+    searchQuery.where.ownerId = uuid;
+  }
+
+  // Sorting order
+  if (sort === "new") {
+    searchQuery.order = [["createdAt", "DESC"]];
+  } else if (sort === "top") {
+    searchQuery.order = [["_totalFavorites", "DESC"]];
+  }
+
+  const collections = await Collection.findAll({
+    ...searchQuery,
+    include: [Build],
+  }).catch(err => []);
+
+  res.send(collections);
 };
 
 exports.createCollection = async function (req, res) {
@@ -54,14 +59,9 @@ exports.createCollection = async function (req, res) {
 exports.deleteCollection = async function (req, res) {
   const { collectionId } = req.params;
 
-  if (!collectionId) {
-    res.status(400).send("Invalid collection id.");
-    return;
-  }
-
   const collection = await Collection.findOne({
     where: { id: collectionId, ownerId: req.user.uuid },
-  });
+  }).catch(err => {});
 
   if (collection) {
     await collection.destroy();
@@ -72,3 +72,40 @@ exports.deleteCollection = async function (req, res) {
 
   res.send("OK");
 };
+
+exports.favorite = async function (req, res) {
+  const user = req.user;
+  const { collectionId } = req.params;
+  const addFavorite = req.body.favorite;
+
+  const collection = await Collection.findOne({
+    where: {
+      id: collectionId,
+    },
+  }).catch((err) => {});
+
+  if (!collection) {
+    res.status(404).send("Collection not found");
+    return;
+  }
+
+  const inFavorites = await user.hasFavoriteCollection(collection);
+
+  if (addFavorite && !inFavorites) {
+    await user.addFavoriteCollection(collection);
+  } else if (!addFavorite && inFavorites) {
+    await user.removeFavoriteCollection(collection);
+  }
+
+  await collection.updateTotalFavorites();
+
+  res
+    .status(200)
+    .send(
+      addFavorite
+        ? "Collection added to favorites"
+        : "Collection removed from favorites"
+    );
+};
+
+exports.modify = async function (req, res) {};
