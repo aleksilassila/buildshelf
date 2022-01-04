@@ -46,7 +46,7 @@ app.use((req, res) => {
   errors.ROUTE_NOT_FOUND.send(res);
 });
 
-sequelize.sync({ force: false }).then(() => {
+sequelize.sync({ force: true }).then(() => {
   console.log("App listening on port 9000");
   app.listen(9000);
 });

@@ -7,8 +7,7 @@ const Collection = sequelize.define("collection", {
   },
   description: DataTypes.STRING,
   image: DataTypes.STRING,
-  // This acts as a kind of cache for sorting the queries
-  _totalFavorites: {
+  totalFavorites: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
@@ -23,7 +22,7 @@ Collection.prototype.countTotalFavorites = function () {
 };
 
 Collection.prototype.updateTotalFavorites = async function () {
-  this._totalFavorites = await this.countTotalFavorites();
+  this.totalFavorites = await this.countTotalFavorites();
   await this.save();
 };
 

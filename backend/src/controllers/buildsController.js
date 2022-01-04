@@ -143,7 +143,7 @@ exports.getFollowedBuilds = async function (req, res) {
   let builds = [];
 
   (
-    await user.getFollowings({
+    await user.getFollows({
       attributes: [],
       include: ["builds"],
     })

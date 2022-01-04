@@ -1,5 +1,5 @@
 const { User, Build, Collection } = require("../models/index");
-const { UserFollower } = require("../models/UserFollower");
+const { UserFollower } = require("../models/junctions/UserFollows");
 
 exports.getUser = async function (req, res) {
   const { uuid } = req.params;
@@ -35,7 +35,7 @@ exports.getUserFavorites = async function (req, res) {
 
   res.send(
     await Promise.all(
-      (await user.getFavorites()).map((build) => build.toJSON(req.user))
+      (await user.getFavoriteBuilds()).map((build) => build.toJSON(req.user))
     )
   );
 };
@@ -99,15 +99,15 @@ exports.follow = async function (req, res) {
     return;
   }
 
-  const isFollowing = await targetUser.hasFollower(user);
+  const isFollowing = await user.hasFollow(targetUser);
 
   if (follow && !isFollowing) {
-    await targetUser.addFollower(user);
+    await user.addFollow(targetUser);
   } else if (!follow && isFollowing) {
-    await targetUser.removeFollower(user);
+    await user.removeFollow(targetUser);
   }
 
-  await targetUser.save();
+  await user.save();
 
   res.send("OK");
 };

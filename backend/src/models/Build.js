@@ -1,4 +1,4 @@
-const { DataTypes, fn, col } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const { sequelize } = require("../database");
 
 const Build = sequelize.define("build", {
@@ -6,19 +6,18 @@ const Build = sequelize.define("build", {
   description: { type: DataTypes.TEXT, allowNull: false },
   buildFile: { type: DataTypes.STRING, allowNull: false },
   images: DataTypes.ARRAY(DataTypes.STRING),
-  downloads: {
+  totalDownloads: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
-  // This acts as a kind of cache for sorting the queries
-  _totalFavorites: {
+  totalFavorites: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
 });
 
 Build.prototype.countTotalFavorites = function () {
-  return sequelize.model("userFavorites").count({
+  return sequelize.model("userFavoriteBuilds").count({
     where: {
       buildId: this.id,
     },
@@ -26,7 +25,7 @@ Build.prototype.countTotalFavorites = function () {
 };
 
 Build.prototype.updateTotalFavorites = async function () {
-  this._totalFavorites = await this.countTotalFavorites();
+  this.totalFavorites = await this.countTotalFavorites();
   await this.save();
 };
 
@@ -36,7 +35,7 @@ Build.prototype.toJSON = async function (user = null) {
   let isFavorite = null;
 
   if (user) {
-    for (const favorite of await user.getFavorites({ attributes: ["id"] })) {
+    for (const favorite of await user.getFavoriteBuilds({ attributes: ["id"] })) {
       if (favorite.id === this.id) {
         isFavorite = true;
         break;

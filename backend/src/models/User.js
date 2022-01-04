@@ -7,11 +7,11 @@ const User = sequelize.define("user", {
     allowNull: false,
   },
   uuid: {
-    type: DataTypes.STRING,
+    type: DataTypes.UUID,
     primaryKey: true,
     allowNull: false,
   },
-  remoteId: DataTypes.STRING,
+  remoteId: DataTypes.UUID,
 
 });
 
@@ -20,9 +20,9 @@ User.prototype.toJSON = async function () {
     username: this.username,
     uuid: this.uuid,
     remoteId: this.remoteId,
-    favorites: await Promise.all((await this.getFavorites()).map(f => f.toJSON())),
-    followers: (await this.getFollowers({ attributes: ["uuid"] })).map(f => f.uuid),
-    followings: (await this.getFollowings({ attributes: ["uuid"] })).map(f => f.uuid),
+    favorites: await Promise.all((await this.getFavoriteBuilds()).map(f => f.toJSON())),
+    // followers: (await this.getFollowers({ attributes: ["uuid"] })).map(f => f.uuid),
+    follows: (await this.getFollows({ attributes: ["uuid"] })).map(f => f.uuid),
   };
 };
 

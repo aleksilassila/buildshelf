@@ -6,6 +6,8 @@ const Tag = sequelize.define("tag", {
     type: DataTypes.STRING,
     primaryKey: true,
   },
+}, {
+  timestamps: false,
 });
 
 Tag.getOrCreateTags = function (tags) {};

@@ -6,6 +6,8 @@ const Category = sequelize.define("category", {
     type: DataTypes.STRING,
     primaryKey: true,
   },
+}, {
+  timestamps: false,
 });
 
 Category.getOrCreateCategory = async function (categoryString) {
