@@ -15,19 +15,13 @@ module.exports = {
     await queryInterface.bulkInsert('tags',
       [
         {
-          name: 'farm',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          name: 'diagonal',
         },
         {
-          name: 'house',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          name: 'easy',
         },
         {
-          name: 'windmill',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          name: 'medieval',
         },
       ], {});
   },

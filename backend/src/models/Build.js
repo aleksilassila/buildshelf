@@ -30,37 +30,26 @@ Build.prototype.updateTotalFavorites = async function () {
 };
 
 Build.prototype.toJSON = async function (user = null) {
-  const creator = await this.getCreator();
-
-  let isFavorite = null;
-
-  if (user) {
-    for (const favorite of await user.getFavoriteBuilds({ attributes: ["id"] })) {
-      if (favorite.id === this.id) {
-        isFavorite = true;
-        break;
-      }
-    }
-
-    isFavorite = isFavorite !== null;
-  }
+  let isFavorite = user
+    ? !!(await user.getFavoriteBuilds({
+        attributes: ["id"],
+        where: { id: this.id },
+      }))
+    : null;
 
   return {
     id: this.id,
     title: this.title,
     description: this.description,
-    thisFile: this.thisFile,
+    buildFile: this.buildFile,
     images: this.images,
-    downloads: this.downloads,
-    totalFavorites: await this.countTotalFavorites(),
-    creator: {
-      username: creator.username,
-      uuid: creator.uuid,
-    },
+    totalDownloads: this.totalDownloads,
+    totalFavorites: this.totalFavorites,
+    creator: this.creator ? await this.creator.toJSON() : undefined,
     category: await this.getCategory(),
     tags: await this.getTags(),
-    collection: await this.getCollection(),
-    uploadedAt: this.createdAt,
+    collection: this.collection ? await this.collection.toJSON() : undefined,
+    createdAt: this.createdAt,
     isFavorite,
   };
 };

@@ -16,20 +16,14 @@ module.exports = {
         {
           userUuid: "f2cc1eadd681243467e4e11476c27df2",
           buildId: 99991,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
         {
           userUuid: "f2cc1eadd681243467e4e11476c27df2",
           buildId: 99992,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
         {
           userUuid: "f2cc1eadd681243467e4e11476c27df2",
           buildId: 99993,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       ], {});
 

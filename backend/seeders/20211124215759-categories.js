@@ -17,7 +17,7 @@ module.exports = {
       "spawns", "tree", "world-prefab", "nether-portals", "bridges", "other"];
 
     await queryInterface.bulkInsert('categories', categories.map(category => {
-      return { name: category, createdAt: new Date(), updatedAt: new Date() };
+      return { name: category };
     }), {});
   },
 

@@ -53,6 +53,7 @@ const castIntegers = (validator) => function (object, key, schema, options, ctx)
 
 module.exports.validateBody = (schema) => {
   return function (req, res, next) {
+    console.log(req.body)
     const validation = validator.validate(req.body, schema, { preValidateProperty: castIntegers(validator)});
 
     if (validation.valid) {

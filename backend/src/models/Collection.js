@@ -44,4 +44,16 @@ Collection.getOrCreateCollection = function (name, description, ownerId) {
   });
 };
 
+Collection.prototype.toJSON = async function (user = null) {
+  return {
+    name: this.name,
+    description: this.description,
+    image: this.image,
+    totalFavorites: this.totalFavorites,
+    builds: this.builds
+      ? await Promise.all(this.builds.map((build) => build.toJSON(user)))
+      : undefined,
+  };
+};
+
 module.exports = { Collection };

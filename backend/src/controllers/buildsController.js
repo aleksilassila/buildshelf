@@ -10,70 +10,54 @@ exports.create = async function (req, res) {
   }
 
   const buildFile = req.files?.buildFile[0];
-  const {
-    description,
-    title,
-    category: categoryString,
-    collectionId,
-  } = req.body;
+  const { description, title, category, collectionId } = req.body;
+
   const tags =
     req.body.tags
       ?.split(",")
       .slice(0, 3)
-      .map((i) => i.toLowerCase()) || [];
+      .map((i) => i.toLowerCase().substring(0, 255)) || [];
 
-  if (!buildFile || !title) {
-    res.status(400).send("Bad request");
-    return;
+  const images = req.files?.images?.length
+    ? req.files.images.map((i) => i.filename)
+    : [];
+
+  if (category) {
+    if (!(await Category.findOne({ where: { name: category } }))) {
+      res.status(404).send("Category not found.");
+      return;
+    }
   }
 
-  const images = [];
-
-  for (const image of req.files?.images || []) {
-    images.push(image.filename);
+  if (collectionId) {
+    if (
+      !(await Collection.findOne({
+        where: { id: collectionId, userUuid: req.user.uuid },
+      }))
+    ) {
+      res.status(404).send("Collection not found.");
+      return;
+    }
   }
 
-  const collection = collectionId
-    ? await Collection.findOne({
-        where: {
-          id: collectionId,
-          ownerId: req.user.uuid,
-        },
-      })
-    : null;
-
-  // const [collection] = collectionName ?
-  //     await Collection.getOrCreateCollection(collectionName, collectionDescription, req.user.id) :
-  //     [null];
-
-  const [category] = categoryString
-    ? await Category.getOrCreateCategory(categoryString)
-    : [null];
-
-  const values = {
+  const build = await Build.create({
     title,
     description,
     buildFile: buildFile.filename,
     images,
-    creatorId: req.user.uuid,
-    tags,
-    collectionId: collection?.id,
-    categoryName: category?.name,
-  };
+    creatorUuid: req.user.uuid,
+    collectionId: collectionId,
+    category,
+  });
 
-  const build = await Build.create(values);
-
-  for (const tagName of tags) {
-    const [tag] = await Tag.findOrCreate({
-      where: {
-        name: tagName,
-      },
+  for (const name of tags) {
+    const [instance] = await Tag.findOrCreate({
+      where: { name },
       defaults: {
-        name: tagName,
-      },
+        name,
+      }
     });
-
-    build.addTag(tag);
+    await build.addTag(instance);
   }
 
   res.send(`${build.id}`);
@@ -149,9 +133,13 @@ exports.getFollowedBuilds = async function (req, res) {
     })
   ).map((user) => (builds = builds.concat(user.builds)));
 
-  builds = builds.sort(function(b1, b2) {
-    return (b1.uploadedAt < b2.uploadedAt) ? -1 : ((b1.uploadedAt > b2.uploadedAt) ? 1 : 0);
-});
+  builds = builds.sort(function (b1, b2) {
+    return b1.uploadedAt < b2.uploadedAt
+      ? -1
+      : b1.uploadedAt > b2.uploadedAt
+      ? 1
+      : 0;
+  });
 
   res.send(await Promise.all(builds.map((build) => build.toJSON(req.user))));
 };
@@ -168,6 +156,7 @@ exports.getBuild = async function (req, res) {
     where: {
       id: buildId,
     },
+    include: ["collection"],
   });
 
   if (!build) {

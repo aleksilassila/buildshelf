@@ -36,7 +36,7 @@ exports.getCollections = async function (req, res) {
     include: [Build],
   }).catch(err => []);
 
-  res.send(collections);
+  res.send(await Promise.all(collections.map(c => c.toJSON())));
 };
 
 exports.createCollection = async function (req, res) {

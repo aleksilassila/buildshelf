@@ -47,8 +47,8 @@ Build.belongsTo(Category, { as: "category" });
 // Category.hasMany(Collection, { as: "category"});
 // Collection.belongsTo(Category, { as: "category"});
 
-Build.belongsToMany(Tag, { through: BuildTags, as: "builds" });
-Tag.belongsToMany(Build, { through: BuildTags, as: "tags" });
+Build.belongsToMany(Tag, { through: BuildTags });
+Tag.belongsToMany(Build, { through: BuildTags });
 
 User.belongsToMany(User, {
   through: UserFollows,

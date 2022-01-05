@@ -8,7 +8,7 @@ exports.getUser = async function (req, res) {
     where: {
       uuid,
     },
-    include: [],
+    include: ["follows", "favoriteBuilds"],
   });
 
   if (!user) {

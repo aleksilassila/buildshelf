@@ -18,7 +18,13 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    // parts: 6,
+    fileSize: "15MB",
+  },
+});
 
 buildRoutes.post(
   "/build/create",
@@ -27,6 +33,24 @@ buildRoutes.post(
     { name: "buildFile", maxCount: 1 },
     { name: "images", maxCount: 4 },
   ]),
+  validateBody({
+    type: "object",
+    properties: {
+      description: { type: "string" },
+      title: { type: "string", maxLength: 255 },
+      category: { type: "string" },
+      collectionId: { type: "number" },
+      tags: { type: "string" },
+      // tags: {
+      //   type: "array",
+      //   items: { type: "string" },
+      //   minItems: 0,
+      //   uniqueItems: true,
+      //   maxItems: 3,
+      // },
+    },
+    required: ["title", "description"],
+  }),
   buildsController.create
 );
 
