@@ -10,6 +10,10 @@ const logError = (err) => {
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+    if (!fs.existsSync("./uploads")){
+        fs.mkdirSync("./uploads");
+    }
+
     fs.copyFile("./images/1.jpg", "./uploads/1.jpg", logError);
     fs.copyFile("./images/2.jpg", "./uploads/2.jpg", logError);
     fs.copyFile("./images/3.jpg", "./uploads/3.jpg", logError);

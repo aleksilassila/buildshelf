@@ -1,5 +1,4 @@
-const { User, Build, Collection } = require("../models/index");
-const { UserFollower } = require("../models/junctions/UserFollows");
+const { User, Collection } = require("../models/index");
 
 exports.getUser = async function (req, res) {
   const { uuid } = req.params;
@@ -9,7 +8,7 @@ exports.getUser = async function (req, res) {
       uuid,
     },
     include: ["follows", "favoriteBuilds"],
-  });
+  }).catch(err => {});
 
   if (!user) {
     res.status(404).send("User not found");
@@ -26,7 +25,7 @@ exports.getUserFavorites = async function (req, res) {
     where: {
       uuid,
     },
-  });
+  }).catch(err => {});
 
   if (!user) {
     res.status(404).send("User not found.");
@@ -35,7 +34,7 @@ exports.getUserFavorites = async function (req, res) {
 
   res.send(
     await Promise.all(
-      (await user.getFavoriteBuilds()).map((build) => build.toJSON(req.user))
+      (await user.getFavoriteBuilds({ include:  ["creator", "collection"]})).map((build) => build.toJSON(req.user))
     )
   );
 };
@@ -66,23 +65,6 @@ exports.getUserSaves = async function (req, res) {
   );
 };
 
-exports.getUserCollections = async function (req, res) {
-  const { uuid } = req.params;
-
-  if (!uuid) {
-    res.status(400).send("User id not found.");
-    return;
-  }
-
-  res.send(
-    await Collection.findAll({
-      where: {
-        ownerId: uuid,
-      },
-    })
-  );
-};
-
 exports.follow = async function (req, res) {
   const user = req.user;
   const { uuid } = req.params;
@@ -92,7 +74,7 @@ exports.follow = async function (req, res) {
     where: {
       uuid,
     },
-  });
+  }).catch(err => {});
 
   if (!targetUser) {
     res.status(404).send("User not found");
@@ -106,8 +88,6 @@ exports.follow = async function (req, res) {
   } else if (!follow && isFollowing) {
     await user.removeFollow(targetUser);
   }
-
-  await user.save();
 
   res.send("OK");
 };

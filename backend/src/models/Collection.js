@@ -5,7 +5,7 @@ const Collection = sequelize.define("collection", {
   name: {
     type: DataTypes.STRING,
   },
-  description: DataTypes.STRING,
+  description: DataTypes.TEXT,
   image: DataTypes.STRING,
   totalFavorites: {
     type: DataTypes.INTEGER,
@@ -53,6 +53,7 @@ Collection.prototype.toJSON = async function (user = null) {
     builds: this.builds
       ? await Promise.all(this.builds.map((build) => build.toJSON(user)))
       : undefined,
+    creator: this.creator ? await this.creator.toJSON() : undefined,
   };
 };
 

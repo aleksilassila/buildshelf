@@ -10,10 +10,10 @@ export interface Collection {
   id: number;
   name: string;
   description: string;
-  ownerId: string;
-  categoryName: string;
   image: string | null;
-  builds: Build[];
+  totalFavorites: number;
+  creator?: User;
+  builds?: Build[];
 }
 
 export interface Build {
@@ -22,20 +22,19 @@ export interface Build {
   description: string;
   buildFile: string;
   images: string[];
-  downloads: number;
+  totalDownloads: number;
   totalFavorites: number;
-  creator: {
-    username: string;
-    uuid: string;
-  };
+  creator?: User;
   tags: Tag[];
   category: Category;
-  collection: Collection;
-  uploadedAt: string;
-  isFavorite: boolean | null;
+  collection?: Collection;
+  createdAt: string;
+  isFavorite?: boolean;
 }
 
 export interface User {
   username: string;
   uuid: string;
+  favorites?: Build[];
+  follows?: User[];
 }

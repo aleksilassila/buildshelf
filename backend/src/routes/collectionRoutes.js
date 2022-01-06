@@ -25,6 +25,14 @@ collectionRoutes.get(
 collectionRoutes.post(
   "/collection/create",
   auth,
+  validateBody({
+      type: "object",
+      properties: {
+          title: { type: "string", maxLength: 255 },
+          description: { type: "string" },
+
+      }
+  }),
   collectionsController.createCollection
 );
 collectionRoutes.delete(

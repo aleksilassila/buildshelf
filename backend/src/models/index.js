@@ -38,8 +38,8 @@ User.belongsToMany(Build, { through: UserSaves, as: "saves" });
 Collection.hasMany(Build);
 Build.belongsTo(Collection);
 
-User.hasMany(Collection);
-Collection.belongsTo(User);
+User.hasMany(Collection, { as: "collections", foreignKey: "creatorUuid" });
+Collection.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });
 
 Category.hasMany(Build, { as: "category" });
 Build.belongsTo(Category, { as: "category" });

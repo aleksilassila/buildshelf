@@ -21,19 +21,19 @@ exports.getCollections = async function (req, res) {
   }
 
   if (uuid) {
-    searchQuery.where.ownerId = uuid;
+    searchQuery.where.creatorUuid = uuid;
   }
 
   // Sorting order
   if (sort === "new") {
     searchQuery.order = [["createdAt", "DESC"]];
   } else if (sort === "top") {
-    searchQuery.order = [["_totalFavorites", "DESC"]];
+    searchQuery.order = [["totalFavorites", "DESC"]];
   }
 
   const collections = await Collection.findAll({
     ...searchQuery,
-    include: [Build],
+    include: ["builds", "creator"],
   }).catch(err => []);
 
   res.send(await Promise.all(collections.map(c => c.toJSON())));
@@ -41,11 +41,6 @@ exports.getCollections = async function (req, res) {
 
 exports.createCollection = async function (req, res) {
   const { name, description } = req.body;
-
-  if (!name || !description) {
-    res.status(400).send("Name and description required.");
-    return;
-  }
 
   const collection = await Collection.create({
     name,

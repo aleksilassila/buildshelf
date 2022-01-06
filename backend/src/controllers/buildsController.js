@@ -98,14 +98,14 @@ exports.getBuilds = async function (req, res) {
   }
 
   if (uuid) {
-    searchQuery.where.creatorId = uuid;
+    searchQuery.where.creatorUuid = uuid;
   }
 
   // Sorting order
   if (sort === "new") {
     searchQuery.order = [["createdAt", "DESC"]];
   } else if (sort === "top") {
-    searchQuery.order = [["_totalFavorites", "DESC"]];
+    searchQuery.order = [["totalFavorites", "DESC"]];
   }
 
   const builds = await Build.findAll({
@@ -115,6 +115,10 @@ exports.getBuilds = async function (req, res) {
         model: Tag,
         where: tagsWhere,
       },
+      {
+        model: User,
+        as: "creator"
+      }
     ],
   });
 
@@ -147,17 +151,12 @@ exports.getFollowedBuilds = async function (req, res) {
 exports.getBuild = async function (req, res) {
   const { buildId } = req.params;
 
-  if (isNaN(parseFloat(buildId))) {
-    res.status(400).send("Bad request");
-    return;
-  }
-
   const build = await Build.findOne({
     where: {
       id: buildId,
     },
-    include: ["collection"],
-  });
+    include: ["collection", "creator"],
+  }).catch(err => {});
 
   if (!build) {
     res.status(404).send("Build not found");
@@ -171,28 +170,23 @@ exports.favorite = async function (req, res) {
   const { buildId } = req.params;
   const addFavorite = req.body.favorite;
 
-  if (buildId === null || isNaN(parseInt(buildId))) {
-    res.status(400).send("Bad request");
-    return;
-  }
-
   const build = await Build.findOne({
     where: {
       id: buildId,
     },
-  });
+  }).catch(err => {});
 
   if (!build) {
     res.status(404).send("Build not found");
     return;
   }
 
-  const inFavorites = await user.hasFavorite(build);
+  const inFavorites = await user.hasFavoriteBuild(build);
 
   if (addFavorite && !inFavorites) {
-    await user.addFavorite(build);
+    await user.addFavoriteBuild(build);
   } else if (!addFavorite && inFavorites) {
-    await user.removeFavorite(build);
+    await user.removeFavoriteBuild(build);
   }
 
   // await build.save();
@@ -207,8 +201,6 @@ exports.favorite = async function (req, res) {
 };
 
 exports.download = function (req, res) {};
-
-exports.search = function (req, res) {};
 
 exports.save = async function (req, res) {
   const user = req.user;

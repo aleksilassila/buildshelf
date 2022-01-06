@@ -39,12 +39,12 @@ const BuildCard = ({ build, openBuild }: Props) => {
           </h3>
         </div>
         <a
-          href={"/user/" + build.creator.uuid}
+          href={"/user/" + build.creator?.uuid}
           className="creator-container"
           onClick={(e) => e.stopPropagation()}
         >
-          <ProfilePicture uuid={build.creator.uuid} />
-          <span className="creator">{build.creator.username}</span>
+          <ProfilePicture uuid={build.creator?.uuid} />
+          <span className="creator">{build.creator?.username}</span>
         </a>
         <span className="favorites">
           <Heart /> {build.totalFavorites}

@@ -35,7 +35,7 @@ Build.prototype.toJSON = async function (user = null) {
         attributes: ["id"],
         where: { id: this.id },
       }))
-    : null;
+    : undefined;
 
   return {
     id: this.id,

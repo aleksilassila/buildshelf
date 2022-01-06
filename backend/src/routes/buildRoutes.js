@@ -99,7 +99,7 @@ buildRoutes.post(
   }),
   buildsController.favorite
 );
-buildRoutes.post("/build/:buildId/save", auth, buildsController.save);
-buildRoutes.get("/build/:buildId/download", auth, buildsController.download);
+// buildRoutes.post("/build/:buildId/save", auth, buildsController.save);
+// buildRoutes.get("/build/:buildId/download", auth, buildsController.download);
 
 module.exports = buildRoutes;

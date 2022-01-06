@@ -39,7 +39,7 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
     axios
       .get<Build>(process.env.BACKEND_ENDPOINT + `/build/${buildId}`, {
         params: {
-          token: userObject.token,
+          token: userObject?.token,
         },
       })
       .then((res) => {
@@ -136,16 +136,16 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
       <div className="build-title">
         <div className="creator-profile">
           <img
-            src={"https://crafatar.com/avatars/" + data.creator.uuid}
-            alt=""
+            src={data.creator && ("https://crafatar.com/avatars/" + data.creator.uuid)}
+            alt={data.creator?.username}
             className="profile-picture"
           />
           <div className="creator-profile-content">
             <h2>{data.title}</h2>
             <span>
               By{" "}
-              <a href={"/user/" + data.creator.uuid} className="username">
-                {data.creator.username}
+              <a href={"/user/" + data.creator?.uuid} className="username">
+                {data.creator?.username}
               </a>
             </span>
           </div>
@@ -160,7 +160,7 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
       <div className="build-details">
         <span>{data.description}</span>
         <div>
-          <span>{new Date(data.uploadedAt).toDateString()}</span>
+          <span>{new Date(data.createdAt).toDateString()}</span>
         </div>
       </div>
       <style jsx>
