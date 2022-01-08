@@ -4,6 +4,9 @@ const { auth } = require("../controllers/auth");
 const multer = require("multer");
 const config = require("../config");
 const { validateQuery, validateBody } = require("../utils");
+const path = require("path");
+const fs = require('fs')
+const { parse, writeUncompressed } = require('prismarine-nbt')
 
 const buildRoutes = Router();
 
@@ -24,6 +27,26 @@ const upload = multer({
     // parts: 6,
     fileSize: "15MB",
   },
+  fileFilter: function (req, file, cb) {
+    switch (file.fieldname) {
+      case "buildFile": {
+        if (
+          file.mimetype !== "application/octet-stream" ||
+          path.extname(file.originalname).toLowerCase() !== ".litematic"
+        ) {
+          return cb(null, false);
+        }
+        break;
+      }
+      case "images": {
+        if (!/image\/png|image\/jpge|image\/gif/.test(file.mimetype)) {
+          return cb(null, false);
+        }
+        break;
+      }
+    }
+    return cb(null, true);
+  },
 });
 
 buildRoutes.post(
@@ -36,8 +59,8 @@ buildRoutes.post(
   validateBody({
     type: "object",
     properties: {
-      description: { type: "string" },
       title: { type: "string", maxLength: 255 },
+      description: { type: "string" },
       category: { type: "string" },
       collectionId: { type: "number" },
       tags: { type: "string" },

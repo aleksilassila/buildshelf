@@ -9,11 +9,17 @@ const Build = sequelize.define("build", {
   totalDownloads: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
+    allowNull: false,
   },
   totalFavorites: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
+    allowNull: false,
   },
+  metadata: {
+    type: DataTypes.JSONB,
+    allowNull: false,
+  }
 });
 
 Build.prototype.countTotalFavorites = function () {

@@ -1,11 +1,54 @@
 const { Category, User } = require("../models");
 const { Op } = require("sequelize");
 const { Build, Collection, Tag } = require("../models/index");
-const { searchQueryBuilder } = require("../utils");
+const { searchQueryBuilder, parseLitematic } = require("../utils");
+const { errors } = require("../client-error");
+const validateJSON = require("jsonschema").validate;
+
+const litematicSchema = {
+  type: "object",
+  properties: {
+    MinecraftDataVersion: { type: "number" },
+    Version: { type: "number" },
+    Metadata: {
+      type: "object",
+      properties: {
+        EnclosingSize: {
+          type: "object",
+          properties: {
+            x: {
+              type: "number",
+              minimum: 1,
+            },
+            y: {
+              type: "number",
+              minimum: 1,
+            },
+            z: {
+              type: "number",
+              minimum: 1,
+            },
+          },
+          required: ["x", "y", "z"],
+        },
+      },
+      required: ["EnclosingSize"],
+    },
+  },
+  required: ["Metadata", "Version", "MinecraftDataVersion"],
+};
 
 exports.create = async function (req, res) {
   if (req.files?.buildFile === undefined) {
-    res.status(400).send("No build file attached.");
+    errors.BAD_REQUEST.send(res);
+    return;
+  }
+
+  const litematic = await parseLitematic(req.files?.buildFile[0].path);
+  console.log(litematic);
+
+  if (!validateJSON(litematic, litematicSchema).valid) {
+    errors.BAD_REQUEST.send(res, "Error parsing litematic file.");
     return;
   }
 
@@ -24,7 +67,7 @@ exports.create = async function (req, res) {
 
   if (category) {
     if (!(await Category.findOne({ where: { name: category } }))) {
-      res.status(404).send("Category not found.");
+      errors.NOT_FOUND.send(res, "Category not found.");
       return;
     }
   }
@@ -35,7 +78,7 @@ exports.create = async function (req, res) {
         where: { id: collectionId, userUuid: req.user.uuid },
       }))
     ) {
-      res.status(404).send("Collection not found.");
+      errors.NOT_FOUND.send(res, "Collection not found.");
       return;
     }
   }
@@ -48,6 +91,16 @@ exports.create = async function (req, res) {
     creatorUuid: req.user.uuid,
     collectionId: collectionId,
     category,
+    metadata: {
+      version: litematic.Version,
+      minecraftDataVersion: litematic.MinecraftDataVersion,
+      enclosingSize: {
+        x: litematic.Metadata?.EnclosingSize?.x,
+        y: litematic.Metadata?.EnclosingSize?.y,
+        z: litematic.Metadata?.EnclosingSize?.z,
+      },
+      blockCount: litematic.Metadata?.TotalBlocks,
+    }
   });
 
   for (const name of tags) {
@@ -55,7 +108,7 @@ exports.create = async function (req, res) {
       where: { name },
       defaults: {
         name,
-      }
+      },
     });
     await build.addTag(instance);
   }
@@ -117,8 +170,8 @@ exports.getBuilds = async function (req, res) {
       },
       {
         model: User,
-        as: "creator"
-      }
+        as: "creator",
+      },
     ],
   });
 
@@ -156,7 +209,7 @@ exports.getBuild = async function (req, res) {
       id: buildId,
     },
     include: ["collection", "creator"],
-  }).catch(err => {});
+  }).catch((err) => {});
 
   if (!build) {
     res.status(404).send("Build not found");
@@ -174,7 +227,7 @@ exports.favorite = async function (req, res) {
     where: {
       id: buildId,
     },
-  }).catch(err => {});
+  }).catch((err) => {});
 
   if (!build) {
     res.status(404).send("Build not found");

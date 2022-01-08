@@ -3,10 +3,11 @@ import MultipleButton, { MultipleButtonData } from "./MultipleButton";
 interface Props {
   files: any;
   setFiles: (files: FileList) => void;
+  accept?: string;
   multiple?: boolean;
 }
 
-const FileSelect = ({ files, setFiles, multiple = false }: Props) => {
+const FileSelect = ({ files, setFiles, accept = undefined, multiple = false }: Props) => {
   const fileDescription = (files): string => {
     if (!files || files?.length === 0) {
       return "No files selected";
@@ -32,6 +33,7 @@ const FileSelect = ({ files, setFiles, multiple = false }: Props) => {
             type="file"
             onChange={(e) => setFiles(e.target.files)}
             multiple={multiple}
+            accept={accept}
           />
           <style jsx>
             {`

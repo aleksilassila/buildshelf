@@ -20,6 +20,7 @@
         "nodemon": "^2.0.13",
         "pg": "^8.7.1",
         "pg-hstore": "^2.3.4",
+        "prismarine-nbt": "^2.0.0",
         "sequelize": "^6.6.5"
     },
     "devDependencies": {

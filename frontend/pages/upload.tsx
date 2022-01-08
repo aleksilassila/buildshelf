@@ -82,7 +82,9 @@ const Upload = () => {
       data.append("images", image);
     }
     data.append("category", formData.category);
-    data.append("collectionId", formData.collectionId);
+    if (formData.collectionId) {
+      data.append("collectionId", formData.collectionId);
+    }
     data.append("tags", formData.tags.join(","));
 
     axios({
@@ -176,9 +178,7 @@ const Upload = () => {
 
   const collectionsButtonData: MultipleButtonData[] = [
     {
-      content: (
-        formData.collectionName || "No collection selected"
-      ),
+      content: formData.collectionName || "No collection selected",
       active: true,
     },
     {
@@ -216,6 +216,7 @@ const Upload = () => {
           <FileSelect
             files={formData.buildFile}
             setFiles={(files) => changeField("buildFile")(files[0])}
+            accept=".litematic, application/gzip"
           />
           <span className="tip">Supported extensions: .litematica</span>
         </div>
@@ -225,7 +226,9 @@ const Upload = () => {
             files={formData.images}
             multiple={true}
             setFiles={changeField("images")}
+            accept="image/png, image/jpeg, image/gif"
           />
+          <span className="tip">Supported extensions: .png, .jpg</span>
         </div>
         <div className="section tags">
           <label>Tags</label>

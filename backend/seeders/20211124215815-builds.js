@@ -12,6 +12,17 @@ module.exports = {
      * }], {});
     */
 
+    const metadata = JSON.stringify({
+      version: 5,
+      minecraftDataVersion: 2578,
+      enclosingSize: {
+        x: 10,
+        y: 15,
+        z: 20,
+      },
+      blockCount: 300,
+    });
+
     await queryInterface.bulkInsert('builds',
       [
         {
@@ -26,6 +37,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99992,
@@ -39,6 +51,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9999,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99993,
@@ -52,6 +65,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99994,
@@ -65,6 +79,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99995,
@@ -78,6 +93,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99996,
@@ -91,6 +107,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9999,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99997,
@@ -104,6 +121,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99998,
@@ -117,6 +135,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99999,
@@ -130,6 +149,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99910,
@@ -143,6 +163,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9999,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99911,
@@ -156,6 +177,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
         {
           id: 99912,
@@ -169,6 +191,7 @@ module.exports = {
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           collectionId: 9998,
           categoryName: "houses",
+          metadata,
         },
       ], {});
   },

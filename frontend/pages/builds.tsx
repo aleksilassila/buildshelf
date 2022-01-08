@@ -58,21 +58,29 @@ const Builds = () => {
     }
   };
 
+  const setSort = (sort) => () => {
+    if (sort !== params.sort) {
+      setData([])
+      setParams(p => ({ ...p, sort }));
+      setRefetch(true);
+    }
+  }
+
   const SortDropdown = (
     <Dropdown
       data={{
         items: [
           {
             content: "Top",
-            onClick: () => setParams({ ...params, sort: "Top" }),
+            onClick: setSort("Top"),
           },
           {
             content: "Popular",
-            onClick: () => setParams({ ...params, sort: "Top" }),
+            onClick: setSort("Top"),
           },
           {
             content: "New",
-            onClick: () => setParams({ ...params, sort: "New" }),
+            onClick: setSort("New"),
           },
         ],
       }}

@@ -8,7 +8,8 @@ const ClientError = function (
   this.info = info;
 };
 
-ClientError.prototype.send = function (res) {
+ClientError.prototype.send = function (res, message = "") {
+  this.info = this.info || message;
   res.status(this.status).send(this.toString());
 };
 
@@ -30,15 +31,15 @@ const middleware = (req, res, next) => {
 };
 
 const errors = {
-  SERVER_ERROR: new ClientError("INTERNAL_ERROR", 500, ""),
+  SERVER_ERROR: new ClientError("INTERNAL_ERROR", 500),
   ROUTE_NOT_FOUND: new ClientError(
     "ROUTE_NOT_FOUND",
     404,
     "This route does not exist."
   ),
-  USER_NOT_FOUND: new ClientError("USER_NOT_FOUND", 404, ""),
-  NOT_FOUND: new ClientError("NOT_FOUND", 404, ""),
-  BAD_REQUEST: new ClientError("BAD_REQUEST", 400, ""),
+  USER_NOT_FOUND: new ClientError("USER_NOT_FOUND", 404),
+  NOT_FOUND: new ClientError("NOT_FOUND", 404),
+  BAD_REQUEST: new ClientError("BAD_REQUEST", 400),
 };
 
 module.exports = {
