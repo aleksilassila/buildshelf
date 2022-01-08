@@ -20,13 +20,14 @@ const CollectionCard = ({ collection }: Props) => {
    */
 
   const Picture = () => {
-    if (collection.image) {
+    const path = collection.image ?  collection.image : collection.builds[0]?.images[0]
+
       return (
         <div
           className={"picture"}
           style={{
             background: `url("${
-              process.env.BACKEND_ENDPOINT + "/files/" + collection.image
+              process.env.BACKEND_ENDPOINT + "/files/" + path
             }")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -34,15 +35,11 @@ const CollectionCard = ({ collection }: Props) => {
             height: "200px",
             maxWidth: "350px",
             width: "35vw",
-            margin: "1em",
-            borderRadius: "4px",
+            // margin: "1em",
+            // borderRadius: "4px",
           }}
         />
-      );
-    } else if (false) {
-      // Do collage of build pictures or something.
-    }
-    return <div className="picture" />;
+      );;
   };
 
   return (
@@ -61,18 +58,17 @@ const CollectionCard = ({ collection }: Props) => {
           <p className="description">{collection.description}</p>
           <div className="stats">
             <div className="stats-right">
-              By <span className={"stats-bold"}>_Jeb</span>
-              {collection.categoryName ? " in " + collection.categoryName : ""}
+              By <span className={"stats-bold"}>{collection.creator?.username}</span>
             </div>
             <div className="stats-left">
-              <Heart /> {collection._totalFavorites}
+              <Heart /> {collection.totalFavorites}
             </div>
           </div>
         </div>
       </div>
       <style jsx>{`
         .collection-card {
-          background-color: ${theme.lightHighContrast};
+          //background-color: ${theme.lightMediumContrast};
           border-radius: 4px;
           display: flex;
           flex-direction: row;
@@ -81,6 +77,10 @@ const CollectionCard = ({ collection }: Props) => {
         }
 
         .card-right {
+          border: 1px solid ${theme.lightLowContrast};
+          border-left: none;
+          border-bottom-right-radius: 4px;
+          border-top-right-radius: 4px;
           flex: 1 0 auto;
           display: flex;
           flex-direction: column;

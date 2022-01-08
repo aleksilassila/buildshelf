@@ -1,7 +1,7 @@
 import theme from "../../constants/theme";
-import {useState} from "react";
+import { useState } from "react";
 
-const Button = ({children, onClick, highlighted: primary = false, danger = false}) => {
+const Button = ({ children, onClick, primary = false, danger = false }) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleClick = (e) => {
@@ -24,14 +24,12 @@ const Button = ({children, onClick, highlighted: primary = false, danger = false
       onClick={handleClick}
       tabIndex={0}
     >
-      <div className="content">
-        {children}
-      </div>
+      {children}
       <style jsx>{`
         .button {
           border: 1px solid ${theme.lightLowContrast};
           background-color: ${theme.lightHighContrast};
-          color: ${theme.darkHighContrast};
+          color: ${theme.darkMediumContrast};
           font-weight: 400;
           border-radius: 4px;
           height: 2.2rem;
@@ -43,20 +41,22 @@ const Button = ({children, onClick, highlighted: primary = false, danger = false
           display: flex;
           align-items: center;
         }
-        
+
         .button:hover {
           background-color: ${theme.lightMediumContrast};
         }
-        
+
         .primary {
           background-color: ${theme.layout};
           color: ${theme.lightHighContrast};
           font-weight: 500;
           text-align: center;
-          border: 1px solid ${theme.layoutLight};
+          border: 1px solid ${theme.layout};
         }
+
         .primary:hover {
           background-color: ${theme.layoutDark};
+          border: 1px solid ${theme.layoutDark};
         }
 
         .danger:focus {

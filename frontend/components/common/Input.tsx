@@ -8,6 +8,7 @@ interface Props {
   height?: string;
   type?: string;
   textArea?: boolean;
+  onBlur?: () => void;
 }
 
 const Input = ({
@@ -18,6 +19,7 @@ const Input = ({
   height = "2.2rem",
   type = "text",
   textArea = false,
+  onBlur = () => {},
 }: Props) => {
   const handleEnterKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -36,6 +38,7 @@ const Input = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
+          onBlur={onBlur}
         />
       ) : (
         <input
@@ -44,6 +47,7 @@ const Input = ({
           placeholder={placeholder}
           type={type}
           onKeyDown={handleEnterKeyDown}
+          onBlur={onBlur}
         />
       )}
       <style jsx>
@@ -71,7 +75,7 @@ const Input = ({
           textarea:hover {
             //border: 1px solid ${theme.layout};
             background-color: ${theme.lightMediumContrast};
-            color: ${theme.darkLowContrast};
+            //color: ${theme.darkLowContrast};
           }
         `}
       </style>

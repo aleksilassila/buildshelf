@@ -7,7 +7,7 @@ import messages from "../../constants/messages";
 import SplashText from "../statuses/SplashText";
 import Table from "../common/Table";
 import Button from "../common/Button";
-import Separator from "../icons/Separator";
+import Separator from "../utils/Separator";
 import Input from "../common/Input";
 
 const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
@@ -139,7 +139,7 @@ const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
         </div>
         <div className="section">
           <div className="create">
-            <Button onClick={createCollection} highlighted>
+            <Button onClick={createCollection} primary>
               Create
             </Button>
           </div>

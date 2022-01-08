@@ -1,7 +1,7 @@
 import theme from "../../constants/theme";
 
 export interface MultipleButtonData {
-  content: JSX.Element;
+  content: JSX.Element | string;
   onClick?: () => void;
   unclickable?: boolean;
   active?: boolean;
@@ -43,6 +43,7 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
             cursor: pointer;
             display: flex;
             align-items: center;
+            color: ${theme.darkMediumContrast};
           }
 
           .multiple-button > *:not(.unclickable):hover {

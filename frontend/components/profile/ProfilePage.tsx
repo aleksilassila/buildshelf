@@ -8,7 +8,7 @@ import CardsGridView from "../../containers/CardsGridView";
 import { Build, User } from "../../interfaces/Builds";
 import theme from "../../constants/theme";
 import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";
-import Separator from "../../components/icons/Separator";
+import Separator from "../utils/Separator";
 import SplashText from "../statuses/SplashText";
 import messages from "../../constants/messages";
 import Button from "../common/Button";
@@ -178,7 +178,7 @@ const ProfilePage = ({
             <div className="avatar" />
             <h2 className="username">{user.username}</h2>
           </div>
-          <Button onClick={follow} highlighted={!followed}>
+          <Button onClick={follow} primary={!followed}>
             {followed ? "Unfollow" : "Follow"}
           </Button>
         </div>

@@ -123,7 +123,7 @@ const TitleBar = ({active = null, dim = false}) => {
         }
 
         .active {
-          color: ${theme.layout} !important;
+          color: ${theme.layoutDark} !important;
           cursor: unset !important;
           //font-weight: 600;
         }

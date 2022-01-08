@@ -1,17 +1,17 @@
 const ListView = ({ children }) => {
   return (
     <div className="list-view">
-      {children.map(item => <div className="item">{item}</div>)}
+      {children.map((item, index) => <div className="item" key={index}>{item}</div>)}
       <style jsx>
         {`
           .list-view {
             display: flex;
             flex-direction: column;
-            margin: -0.5em;
+            margin: -1em;
           }
           
           .item {
-            margin: 0.5em;
+            margin: 1em;
           }
         `}
       </style>

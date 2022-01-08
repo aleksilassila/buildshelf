@@ -21,66 +21,72 @@ class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
-        <style global>
+        <style jsx global>
           {`
             body {
-                font-family: Avenir, Montserrat, Arial, sans-serif;
-                color: ${theme.darkHighContrast};
-            }                        
-
-            body, head, html {
-                margin: 0;
-                padding: 0;
-                background-color: ${theme.lightHighContrast};
+              font-family: Avenir, Montserrat, Arial, sans-serif;
+              color: ${theme.darkHighContrast};
             }
 
-            h1, h2, h3, h4, h5, h6 {
-                font-weight: 600;
-                color: ${theme.dark};
-                margin: 0;
+            body,
+            head,
+            html {
+              margin: 0;
+              padding: 0;
+              background-color: ${theme.lightHighContrast};
             }
-            
-            p, span {
-                color: ${theme.darkLowContrast};
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+              font-weight: 600;
+              color: ${theme.dark};
+              margin: 0;
             }
-            
+
+            p,
+            span {
+              color: ${theme.darkLowContrast};
+            }
+
             p {
-                margin: 0.5rem 0;
+              margin: 0.5rem 0;
             }
-            
+
             input {
-                font-family: Avenir, Montserrat, Arial, sans-serif;
+              font-family: Avenir, Montserrat, Arial, sans-serif;
             }
-            
+
             .uppercase {
-                font-weight: 100;
-                text-transform: uppercase;
+              font-weight: 100;
+              text-transform: uppercase;
             }
-            
+
             a {
-                color: ${theme.darkHighContrast}
+              color: ${theme.darkHighContrast};
             }
-            
+
             a:visited {
-                color: inherit;
+              color: inherit;
             }
-            
+
             * {
-                box-sizing: border-box;
+              box-sizing: border-box;
             }
-            
+
             .no-margin {
-                margin: 0;
+              margin: 0;
             }
-            
-            
-            
+
             .page-container {
-                padding: 2rem 5vw;
+              padding: 2rem 5vw;
             }
-            
+
             .large-page-container {
-                padding: 6rem 5vw;
+              padding: 6rem 5vw;
             }
           `}
         </style>

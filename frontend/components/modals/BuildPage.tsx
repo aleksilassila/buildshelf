@@ -1,7 +1,7 @@
 import { Build } from "../../interfaces/Builds";
 import messages from "../../constants/messages";
 import ImageCollection from "../ImageCollection";
-import Separator from "../icons/Separator";
+import Separator from "../utils/Separator";
 import SplashText from "../statuses/SplashText";
 import ErrorText from "../statuses/ErrorText";
 import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";

@@ -3,7 +3,7 @@ import TitleBar from "../components/bars/TitleBar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CollectionsManager from "../components/modals/CollectionsManager";
-import Separator from "../components/icons/Separator";
+import Separator from "../components/utils/Separator";
 import Input from "../components/common/Input";
 import FileSelect from "../components/common/FileSelect";
 import Table, { TableData } from "../components/common/Table";
@@ -177,12 +177,12 @@ const Upload = () => {
   const collectionsButtonData: MultipleButtonData[] = [
     {
       content: (
-        <span>{formData.collectionName || "No collection selected"}</span>
+        formData.collectionName || "No collection selected"
       ),
       active: true,
     },
     {
-      content: <span>Select a collection</span>,
+      content: "Select a collection",
       onClick: () => setShowCollectionsManager(true),
     },
   ];
@@ -283,7 +283,7 @@ const Upload = () => {
         </Message>
         {Separator}
         <div className="section upload">
-          <Button onClick={submitData} highlighted>
+          <Button onClick={submitData} primary>
             Upload
           </Button>
           <Button onClick={() => setFormData(initialFormData)} danger>

@@ -59,7 +59,7 @@ const Home = () => {
    * */
 
   return (
-    <div className="container">
+    <div className="home">
       <TitleBar active="home" />
       <div className="introduction">
         <h2>The most ambitious Minecraft build library at your hands</h2>
@@ -94,9 +94,10 @@ const Home = () => {
         </div>
       </div>
       <style jsx>{`
-        .container {
+        .home {
+          display: flex;
+          flex-direction: column;
           min-height: 100vh;
-          width: 100vw;
         }
 
         .introduction {
@@ -106,11 +107,11 @@ const Home = () => {
         .follows-grid {
           padding: 2rem 5vw;
         }
-        
+
         .content {
           background-color: ${theme.light}; //hsl(147deg 21% 95%)
         }
-        
+
         .row-heading-link:hover {
           cursor: pointer;
           text-decoration: underline;
