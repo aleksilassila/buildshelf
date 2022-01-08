@@ -63,11 +63,6 @@ const CardsRowView = ({ builds, children }: Props) => {
       </div>
       <style jsx>
         {`
-          .cards-row-view {
-            padding: 2rem 5vw;
-            position: relative;
-          }
-
           .heading-container {
             display: flex;
             flex-direction: row;

@@ -1,102 +1,117 @@
 import theme from "../../constants/theme";
 import Link from "next/link";
 import Auth from "../../utils/auth";
+import NBSP from "../utils/NBSP";
+import ChevronDown from "../icons/ChevronDown";
+import { useState } from "react";
+import { useRouter } from 'next/router';
 
-const TitleBar = ({active = null, dim = false}) => {
+const TitleBar = ({ active = null, dim = false }) => {
+  const [showProfileBar, setShowProfileBar] = useState(false);
   const userObject = Auth.getUser();
 
-  const ProfileDropdown = ({children}) => {
-    return (
-      <div className="profile-dropdown" tabIndex={0}>
-        {children}
-        <style jsx>{`
-          .profile-dropdown {
-            border: 1px solid ${theme.darkLowContrast};
-            border-radius: 999px;
-            margin: 0 0.6em;
-            cursor: pointer;
-          }
+  const router = useRouter();
 
-          .profile-dropdown :global(span) {
-            color: ${theme.lightHighContrast} !important;
-            padding: 0.2em 0.4em;
-            color: ${theme.darkLowContrast} !important;
-          }
-
-          .profile-dropdown:focus {
-            border: 1px solid ${theme.layout};
-            background-color: ${theme.layout};
-          }
-
-          .profile-dropdown:focus :global(span) {
-            color: ${theme.lightHighContrast} !important;
-          }
-        `}</style>
-      </div>
-    );
-  };
+  const logOut = () => {
+    Auth.setUser(undefined);
+    router.push("/")
+  }
 
   return (
-    <>
+    <div className="container">
       <div className="title-bar">
         <Link href="/">
           <h2 className="title">Litematica Library</h2>
         </Link>
         <ul>
           <Link href="/">
-            <a className={active === "home" && "active"}>Home</a>
+            <div className={`${active === "home" && "active"} clickable`}>
+              Home
+            </div>
           </Link>
           <Link href="/builds">
-            <a className={active === "builds" && "active"}>Builds</a>
+            <div className={`${active === "builds" && "active"} clickable`}>
+              Builds
+            </div>
           </Link>
           <Link href="/collections">
-            <a className={active === "collections" && "active"}>Collections</a>
+            <div
+              className={`${active === "collections" && "active"} clickable`}
+            >
+              Collections
+            </div>
           </Link>
           <Link href="/creators">
-            <a className={active === "creators" && "active"}>Creators</a>
+            <div className={`${active === "creators" && "active"} clickable`}>
+              Creators
+            </div>
           </Link>
           <Link href="/about">
-            <a className={active === "about" && "active"}>About</a>
+            <div className={`${active === "about" && "active"} clickable`}>
+              About
+            </div>
           </Link>
           {userObject?.username ? (
             <Link href="/upload">
-              <a className={active === "upload" && "active"}>Upload</a>
+              <div className={`${active === "upload" && "active"} clickable`}>
+                Upload
+              </div>
             </Link>
           ) : null}
           {userObject?.username ? (
-            <ProfileDropdown>
-              <span>▾ {userObject.username}</span>
-            </ProfileDropdown>
+            <div
+              className={`${active === "about" && "active"} profile clickable`}
+              onClick={() => setShowProfileBar((p) => !p)}
+            >
+              {userObject.username}
+              {NBSP}
+              <ChevronDown style={{ height: "0.8em" }} />
+            </div>
           ) : (
             <Link href="/login">
-              <a className={active === "login" && "active"}>Log In</a>
+              <div className={`${active === "login" && "active"} clickable`}>
+                Log In
+              </div>
             </Link>
           )}
         </ul>
       </div>
+      <div className="profile-bar">
+        <Link href="/">
+          <div className={`${active === "" && "active"} clickable`}>
+            Profile
+          </div>
+        </Link>
+        <Link href="/">
+          <div className={`${active === "" && "active"} clickable`}>
+            Favorites
+          </div>
+        </Link>
+        <div onClick={logOut} className={`${active === "" && "active"} clickable`}>Log out</div>
+      </div>
+      <div className="background" onClick={() => setShowProfileBar(false)} />
       <style jsx>{`
+        .container {
+          height: 4em;
+        }
+
         .title-bar {
           background-color: ${theme.lightHighContrast}${dim ? "77" : "ff"};
           color: ${theme.darkHighContrast};
           display: flex;
           justify-content: space-between;
-          padding: 1em 1.2em;
-          position: sticky;
+          padding: 0 1.2em;
+          position: relative;
+          z-index: 2;
           transition: background-color 80ms linear;
           border-bottom: 2px solid ${theme.lightMediumContrast};
+          height: 4em;
+          align-items: center;
         }
 
         .title {
           text-transform: uppercase;
           cursor: pointer;
-        }
-
-        .separator {
-          background-color: ${theme.lightLowContrast}80;
-          height: 2px;
-          border-radius: 20px;
-          margin: 0 1.2em;
-          flex-shrink: 0;
         }
 
         ul {
@@ -107,28 +122,57 @@ const TitleBar = ({active = null, dim = false}) => {
           align-items: center;
         }
 
-        ul a,
-        ul span {
+        .clickable {
           display: inline-block;
-          margin: 0 0.6em;
+          padding: 0 0.6em;
           text-transform: capitalize;
           font-size: 0.9em;
           font-weight: 500;
           text-decoration: none;
-        }
-
-        ul a:hover {
           cursor: pointer;
-          //text-decoration: underline;
         }
 
         .active {
           color: ${theme.layoutDark} !important;
           cursor: unset !important;
-          //font-weight: 600;
+        }
+
+        .profile {
+          justify-self: flex-end;
+          flex: 1 0 auto;
+          padding: 0.5em 0.6em !important;
+          border-radius: 4px;
+          transition: background-color 100ms linear, color 100ms linear;
+
+          background-color: ${showProfileBar ? theme.layoutLight : "unset"};
+          color: ${showProfileBar ? theme.lightHighContrast : "unset"};
+        }
+
+        .profile-bar {
+          background-color: ${theme.light};
+          color: ${theme.dark};
+          z-index: 2;
+          position: relative;
+          display: flex;
+          justify-content: flex-end;
+          padding: 0 1.2em;
+          align-items: center;
+          height: ${showProfileBar ? "2.5em" : 0};
+          overflow: hidden;
+          transition: height 100ms linear;
+        }
+
+        .background {
+          display: ${showProfileBar ? "unset" : "none"};
+          position: fixed;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          z-index: 1;
         }
       `}</style>
-    </>
+    </div>
   );
 };
 export default TitleBar;

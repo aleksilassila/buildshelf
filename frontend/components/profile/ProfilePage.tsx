@@ -96,10 +96,14 @@ const ProfilePage = ({
       return;
 
     axios
-      .get(process.env.BACKEND_ENDPOINT + `/user/${uuid}`)
+      .get(process.env.BACKEND_ENDPOINT + `/user/${uuid}`, {
+        params: {
+          token: userObject?.token,
+        }
+      })
       .then((res) => {
         setUser(res.data);
-        setFollowed(res.data?.followers?.indexOf(uuid) !== -1);
+        setFollowed(res.data?.following === true);
       })
       .catch(setError);
 

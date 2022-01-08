@@ -30,7 +30,7 @@ const Button = ({ children, onClick, primary = false, danger = false }) => {
           border: 1px solid ${theme.lightLowContrast};
           background-color: ${theme.lightHighContrast};
           color: ${theme.darkMediumContrast};
-          font-weight: 400;
+          font-weight: 500;
           border-radius: 4px;
           height: 2.2rem;
           font-size: 0.9em;

@@ -14,7 +14,7 @@ const User = sequelize.define("user", {
   remoteId: DataTypes.UUID,
 });
 
-User.prototype.toJSON = async function () {
+User.prototype.toJSON = async function (user = null) {
   return {
     username: this.username,
     uuid: this.uuid,
@@ -24,6 +24,7 @@ User.prototype.toJSON = async function () {
     follows: this.follows
       ? await Promise.all(this.follows.map((u) => u.toJSON()))
       : undefined,
+    following: user ? await user.hasFollow(this.uuid) : undefined,
   };
 };
 

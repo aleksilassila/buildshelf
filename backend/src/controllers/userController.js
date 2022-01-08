@@ -15,7 +15,7 @@ exports.getUser = async function (req, res) {
     return;
   }
 
-  res.send(await user.toJSON());
+  res.send(await user.toJSON(req.user));
 };
 
 exports.getUserFavorites = async function (req, res) {

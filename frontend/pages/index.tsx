@@ -73,21 +73,25 @@ const Home = () => {
         </p>
       </div>
       <div className="content">
-        <CardsRowView builds={topData || []}>
-          <Link href="/builds">
-            <h2 className="row-heading-link">
-              {!!topData ? "Popular builds right now" : messages.loading}
-            </h2>
-          </Link>
-        </CardsRowView>
-        <CardsRowView builds={newData || []}>
-          <Link href="/builds">
-            <h2 className="row-heading-link">
-              {!!newData ? "New builds" : messages.loading}
-            </h2>
-          </Link>
-        </CardsRowView>
-        <div className="follows-grid">
+        <div className="page-container">
+          <CardsRowView builds={topData || []}>
+            <Link href="/builds">
+              <h2 className="row-heading-link">
+                {!!topData ? "Popular builds right now" : messages.loading}
+              </h2>
+            </Link>
+          </CardsRowView>
+        </div>
+        <div className="page-container">
+          <CardsRowView builds={newData || []}>
+            <Link href="/builds">
+              <h2 className="row-heading-link">
+                {!!newData ? "New builds" : messages.loading}
+              </h2>
+            </Link>
+          </CardsRowView>
+        </div>
+        <div className="page-container">
           <CardsGridView builds={followedData || []}>
             <h2>{!!followedData ? "Followed creators" : messages.loading}</h2>
           </CardsGridView>
@@ -102,10 +106,6 @@ const Home = () => {
 
         .introduction {
           margin: 6em 5vw;
-        }
-
-        .follows-grid {
-          padding: 2rem 5vw;
         }
 
         .content {
