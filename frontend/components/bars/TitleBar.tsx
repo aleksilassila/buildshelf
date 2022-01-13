@@ -77,17 +77,26 @@ const TitleBar = ({ active = null, dim = false }) => {
         </ul>
       </div>
       <div className="profile-bar">
-        <Link href="/">
-          <div className={`${active === "" && "active"} clickable`}>
+        <a href={"/user/" + userObject?.uuid}>
+          <div
+            className={`${
+              active === "profile" && "active"
+            } clickable`}
+          >
             Profile
           </div>
-        </Link>
-        <Link href="/">
-          <div className={`${active === "" && "active"} clickable`}>
+        </a>
+        <a href={"/user/" + userObject?.uuid + "/favorites"}>
+          <div className={`${active === "favorites" && "active"} clickable`}>
             Favorites
           </div>
-        </Link>
-        <div onClick={logOut} className={`${active === "" && "active"} clickable`}>Log out</div>
+        </a>
+        <div
+          onClick={logOut}
+          className={`${active === "" && "active"} clickable`}
+        >
+          Log out
+        </div>
       </div>
       <div className="background" onClick={() => setShowProfileBar(false)} />
       <style jsx>{`

@@ -15,9 +15,6 @@ import messages from "../constants/messages";
 import SplashText from "../components/statuses/SplashText";
 import InfiniteScroll from "../containers/InfiniteScroll";
 import Empty from "../components/statuses/Empty";
-import ChevronDown from "../components/icons/ChevronDown";
-import NBSP from "../components/utils/NBSP";
-import Center from "../components/utils/Center";
 
 const Collections = () => {
   const [params, setParams] = useState({
@@ -75,11 +72,11 @@ const Collections = () => {
 
   const setSort = (sort) => () => {
     if (sort !== params.sort) {
-      setData([])
-      setParams(p => ({ ...p, sort }));
+      setData([]);
+      setParams((p) => ({ ...p, sort }));
       setRefetch(true);
     }
-  }
+  };
 
   const SortDropdown = (
     <Dropdown

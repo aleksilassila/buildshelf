@@ -2,147 +2,51 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import TitleBar from "../bars/TitleBar";
 import Auth from "../../utils/auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import CardsGridView from "../../containers/CardsGridView";
-import { Build, User } from "../../interfaces/Builds";
+import { User } from "../../interfaces/Builds";
 import theme from "../../constants/theme";
-import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";
-import Separator from "../utils/Separator";
 import SplashText from "../statuses/SplashText";
 import messages from "../../constants/messages";
 import Button from "../common/Button";
+import Heart from "../icons/Heart";
+import NBSP from "../utils/NBSP";
+import useApi from "../hooks/useApi";
 
-interface ProfileNavBarProps {
-  user: User;
-  isOwnProfile: boolean;
-  tabName: "builds" | "favorites" | "saves";
-}
+/*
+when joined?
+build count
+received favorites count
 
-const ProfileNavBar = ({
-  user,
-  isOwnProfile,
-  tabName = "builds",
-}: ProfileNavBarProps) => {
-  const tabButtonData: MultipleButtonData[] = [
-    {
-      content: (
-        <Link href={"/user/" + user.uuid}>
-          <span>Builds</span>
-        </Link>
-      ),
-      active: tabName === "builds",
-    },
-    {
-      content: (
-        <Link href={"/user/" + user.uuid + "/favorites"}>
-          <span>Favorites</span>
-        </Link>
-      ),
-      active: tabName === "favorites",
-    },
-  ];
-
-  if (isOwnProfile) {
-    tabButtonData.push({
-      content: (
-        <Link href={"/user/" + user.uuid + "/saves"}>
-          <span>Saves</span>
-        </Link>
-      ),
-      active: tabName === "saves",
-    });
-  }
-
-  return (
-    <div>
-      <MultipleButton data={tabButtonData} />
-      {Separator}
-      <style jsx>
-        {`
-          span {
-            font-size: 0.9em;
-            font-weight: 600;
-          }
-        `}
-      </style>
-    </div>
-  );
-};
+(builds / manage)
+(bookmarks?)
+(collections / manage)
+(edit profile)
+ - Delete account
+ - Change description
+•
+ */
 
 const ProfilePage = ({
-  tabName = "builds",
+  tabName = "profile",
+  count,
+  bannerUrl = null,
+  children,
 }: {
-  tabName: "builds" | "favorites" | "saves";
+  tabName?: "profile" | "favorites" | "collections";
+  count?: number;
+  bannerUrl?: string;
+  children?: JSX.Element;
 }) => {
-  const [user, setUser] = useState<User>();
-  const [error, setError] = useState();
-  const [followed, setFollowed] = useState(false);
-
-  const [builds, setBuilds] = useState<Build[]>(null);
-
   const router = useRouter();
   const { uuid } = router.query;
+
+  const [user, loading, error] = useApi<User>("/user/" + uuid, {}, [uuid]);
+
+  const [followed, setFollowed] = useState(false);
+
   const userObject = Auth.getUser();
   const isOwnProfile = userObject?.uuid === uuid;
-
-  useEffect(() => {
-    if (
-      uuid === undefined ||
-      userObject === undefined ||
-      user !== undefined ||
-      error !== undefined
-    )
-      return;
-
-    axios
-      .get(process.env.BACKEND_ENDPOINT + `/user/${uuid}`, {
-        params: {
-          token: userObject?.token,
-        }
-      })
-      .then((res) => {
-        setUser(res.data);
-        setFollowed(res.data?.following === true);
-      })
-      .catch(setError);
-
-    if (tabName === "favorites") {
-      axios
-        .get(process.env.BACKEND_ENDPOINT + `/user/${uuid}/favorites`, {
-          params: {
-            token: userObject?.token,
-          },
-        })
-        .then((res) => {
-          setBuilds(res.data);
-        })
-        .catch(setError);
-    } else if (tabName === "saves") {
-      axios
-        .get(process.env.BACKEND_ENDPOINT + `/user/${uuid}/saves`, {
-          params: {
-            token: userObject.token,
-          },
-        })
-        .then((res) => {
-          setBuilds(res.data);
-        })
-        .catch(setError);
-    } else {
-      axios
-        .get(process.env.BACKEND_ENDPOINT + `/builds/get`, {
-          params: {
-            uuid,
-            token: userObject?.token,
-          },
-        })
-        .then((res) => {
-          setBuilds(res.data);
-        })
-        .catch(setError);
-    }
-  }, [uuid, userObject]);
 
   const follow = () => {
     axios
@@ -153,7 +57,7 @@ const ProfilePage = ({
         },
         {
           params: {
-            token: userObject.token,
+            token: userObject?.token,
           },
         }
       )
@@ -173,38 +77,46 @@ const ProfilePage = ({
 
   return (
     <div>
-      <TitleBar active={isOwnProfile ? "profile" : null} />
+      <TitleBar active={isOwnProfile ? tabName : null} />
       <div className="profile-banner">
         <div className="profile-banner-content">
           <div />
-          <div />
+          <div className="user-stats">{/*<span>Builds: 13</span>*/}</div>
           <div className="user-info">
             <div className="avatar" />
             <h2 className="username">{user.username}</h2>
           </div>
-          <Button onClick={follow} primary={!followed}>
-            {followed ? "Unfollow" : "Follow"}
-          </Button>
+          {userObject !== null ? (
+            <Button onClick={follow} primary={!followed}>
+              <Heart style={{ height: "0.8em" }} />
+              {NBSP}
+              {followed ? "Unfollow" : "Follow"}
+            </Button>
+          ) : (
+            <div />
+          )}
         </div>
         {/*<div className="profile-mask" />*/}
       </div>
-      <div className="content">
+      <div className="medium-page-container">
         <ProfileNavBar
           user={user}
           tabName={tabName}
           isOwnProfile={isOwnProfile}
+          count={count}
         />
-        <CardsGridView builds={builds || []} />
+        {children}
       </div>
       <style jsx>
         {`
           .profile-banner {
-            background: no-repeat center
-              url("${builds?.length &&
-              builds[0].images?.length &&
-              process.env.BACKEND_ENDPOINT +
-                "/files/" +
-                builds[0]?.images[0]}");
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+              url("${bannerUrl || "/blueprint.jpeg"}") no-repeat center center;
+            background-size: cover;
+          }
+
+          .medium-page-container {
+            border-top: 3px solid ${theme.lightLowContrast};
           }
 
           .profile-banner-content {
@@ -213,20 +125,20 @@ const ProfilePage = ({
             grid-template-rows: 1fr 1fr;
             padding: 2em;
             backdrop-filter: blur(2px);
-            background: linear-gradient(
-              180deg,
-              rgba(0, 0, 0, 0) 0%,
-              rgba(0, 0, 0, 0) 40%,
-              rgba(0, 0, 0, 0.7) 100%
-            );
+            //background: linear-gradient(
+            //  180deg,
+            //  rgba(0, 0, 0, 0) 0%,
+            //  rgba(0, 0, 0, 0) 40%,
+            //  rgba(0, 0, 0, 0.7) 100%
+            //);
             min-height: 200px;
           }
-          
+
           .profile-banner-content > :global(.button) {
             align-self: end;
             justify-self: right;
           }
-          
+
           .user-info {
             display: flex;
             flex-direction: row;
@@ -249,9 +161,70 @@ const ProfilePage = ({
             margin-right: 0.5em;
           }
 
-          .content {
-            padding: 2em;
-            border-top: 3px solid ${theme.lightLowContrast};
+          .user-stats,
+          .user-stats > :global(*) {
+            color: ${theme.lightHighContrast};
+          }
+        `}
+      </style>
+    </div>
+  );
+};
+
+interface ProfileNavBarProps {
+  user: User;
+  isOwnProfile: boolean;
+  tabName?: "profile" | "favorites" | "collections";
+  count: number;
+}
+
+const ProfileNavBar = ({
+  user,
+  isOwnProfile,
+  count = null,
+  tabName = "profile",
+}: ProfileNavBarProps) => {
+  const getCount = (t) => (tabName === t && count !== null ? `(${count})` : "");
+
+  return (
+    <div className="profile-bar">
+      <Link href={"/user/" + user.uuid}>
+        <div className={`${tabName === "profile" && "active"} item`}>
+          Builds {getCount("profile")}
+        </div>
+      </Link>
+      <Link href={"/user/" + user.uuid + "/collections"}>
+        <div className={`${tabName === "collections" && "active"} item`}>
+          Collections {getCount("collections")}
+        </div>
+      </Link>
+      <Link href={"/user/" + user.uuid + "/favorites"}>
+        <div className={`${tabName === "favorites" && "active"} item`}>
+          Favorites {getCount("favorites")}
+        </div>
+      </Link>
+      <style jsx>
+        {`
+          .profile-bar {
+            display: flex;
+            //margin: 0 -0.5em;
+            //padding: 0 0 0.5em 0;
+            align-items: stretch;
+            height: 2em;
+            border-bottom: 2px solid ${theme.lightLowContrast};
+            margin-bottom: 1em;
+          }
+
+          .item {
+            font-weight: 600;
+            padding: 0 0.5em;
+            cursor: pointer;
+            margin-bottom: -2px;
+          }
+
+          .active {
+            color: ${theme.layoutDark};
+            border-bottom: 2px solid ${theme.layoutDark};
           }
         `}
       </style>

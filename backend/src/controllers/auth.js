@@ -71,7 +71,7 @@ exports.login = async function (req, res) {
   const profile = response?.data?.selectedProfile;
 
   if (response?.status === 200 && user && profile) {
-    await User.findOrCreate({
+    const [localUser] = await User.findOrCreate({
       where: { username: profile.name },
       defaults: {
         username: profile.name,
@@ -82,8 +82,8 @@ exports.login = async function (req, res) {
 
     res.send(
       signToken({
-        username: profile.name,
-        uuid: profile.id,
+        username: localUser.username,
+        uuid: localUser.uuid,
       })
     );
   } else {

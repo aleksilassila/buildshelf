@@ -43,8 +43,9 @@ const Home = () => {
   /*
    * TODO:
    *  - Edit and manage own builds
-   *  - Browse and favorite collections
-   *  - Browse and follow creators
+   *    - Markdown
+   *  - Favorite collections
+   *  - Browse creators
    *  - Finish builds page filters, search
    *  - Markdown in build description
    *  - Finish dropdowns?

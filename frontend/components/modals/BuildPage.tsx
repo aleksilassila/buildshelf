@@ -12,7 +12,7 @@ import ModalContainer from "../../containers/ModalContainer";
 import Heart from "../icons/Heart";
 
 interface Props {
-  buildId: number;
+  buildId: number | string;
   setBuildPage: (number) => void;
   modal: boolean;
 }

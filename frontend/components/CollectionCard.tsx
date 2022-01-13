@@ -20,9 +20,12 @@ const CollectionCard = ({ collection }: Props) => {
    */
 
   const Picture = () => {
-    const path = collection.image ?  collection.image : collection.builds[0]?.images[0]
+    const path = collection.image
+      ? collection.image
+      : collection.builds[0]?.images[0];
 
-      return (
+    return (
+      <Link href={"/collection/" + collection.id}>
         <div
           className={"picture"}
           style={{
@@ -35,11 +38,13 @@ const CollectionCard = ({ collection }: Props) => {
             height: "200px",
             maxWidth: "350px",
             width: "35vw",
+            cursor: "pointer",
             // margin: "1em",
             // borderRadius: "4px",
           }}
         />
-      );;
+      </Link>
+    );
   };
 
   return (
@@ -48,9 +53,7 @@ const CollectionCard = ({ collection }: Props) => {
       <div className="card-right">
         <div className="card-heading">
           <Link href={"/collection/" + collection.id}>
-            <h3 className="name">
-              {collection.name}
-            </h3>
+            <h3 className="name">{collection.name}</h3>
           </Link>
           <span className="build-count">{collection.builds.length} builds</span>
         </div>
@@ -58,7 +61,12 @@ const CollectionCard = ({ collection }: Props) => {
           <p className="description">{collection.description}</p>
           <div className="stats">
             <div className="stats-right">
-              By <span className={"stats-bold"}>{collection.creator?.username}</span>
+              By{" "}
+              <Link href={"/user/" + collection.creator?.uuid}>
+                <span className={"stats-bold creator"}>
+                  {collection.creator?.username}
+                </span>
+              </Link>
             </div>
             <div className="stats-left">
               <Heart /> {collection.totalFavorites}
@@ -126,6 +134,10 @@ const CollectionCard = ({ collection }: Props) => {
 
         .stats-bold {
           font-weight: 600;
+        }
+        
+        .creator {
+          cursor: pointer;
         }
       `}</style>
     </div>

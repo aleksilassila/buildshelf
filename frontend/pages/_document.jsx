@@ -84,7 +84,11 @@ class MyDocument extends Document {
             .page-container {
               padding: 1rem 5vw;
             }
-
+            
+            .medium-page-container {
+              padding: 2rem 5vw;
+            }
+            
             .large-page-container {
               padding: 6rem 5vw;
             }

@@ -46,6 +46,7 @@ Collection.getOrCreateCollection = function (name, description, ownerId) {
 
 Collection.prototype.toJSON = async function (user = null) {
   return {
+    id: this.id,
     name: this.name,
     description: this.description,
     image: this.image,

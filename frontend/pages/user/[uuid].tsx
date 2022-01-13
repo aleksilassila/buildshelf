@@ -1,7 +1,3 @@
-import ProfilePage from "../../components/profile/ProfilePage";
-
-const Builds = () => {
-  return <ProfilePage tabName="builds" />;
-};
+import Builds from "./[uuid]/builds";
 
 export default Builds;
