@@ -19,10 +19,12 @@ const CollectionCard = ({ collection }: Props) => {
   created at?
    */
 
+  if (!collection) {
+    return null;
+  }
+
   const Picture = () => {
-    const path = collection.image
-      ? collection.image
-      : collection.builds[0]?.images[0];
+    const path = collection.image || collection.builds[0]?.images[0];
 
     return (
       <Link href={"/collection/" + collection.id}>
@@ -135,7 +137,7 @@ const CollectionCard = ({ collection }: Props) => {
         .stats-bold {
           font-weight: 600;
         }
-        
+
         .creator {
           cursor: pointer;
         }

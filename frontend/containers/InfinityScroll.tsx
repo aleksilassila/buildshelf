@@ -1,13 +1,13 @@
-import { useEffect, useRef } from "react";
+import {useCallback, useEffect, useRef} from "react";
 
-const InfiniteScroll = ({ children, page, incrementPage }) => {
+const InfinityScroll = ({ children, fetchMore }) => {
   const loader = useRef(null);
 
-  const handleObserver = (entities) => {
+  const handleObserver = useCallback((entities) => {
     if (entities[0].isIntersecting) {
-      incrementPage();
+      fetchMore();
     }
-  };
+  }, [fetchMore]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, {
@@ -22,11 +22,14 @@ const InfiniteScroll = ({ children, page, incrementPage }) => {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{ display: "flex", flex: "1 0 auto", flexDirection: "column" }}
+      className="infinity-scroll"
+    >
       {children}
       <div className="loader" ref={loader} />
     </div>
   );
 };
 
-export default InfiniteScroll;
+export default InfinityScroll;

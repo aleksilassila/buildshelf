@@ -1,4 +1,4 @@
-const SplashText = ({ children, fullscreen = false }) => {
+const Status = ({ children }) => {
   return (
     <div className="splash-text-container">
       {children}
@@ -8,16 +8,11 @@ const SplashText = ({ children, fullscreen = false }) => {
           flex-direction: column;
           justify-content: center;
           align-items: center;
-
-          ${fullscreen ?
-          `
-            height: 100vh;
-            width: 100vw;
-          ` : ""}
+          flex: 1 0 auto;
         }
       `}</style>
     </div>
   );
 };
 
-export default SplashText;
+export default Status;

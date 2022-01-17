@@ -4,7 +4,7 @@ import axios from "axios";
 import { Collection } from "../../interfaces/Builds";
 import ModalContainer from "../../containers/ModalContainer";
 import messages from "../../constants/messages";
-import SplashText from "../statuses/SplashText";
+import Status from "../statuses/Status";
 import Table from "../common/Table";
 import Button from "../common/Button";
 import Separator from "../utils/Separator";
@@ -78,9 +78,9 @@ const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
   if (!data) {
     return (
       <ModalContainer close={() => setShowMenu(false)} splash>
-        <SplashText>
+        <Status>
           <h2>{messages.loading}</h2>
-        </SplashText>
+        </Status>
       </ModalContainer>
     );
   }

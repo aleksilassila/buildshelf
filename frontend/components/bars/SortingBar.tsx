@@ -1,60 +1,14 @@
-import theme from "../../constants/theme";
 import Dropdown from "../common/Dropdown";
 import { useState } from "react";
-import Sort from "../icons/Sort";
-import SortDown from "../icons/SortDown";
-import Center from "../utils/Center";
-import NBSP from "../utils/NBSP";
 import Input from "../common/Input";
+import { Category } from "../../interfaces/Builds";
+import SearchIcon from "../icons/SearchIcon";
+import { useApi } from "../hooks/api";
 
-const SortingBar = ({ SortDropdown, SearchInput, RightButton, }) => {
-  // const [searchValue, setSearchValue] = useState("");
-
-  // const SortDropdown = (
-  //   <Dropdown
-  //     data={{
-  //       items: [
-  //         {
-  //           content: "Top",
-  //           onClick: () => setSortBy("Top"),
-  //         },
-  //         {
-  //           content: "Popular",
-  //           onClick: () => setSortBy("Top"),
-  //         },
-  //         {
-  //           content: "New",
-  //           onClick: () => setSortBy("New"),
-  //         },
-  //       ],
-  //     }}
-  //   >
-  //     <Center>
-  //       <Sort />
-  //       {NBSP}
-  //       {sortBy}
-  //     </Center>
-  //   </Dropdown>
-  // );
-  //
-  // const SearchInput = (
-  //   <Input
-  //     value={searchValue}
-  //     setValue={setSearchValue}
-  //     placeholder={"Search builds by title"}
-  //     onEnter={doSearch(searchValue)}
-  //   />
-  // );
-
+const SortingBar = ({ children }) => {
   return (
     <div className="sorting-bar">
-      <div className="left">
-        <div className="space">
-          {SortDropdown}
-        </div>
-        {SearchInput}
-      </div>
-      {RightButton}
+      {children}
       <style jsx>
         {`
           .sorting-bar {
@@ -67,11 +21,9 @@ const SortingBar = ({ SortDropdown, SearchInput, RightButton, }) => {
           .space {
             margin-right: 0.5em;
           }
-
-          .left {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
+          
+          :global(.left > *:not(:last-child)) {
+            margin-right: 0.5em;
           }
         `}
       </style>
@@ -79,4 +31,26 @@ const SortingBar = ({ SortDropdown, SearchInput, RightButton, }) => {
   );
 };
 
-export default SortingBar;
+const SortingBarLeft = ({ children }) => {
+  return (
+    <div
+      className="left"
+      style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const SortingBarRight = ({ children }) => {
+  return (
+    <div
+      className="right"
+      style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+    >
+      {children}
+    </div>
+  );
+};
+
+export { SortingBar, SortingBarLeft, SortingBarRight };

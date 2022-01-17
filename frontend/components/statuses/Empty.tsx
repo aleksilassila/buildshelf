@@ -1,7 +1,8 @@
 import theme from "../../constants/theme";
+import Status from "./Status";
 
 const Empty = () => (
-  <span>
+  <Status>
     It's quite empty here.
     <style jsx>{`
       span {
@@ -10,7 +11,7 @@ const Empty = () => (
         text-align: center;
       }
     `}</style>
-  </span>
+  </Status>
 );
 
 export default Empty;

@@ -1,5 +1,5 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
-import useApi from "../../../components/hooks/useApi";
+import useApi from "../../../components/hooks/api";
 import {Collection} from "../../../interfaces/Builds";
 import {useRouter} from "next/router";
 import ListView from "../../../containers/ListView";

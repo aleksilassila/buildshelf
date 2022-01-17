@@ -9,6 +9,7 @@ interface Props {
   type?: string;
   textArea?: boolean;
   onBlur?: () => void;
+  children?: JSX.Element;
 }
 
 const Input = ({
@@ -20,6 +21,7 @@ const Input = ({
   type = "text",
   textArea = false,
   onBlur = () => {},
+  children,
 }: Props) => {
   const handleEnterKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -33,6 +35,7 @@ const Input = ({
 
   return (
     <div className="input">
+      {children}
       {textArea ? (
         <textarea
           value={value}
@@ -52,31 +55,39 @@ const Input = ({
       )}
       <style jsx>
         {`
-          input,
-          textarea {
-            outline: none;
-            appearance: none;
-            font-family: inherit;
-            border-radius: 4px;
-            border: 1px solid ${theme.lightLowContrast};
-            padding: 0.4em 1em;
-            font-size: 0.96em;
-            color: ${theme.darkHighContrast};
-            font-weight: 400;
-            height: ${height};
-            width: 100%;
-            resize: vertical;
-            //box-shadow: inset 0 1px 2px ${theme.lightLowContrast};
-          }
-
-          input:focus-visible,
-          textarea:focus-visible,
-          input:hover,
-          textarea:hover {
-            //border: 1px solid ${theme.layout};
-            background-color: ${theme.lightMediumContrast};
-            //color: ${theme.darkLowContrast};
-          }
+            .input {
+              width: 100%;
+              height: ${height};
+              border: 1px solid ${theme.lightLowContrast};
+              border-radius: 4px;
+              padding: 0.4em 1em;
+              display: flex;
+              align-items: center;
+            }
+  
+            input,
+            textarea {
+              outline: none;
+              border: none;
+              background-color: #00000000;
+              font-family: inherit;
+              resize: vertical;
+            }
+            
+            .input, .input > :global(*) {
+              font-weight: 400;
+              font-size: 0.96rem;
+              color: ${theme.darkLowContrast};
+            }
+            
+            .input > :global(*):not(:last-child) {
+              margin-right: 0.5rem;
+            }
+  
+            .input:hover,
+            .input:focus-within {
+              background-color: ${theme.lightMediumContrast};
+            }
         `}
       </style>
     </div>

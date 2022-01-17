@@ -30,13 +30,8 @@ const ModalContainer = ({ children, close, splash = false }) => (
         border-radius: 4px;
         backdrop-filter: blur(3px);
         overflow: scroll;
-        ${splash &&
-        `
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-              `}
+        display: flex;
+        flex-direction: column;
       }
 
       .close {

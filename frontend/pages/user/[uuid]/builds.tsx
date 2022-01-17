@@ -2,7 +2,7 @@ import ProfilePage from "../../../components/profile/ProfilePage";
 import CardsGridView from "../../../containers/CardsGridView";
 import { Build } from "../../../interfaces/Builds";
 import { useRouter } from "next/router";
-import useApi from "../../../components/hooks/useApi";
+import useApi from "../../../components/hooks/api";
 
 const Builds = () => {
   const router = useRouter();

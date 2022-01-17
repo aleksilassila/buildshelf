@@ -40,7 +40,7 @@ Build.prototype.toJSON = async function (user = null) {
     ? !!(await user.getFavoriteBuilds({
         attributes: ["id"],
         where: { id: this.id },
-      }))
+      }))?.length
     : undefined;
 
   return {

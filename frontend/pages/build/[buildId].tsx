@@ -14,7 +14,7 @@ const Build = ({}) => {
   return (
     <div>
       <TitleBar />
-      <BuildPage buildId={buildId} />
+      <BuildPage buildId={buildId} modal={false} />
     </div>
   );
 };

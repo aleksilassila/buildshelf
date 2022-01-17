@@ -27,7 +27,7 @@ const Dropdown = ({
 
   return (
     <div className="dropdown">
-      <Button onClick={() => setVisible(!visible)}>{children}<ChevronDown style={{ height: "0.8em" }} /></Button>
+      <Button onClick={() => setVisible(!visible)}>{children}<ChevronDown style={{ height: "0.8em", marginLeft: "0.5em" }} /></Button>
       <div className="background" onClick={() => setVisible(false)} />
       <div className="list" onClick={() => setVisible(false)}>
         {data.items.map((item, index) => (
@@ -51,6 +51,7 @@ const Dropdown = ({
         .list {
           position: relative;
           visibility: ${visible ? "visible" : "hidden"};
+          height: ${visible ? "auto" : "0"};
           z-index: 2;
           background-color: ${theme.lightHighContrast};
           border: 1px solid ${theme.lightLowContrast};

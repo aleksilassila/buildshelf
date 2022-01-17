@@ -6,12 +6,12 @@ import { useState } from "react";
 import axios from "axios";
 import { User } from "../../interfaces/Builds";
 import theme from "../../constants/theme";
-import SplashText from "../statuses/SplashText";
+import Status from "../statuses/Status";
 import messages from "../../constants/messages";
 import Button from "../common/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
-import useApi from "../hooks/useApi";
+import useApi from "../hooks/api";
 
 /*
 when joined?
@@ -69,9 +69,9 @@ const ProfilePage = ({
 
   if (!user) {
     return (
-      <SplashText fullscreen>
+      <Status fullscreen>
         <h2>{messages.loading}</h2>
-      </SplashText>
+      </Status>
     );
   }
 

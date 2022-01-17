@@ -1,7 +1,7 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
 import CardsGridView from "../../../containers/CardsGridView";
 import {Build} from "../../../interfaces/Builds";
-import useApi from "../../../components/hooks/useApi";
+import useApi from "../../../components/hooks/api";
 import {useRouter} from "next/router";
 
 const Favorites = () => {

@@ -83,7 +83,16 @@ const TitleBar = ({ active = null, dim = false }) => {
               active === "profile" && "active"
             } clickable`}
           >
-            Profile
+            Builds
+          </div>
+        </a>
+        <a href={"/user/" + userObject?.uuid + "/collections"}>
+          <div
+            className={`${
+              active === "collections" && "active"
+            } clickable`}
+          >
+            Collections
           </div>
         </a>
         <a href={"/user/" + userObject?.uuid + "/favorites"}>

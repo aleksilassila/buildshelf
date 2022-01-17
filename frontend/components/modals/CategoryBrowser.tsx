@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import ModalContainer from "../../containers/ModalContainer";
-import SplashText from "../statuses/SplashText";
+import Status from "../statuses/Status";
 import messages from "../../constants/messages";
-import ErrorText from "../statuses/ErrorText";
+import NetworkError from "../statuses/NetworkError";
 import Table, {TableData} from "../common/Table";
 import Button from "../common/Button";
 
@@ -26,9 +26,9 @@ const CategoryBrowser = ({show, setShow, setCategory}) => {
   if (!data) {
     return (
       <ModalContainer close={() => setShow(false)} splash>
-        <SplashText>
+        <Status>
           <h2>{messages.loading}</h2>
-        </SplashText>
+        </Status>
       </ModalContainer>
     );
   }
@@ -36,10 +36,10 @@ const CategoryBrowser = ({show, setShow, setCategory}) => {
   if (error) {
     return (
       <ModalContainer close={() => setShow(false)} splash>
-        <ErrorText>
+        <NetworkError>
           <h2>{messages.errorTitle}</h2>
           <p>Could not fetch categories.</p>
-        </ErrorText>
+        </NetworkError>
       </ModalContainer>
     );
   }

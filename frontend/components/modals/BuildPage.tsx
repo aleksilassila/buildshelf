@@ -1,15 +1,17 @@
 import { Build } from "../../interfaces/Builds";
-import messages from "../../constants/messages";
 import ImageCollection from "../ImageCollection";
 import Separator from "../utils/Separator";
-import SplashText from "../statuses/SplashText";
-import ErrorText from "../statuses/ErrorText";
 import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Auth from "../../utils/auth";
 import ModalContainer from "../../containers/ModalContainer";
 import Heart from "../icons/Heart";
+import Button from "../common/Button";
+import Link from "next/link";
+import useApi from "../hooks/api";
+import Loading from "../statuses/Loading";
+import NetworkError from "../statuses/NetworkError";
 
 interface Props {
   buildId: number | string;
@@ -17,150 +19,101 @@ interface Props {
   modal: boolean;
 }
 
-const BuildPage = ({ buildId, setBuildPage }: Props) => {
+const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
   if (buildId === undefined) return null;
 
-  const [favoriteButton, setFavoriteButton] = useState({
+  const [build, loading, error] = useApi<Build>("/build/" + buildId, {}, [
+    buildId,
+  ]);
+
+  const [FBData, setFBData] = useState({
     active: true,
     isBuildFavorite: false,
     favoriteCount: 0,
   });
 
-  const userObject = Auth.getUser();
-
-  const [data, setData] = useState<Build>(null);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
-    if (userObject === undefined || error || data) return;
+    if (loading || error) return;
+    setFBData({
+      favoriteCount: build.totalFavorites,
+      active: false,
+      isBuildFavorite: build.isFavorite,
+    });
+  }, [build]);
 
-    console.log("Fetching build page...");
-
-    axios
-      .get<Build>(process.env.BACKEND_ENDPOINT + `/build/${buildId}`, {
-        params: {
-          token: userObject?.token,
-        },
-      })
-      .then((res) => {
-        setData(res.data);
-        console.log(res.data.isFavorite);
-        setFavoriteButton({
-          favoriteCount: res.data.totalFavorites,
-          active: false,
-          isBuildFavorite: res.data.isFavorite,
-        });
-      })
-      .catch(setError);
-  }, [userObject]);
+  const userObject = Auth.getUser();
 
   const close = () => setBuildPage(undefined);
 
-  if (!data) {
+  const Container = ({ children }) => {
+    if (modal) {
+      return <ModalContainer close={close}>{children}</ModalContainer>;
+    } else {
+      return <div className="medium-page-container">{children}</div>;
+    }
+  };
+
+  if (loading) {
     return (
-      <ModalContainer close={close} splash>
-        <SplashText>
-          <h2>{messages.loading}</h2>
-        </SplashText>
-      </ModalContainer>
+      <Container>
+        <Loading />
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <ModalContainer close={close} splash>
-        <ErrorText>
-          <h2>{messages.errorTitle}</h2>
-          <p>Could not fetch the build.</p>
-        </ErrorText>
-      </ModalContainer>
+      <Container>
+        <NetworkError />
+      </Container>
     );
   }
 
-  const addToFavorites = () => {
-    if (favoriteButton.active) return;
-    setFavoriteButton({ active: true, ...favoriteButton });
-
-    axios
-      .post(
-        process.env.BACKEND_ENDPOINT + `/build/${buildId}/favorite`,
-        {
-          favorite: !favoriteButton.isBuildFavorite,
-        },
-        { params: { token: userObject.token } }
-      )
-      .then((res) => {
-        const newFavoriteCount =
-          favoriteButton.favoriteCount +
-          (!favoriteButton.isBuildFavorite ? 1 : -1);
-
-        setFavoriteButton({
-          active: false,
-          isBuildFavorite:
-            res.status === 200
-              ? !favoriteButton.isBuildFavorite
-              : favoriteButton.isBuildFavorite,
-          favoriteCount:
-            res.status === 200
-              ? newFavoriteCount
-              : favoriteButton.favoriteCount,
-        });
-      })
-      .catch((err) => setFavoriteButton({ active: false, ...favoriteButton }));
-  };
-
-  const favoriteButtonData: MultipleButtonData[] = [
-    {
-      content: (
-        <span style={{ fontWeight: 600 }}>
-          <Heart /> {favoriteButton.favoriteCount}
-        </span>
-      ),
-      unclickable: true,
-      active: favoriteButton.isBuildFavorite,
-    },
-    {
-      content: (
-        <span onClick={addToFavorites}>
-          {favoriteButton.isBuildFavorite
-            ? "Remove from favorites"
-            : "Add to favorites"}
-        </span>
-      ),
-      active: favoriteButton.active,
-    },
-  ];
-
   return (
-    <ModalContainer close={close}>
+    <Container>
       <div className="build-title">
         <div className="creator-profile">
           <img
-            src={data.creator && ("https://crafatar.com/avatars/" + data.creator.uuid)}
-            alt={data.creator?.username}
+            src={
+              build.creator &&
+              "https://crafatar.com/avatars/" + build.creator.uuid
+            }
+            alt={build.creator?.username}
             className="profile-picture"
           />
           <div className="creator-profile-content">
-            <h2>{data.title}</h2>
+            <h2>{build.title}</h2>
             <span>
               By{" "}
-              <a href={"/user/" + data.creator?.uuid} className="username">
-                {data.creator?.username}
+              <a href={"/user/" + build.creator?.uuid} className="username">
+                {build.creator?.username}
               </a>
             </span>
           </div>
         </div>
-        <div className="build-stats">
-          <MultipleButton data={favoriteButtonData} />
+        <div className="build-actions">
+          {userObject?.uuid === build.creator.uuid ? (
+            <Link href={"/build/" + build.id + "/edit"}>
+              <Button primary onClick={() => {}}>
+                Edit Build
+              </Button>
+            </Link>
+          ) : userObject ? (
+            <FavoriteButton
+              buildId={buildId}
+              fbData={FBData}
+              setFBData={setFBData}
+            />
+          ) : null}
         </div>
       </div>
       {Separator}
-      <ImageCollection images={data.images} />
+      <ImageCollection images={build.images} />
       {Separator}
       <div className="build-details">
-        <span>{data.description}</span>
+        <span>{build.description}</span>
         <div>
-          <span>{new Date(data.createdAt).toDateString()}</span>
+          <span>{new Date(build.createdAt).toDateString()}</span>
         </div>
       </div>
       <style jsx>
@@ -197,11 +150,19 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
             color: inherit;
           }
 
-          .build-stats {
+          .build-actions {
             display: flex;
             flex-direction: column;
             align-items: end;
             justify-content: end;
+          }
+
+          .build-actions > :global(*) {
+            //flex: 1 0 auto;
+          }
+
+          .build-actions > :global(*:not(:last-child)) {
+            margin-bottom: 0.5em;
           }
 
           .build-details {
@@ -217,8 +178,66 @@ const BuildPage = ({ buildId, setBuildPage }: Props) => {
           }
         `}
       </style>
-    </ModalContainer>
+    </Container>
   );
+};
+
+const FavoriteButton = ({ buildId, fbData, setFBData }) => {
+  const userObject = Auth.getUser();
+
+  const addToFavorites = () => {
+    if (fbData.active) return;
+
+    setFBData({ active: true, ...fbData });
+
+    axios
+      .post(
+        process.env.BACKEND_ENDPOINT + `/build/${buildId}/favorite`,
+        {
+          favorite: !fbData.isBuildFavorite,
+        },
+        { params: { token: userObject.token } }
+      )
+      .then((res) => {
+        const newFavoriteCount =
+          fbData.favoriteCount + (!fbData.isBuildFavorite ? 1 : -1);
+
+        setFBData({
+          active: false,
+          isBuildFavorite:
+            res.status === 200
+              ? !fbData.isBuildFavorite
+              : fbData.isBuildFavorite,
+          favoriteCount:
+            res.status === 200 ? newFavoriteCount : fbData.favoriteCount,
+        });
+      })
+      .catch((err) => setFBData({ active: false, ...fbData }));
+  };
+
+  const favoriteButtonData: MultipleButtonData[] = [
+    {
+      content: (
+        <span style={{ fontWeight: 600 }}>
+          <Heart /> {fbData.favoriteCount}
+        </span>
+      ),
+      unclickable: true,
+      active: fbData.isBuildFavorite,
+    },
+    {
+      content: (
+        <span onClick={addToFavorites}>
+          {fbData.isBuildFavorite
+            ? "Remove from favorites"
+            : "Add to favorites"}
+        </span>
+      ),
+      active: fbData.active,
+    },
+  ];
+
+  return <MultipleButton data={favoriteButtonData} />;
 };
 
 export default BuildPage;
