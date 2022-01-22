@@ -1,8 +1,8 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
 import CardsGridView from "../../../containers/CardsGridView";
-import { Build } from "../../../interfaces/Builds";
+import { Build } from "../../../interfaces/ApiResponses";
 import { useRouter } from "next/router";
-import useApi from "../../../components/hooks/api";
+import {useApi} from "../../../components/hooks/api";
 
 const Builds = () => {
   const router = useRouter();
@@ -16,7 +16,7 @@ const Builds = () => {
 
   return (
     <ProfilePage count={builds?.length}>
-      <CardsGridView builds={builds || []} />
+      <CardsGridView builds={builds || []}  error={error} loading={loading}/>
     </ProfilePage>
   );
 };

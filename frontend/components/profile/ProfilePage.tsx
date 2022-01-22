@@ -4,14 +4,12 @@ import TitleBar from "../bars/TitleBar";
 import Auth from "../../utils/auth";
 import { useState } from "react";
 import axios from "axios";
-import { User } from "../../interfaces/Builds";
+import { User } from "../../interfaces/ApiResponses";
 import theme from "../../constants/theme";
-import Status from "../statuses/Status";
-import messages from "../../constants/messages";
 import Button from "../common/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
-import useApi from "../hooks/api";
+import { useApi } from "../hooks/api";
 
 /*
 when joined?
@@ -68,11 +66,12 @@ const ProfilePage = ({
   };
 
   if (!user) {
-    return (
-      <Status fullscreen>
-        <h2>{messages.loading}</h2>
-      </Status>
-    );
+    return null;
+    // return (
+    //   <Status fullscreen>
+    //     <h2>{messages.loading}</h2>
+    //   </Status>
+    // );
   }
 
   return (

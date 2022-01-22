@@ -10,7 +10,7 @@ export interface Collection {
   id: number;
   name: string;
   description: string;
-  image: string | null;
+  images: string[];
   totalFavorites: number;
   creator?: User;
   builds?: Build[];

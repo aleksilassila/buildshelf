@@ -6,7 +6,7 @@ const Collection = sequelize.define("collection", {
     type: DataTypes.STRING,
   },
   description: DataTypes.TEXT,
-  image: DataTypes.STRING,
+  image: DataTypes.ARRAY(DataTypes.STRING),
   totalFavorites: {
     type: DataTypes.INTEGER,
     defaultValue: 0,

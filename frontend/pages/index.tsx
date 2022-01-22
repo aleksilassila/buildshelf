@@ -1,49 +1,39 @@
 import Link from "next/link";
 import TitleBar from "../components/bars/TitleBar";
 import CardsRowView from "../containers/CardsRowView";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
 import Auth from "../utils/auth";
 import theme from "../constants/theme";
+import { useApi } from "../components/hooks/api";
+import { Build } from "../interfaces/ApiResponses";
 
 const Home = () => {
-  const [topData, setTopData] = useState(null);
-  const [newData, setNewData] = useState(null);
-  const [followedData, setFollowedData] = useState(null);
+  const [topData, topLoading, topError] = useApi<Build[]>(
+    "/builds/get?sort=top&",
+    {},
+    []
+  );
+  const [newData, newLoading, newError] = useApi<Build[]>(
+    "/builds/get?sort=new&",
+    {},
+    []
+  );
+  const [followedData, followedLoading, followedError] = useApi<Build[]>(
+    "/builds/get/followed",
+    {},
+    [],
+    true
+  );
 
   const userObject = Auth.getUser();
-
-  useEffect(() => {
-    if (userObject === undefined) return;
-
-    axios
-      .get(process.env.BACKEND_ENDPOINT + "/builds/get?sort=top&")
-      .then((res) => setTopData(res.data || []))
-      .catch((err) => {});
-
-    axios
-      .get(process.env.BACKEND_ENDPOINT + "/builds/get?sort=new&")
-      .then((res) => setNewData(res.data || []))
-      .catch((err) => {});
-
-    if (userObject?.token) {
-      axios
-        .get(process.env.BACKEND_ENDPOINT + "/builds/get/followed", {
-          params: {
-            token: userObject.token,
-          },
-        })
-        .then((res) => setFollowedData(res.data || []))
-        .catch((err) => {});
-    }
-  }, []);
 
   /*
    * TODO:
    *  - Edit and manage own builds
    *    - Markdown
+   *  - Sync files
+   *    - Favorites -> Syncs?
    *  - Favorite collections
    *  - Browse creators
    *  - Finish builds page filters, search
@@ -93,7 +83,11 @@ const Home = () => {
           </CardsRowView>
         </div>
         <div className="page-container">
-          <CardsGridView builds={followedData || []}>
+          <CardsGridView
+            builds={followedData || []}
+            error={followedError}
+            loading={followedLoading}
+          >
             <h2>{!!followedData ? "Followed creators" : messages.loading}</h2>
           </CardsGridView>
         </div>

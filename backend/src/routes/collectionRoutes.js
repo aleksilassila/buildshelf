@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const collectionRoutes = Router();
 const collectionsController = require("../controllers/collectionsController");
-const { auth } = require("../controllers/auth");
+const { auth, optionalAuth} = require("../controllers/auth");
 const { validateQuery, validateBody } = require("../utils");
 
 collectionRoutes.get(
@@ -21,6 +21,8 @@ collectionRoutes.get(
   }),
   collectionsController.getCollections
 );
+
+collectionRoutes.get("/collection/:collectionId", collectionsController.getCollection);
 
 collectionRoutes.post(
   "/collection/create",

@@ -3,7 +3,7 @@ const cors = require("cors");
 
 const tagsController = require("./src/controllers/tagsController");
 const categoriesController = require("./src/controllers/categoriesController");
-const { optionalAuth, login } = require("./src/controllers/auth");
+const { optionalAuth, login, loginClient} = require("./src/controllers/auth");
 
 const { sequelize } = require("./src/database");
 const { errors } = require("./src/client-error");
@@ -35,6 +35,7 @@ api.use(optionalAuth);
 api.get("/tags", tagsController.getTags);
 api.get("/categories", categoriesController.getCategories);
 api.post("/login", login);
+api.post("/login/token", loginClient)
 
 api.use(users);
 api.use(collections);

@@ -1,7 +1,7 @@
 import Auth from "../../utils/auth";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Collection } from "../../interfaces/Builds";
+import { Collection } from "../../interfaces/ApiResponses";
 import ModalContainer from "../../containers/ModalContainer";
 import messages from "../../constants/messages";
 import Status from "../statuses/Status";

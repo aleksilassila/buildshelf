@@ -1,4 +1,4 @@
-import { Collection } from "../interfaces/Builds";
+import { Collection } from "../interfaces/ApiResponses";
 import theme from "../constants/theme";
 import Heart from "./icons/Heart";
 import Link from "next/link";

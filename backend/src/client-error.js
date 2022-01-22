@@ -40,6 +40,7 @@ const errors = {
   USER_NOT_FOUND: new ClientError("USER_NOT_FOUND", 404),
   NOT_FOUND: new ClientError("NOT_FOUND", 404),
   BAD_REQUEST: new ClientError("BAD_REQUEST", 400),
+  UNAUTHORIZED: new ClientError("UNAUTHORIZED", 401),
 };
 
 module.exports = {

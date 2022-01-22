@@ -3,7 +3,9 @@ const { Op } = require("sequelize");
 const { Build, Collection, Tag } = require("../models/index");
 const { searchQueryBuilder, parseLitematic } = require("../utils");
 const { errors } = require("../client-error");
+const fs = require("fs");
 const validateJSON = require("jsonschema").validate;
+const crypto = require("crypto");
 
 const litematicSchema = {
   type: "object",
@@ -83,15 +85,19 @@ exports.create = async function (req, res) {
     }
   }
 
+  // Calculate build file hash
+  const hashSum = crypto.createHash("md5");
+  hashSum.update(fs.readFileSync(buildFile.path));
+
   const build = await Build.create({
     title,
     description,
-    buildFile: buildFile.filename,
     images,
     creatorUuid: req.user.uuid,
     collectionId: collectionId,
     category,
-    metadata: {
+    buildFile: {
+      filename: buildFile.filename,
       version: litematic.Version,
       minecraftDataVersion: litematic.MinecraftDataVersion,
       enclosingSize: {
@@ -100,7 +106,8 @@ exports.create = async function (req, res) {
         z: litematic.Metadata?.EnclosingSize?.z,
       },
       blockCount: litematic.Metadata?.TotalBlocks,
-    }
+      md5: hashSum.digest("hex"),
+    },
   });
 
   for (const name of tags) {
@@ -255,12 +262,12 @@ exports.favorite = async function (req, res) {
 
 exports.download = function (req, res) {};
 
-exports.save = async function (req, res) {
+exports.bookmark = async function (req, res) {
   const user = req.user;
   const { buildId } = req.params;
-  const addSave = req.body.save;
+  const addBookmark = req.body.bookmark;
 
-  if (buildId === null || isNaN(parseInt(buildId))) {
+  if (buildId === null) {
     res.status(400).send("Bad request");
     return;
   }
@@ -271,13 +278,13 @@ exports.save = async function (req, res) {
     },
   });
 
-  const isSaved = await user.hasSave(build);
+  const isSaved = await user.hasBookmark(build);
 
-  if (addSave && !isSaved) {
-    await user.addSave(build);
-  } else if (!addSave && isSaved) {
-    await user.removeSave(build);
+  if (addBookmark && !isSaved) {
+    await user.addBookmark(build);
+  } else if (!addBookmark && isSaved) {
+    await user.removeBookmark(build);
   }
 
-  res.send(addSave ? "Build saved" : "Build unsaved");
+  res.send(addBookmark ? "Build bookmarked" : "Bookmark removed");
 };

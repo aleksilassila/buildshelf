@@ -36,10 +36,7 @@ const CategoryBrowser = ({show, setShow, setCategory}) => {
   if (error) {
     return (
       <ModalContainer close={() => setShow(false)} splash>
-        <NetworkError>
-          <h2>{messages.errorTitle}</h2>
-          <p>Could not fetch categories.</p>
-        </NetworkError>
+        <NetworkError />
       </ModalContainer>
     );
   }

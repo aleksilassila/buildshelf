@@ -92,6 +92,23 @@ class MyDocument extends Document {
             .large-page-container {
               padding: 6rem 5vw;
             }
+            
+            .fullscreen {
+              width: 100vw;
+              height: 100vh;
+            }
+            
+            .markdown * {
+              color: ${theme.dark};
+            }
+            
+            .markdown a {
+              color: ${theme.layoutDark};
+            }
+            
+            .markdown p {
+              margin: revert;
+            }
           `}
         </style>
       </Html>

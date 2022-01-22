@@ -1,11 +1,12 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Auth from "../../utils/auth";
 import axios, { AxiosRequestConfig } from "axios";
 
 const useApi = <S>(
   uri: string,
   config: AxiosRequestConfig,
-  deps: any[]
+  deps: any[],
+  requiresAuth = false
 ): [
   data: S | null,
   loading: boolean,
@@ -21,7 +22,7 @@ const useApi = <S>(
   const userObject = Auth.getUser();
 
   const fetch = useCallback((_config = config) => {
-    if (values.loading) return;
+    if (values.loading || (userObject === null && requiresAuth)) return;
 
     setValues({ ...values, loading: true });
 
@@ -34,7 +35,7 @@ const useApi = <S>(
     })
       .then((res) => setValues({ ...values, data: res.data, loading: false }))
       .catch((error) => setValues({ ...values, loading: false, error }));
-  }, [uri].concat(deps));
+  }, [uri, userObject].concat(deps));
 
   useEffect(() => {
     if (

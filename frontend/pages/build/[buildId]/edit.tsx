@@ -1,6 +1,6 @@
 import TitleBar from "../../../components/bars/TitleBar";
-import useApi from "../../../components/hooks/api";
 import {useRouter} from "next/router";
+import {useApi} from "../../../components/hooks/api";
 
 const Edit = () => {
   const router = useRouter();

@@ -1,4 +1,4 @@
-import { Build } from "../../interfaces/Builds";
+import { Build } from "../../interfaces/ApiResponses";
 import ImageCollection from "../ImageCollection";
 import Separator from "../utils/Separator";
 import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";
@@ -9,9 +9,11 @@ import ModalContainer from "../../containers/ModalContainer";
 import Heart from "../icons/Heart";
 import Button from "../common/Button";
 import Link from "next/link";
-import useApi from "../hooks/api";
 import Loading from "../statuses/Loading";
 import NetworkError from "../statuses/NetworkError";
+import { useApi } from "../hooks/api";
+import TitleSubtitlePicture from "../TitleSubtitlePicture";
+import ReactMarkdown from "react-markdown";
 
 interface Props {
   buildId: number | string;
@@ -47,7 +49,11 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
 
   const Container = ({ children }) => {
     if (modal) {
-      return <ModalContainer close={close}>{children}</ModalContainer>;
+      return (
+        <ModalContainer externalUrl={"/build/" + buildId} close={close}>
+          {children}
+        </ModalContainer>
+      );
     } else {
       return <div className="medium-page-container">{children}</div>;
     }
@@ -72,25 +78,27 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
   return (
     <Container>
       <div className="build-title">
-        <div className="creator-profile">
-          <img
-            src={
-              build.creator &&
-              "https://crafatar.com/avatars/" + build.creator.uuid
-            }
-            alt={build.creator?.username}
-            className="profile-picture"
-          />
-          <div className="creator-profile-content">
-            <h2>{build.title}</h2>
+        <TitleSubtitlePicture
+          title={build.title}
+          subtitle={
             <span>
-              By{" "}
+              Litematic by{" "}
               <a href={"/user/" + build.creator?.uuid} className="username">
                 {build.creator?.username}
               </a>
             </span>
-          </div>
-        </div>
+          }
+          picture={
+            <img
+              src={
+                build.creator &&
+                "https://crafatar.com/avatars/" + build.creator.uuid
+              }
+              alt={build.creator?.username}
+              className="profile-picture"
+            />
+          }
+        />
         <div className="build-actions">
           {userObject?.uuid === build.creator.uuid ? (
             <Link href={"/build/" + build.id + "/edit"}>
@@ -111,8 +119,10 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
       <ImageCollection images={build.images} />
       {Separator}
       <div className="build-details">
-        <span>{build.description}</span>
-        <div>
+        <div className="build-description markdown">
+          <ReactMarkdown>{build.description}</ReactMarkdown>
+        </div>
+        <div className="build-info">
           <span>{new Date(build.createdAt).toDateString()}</span>
         </div>
       </div>
@@ -166,15 +176,23 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
           }
 
           .build-details {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            //display: flex;
+            //flex-direction: row;
+            //flex-wrap: wrap;
+            //justify-content: space-between;
           }
-
-          .build-details > * {
-            min-width: 230px;
+          
+          .build-description {
+            min-width: 300px;
+            max-width: 600px;
             flex: 1 1 0;
             margin: 0 1em;
+          }
+          
+          .build-info {
+          
           }
         `}
       </style>

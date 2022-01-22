@@ -1,6 +1,7 @@
 const { Collection, Build } = require("../models/index");
 const { Op } = require("sequelize");
 const { searchQueryBuilder } = require("../utils");
+const {errors} = require("../client-error");
 
 exports.getCollections = async function (req, res) {
   const { category, name, sort, uuid } = req.query;
@@ -38,6 +39,23 @@ exports.getCollections = async function (req, res) {
 
   res.send(await Promise.all(collections.map(c => c.toJSON())));
 };
+
+exports.getCollection = async function (req, res) {
+  const { collectionId } = req.params;
+
+  const collection = await Collection.findOne({
+    where: {
+      id: collectionId,
+    },
+    include: ["builds", "creator"],
+  }).catch((err) => {});
+
+  if (!collection) {
+    errors.NOT_FOUND.send(res, "Collection not found");
+    return;
+  }
+  res.send(await collection.toJSON(req.user));
+}
 
 exports.createCollection = async function (req, res) {
   const { name, description } = req.body;

@@ -5,8 +5,9 @@ const multer = require("multer");
 const config = require("../config");
 const { validateQuery, validateBody } = require("../utils");
 const path = require("path");
-const fs = require('fs')
-const { parse, writeUncompressed } = require('prismarine-nbt')
+const fs = require("fs");
+const { parse, writeUncompressed } = require("prismarine-nbt");
+const { bookmark } = require("../controllers/buildsController");
 
 const buildRoutes = Router();
 
@@ -122,7 +123,17 @@ buildRoutes.post(
   }),
   buildsController.favorite
 );
-// buildRoutes.post("/build/:buildId/save", auth, buildsController.save);
-// buildRoutes.get("/build/:buildId/download", auth, buildsController.download);
+buildRoutes.post(
+  "/build/:buildId/bookmark",
+  auth,
+  validateBody({
+    type: "object",
+    properties: {
+      bookmark: { type: "boolean" },
+    },
+    required: ["bookmark"],
+  }),
+  buildsController.bookmark
+);
 
 module.exports = buildRoutes;

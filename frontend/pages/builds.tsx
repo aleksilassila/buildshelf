@@ -5,7 +5,7 @@ import { useState } from "react";
 import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
 import { useApiFeed } from "../components/hooks/api";
-import { Build } from "../interfaces/Builds";
+import { Build } from "../interfaces/ApiResponses";
 import {
   SortingBar,
   SortingBarLeft,

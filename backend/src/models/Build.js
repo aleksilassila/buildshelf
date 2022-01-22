@@ -4,7 +4,7 @@ const { sequelize } = require("../database");
 const Build = sequelize.define("build", {
   title: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.TEXT, allowNull: false },
-  buildFile: { type: DataTypes.STRING, allowNull: false },
+  buildFile: { type: DataTypes.JSONB, allowNull: false },
   images: DataTypes.ARRAY(DataTypes.STRING),
   totalDownloads: {
     type: DataTypes.INTEGER,
@@ -16,10 +16,6 @@ const Build = sequelize.define("build", {
     defaultValue: 0,
     allowNull: false,
   },
-  metadata: {
-    type: DataTypes.JSONB,
-    allowNull: false,
-  }
 });
 
 Build.prototype.countTotalFavorites = function () {

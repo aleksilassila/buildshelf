@@ -1,7 +1,7 @@
 import Dropdown from "../common/Dropdown";
 import { useState } from "react";
 import Input from "../common/Input";
-import { Category } from "../../interfaces/Builds";
+import { Category } from "../../interfaces/ApiResponses";
 import SearchIcon from "../icons/SearchIcon";
 import { useApi } from "../hooks/api";
 

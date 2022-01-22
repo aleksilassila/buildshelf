@@ -1,5 +1,5 @@
 import theme from "../constants/theme";
-import { Build } from "../interfaces/Builds";
+import { Build } from "../interfaces/ApiResponses";
 import Heart from "./icons/Heart";
 
 interface Props {

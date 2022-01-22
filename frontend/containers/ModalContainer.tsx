@@ -1,7 +1,14 @@
 import CloseIcon from "../components/icons/CloseIcon";
 import theme from "../constants/theme";
+import ExternalLink from "../components/icons/ExternalLink";
+import Link from "next/link";
 
-const ModalContainer = ({ children, close, splash = false }) => (
+const ModalContainer = ({
+  children,
+  close,
+  externalUrl = null,
+  splash = false,
+}) => (
   <div className="container" onClick={close}>
     <div className="content" onClick={(e) => e.stopPropagation()}>
       {/*<div className="close"><Button onClick={close}>Back</Button></div>*/}
@@ -9,6 +16,13 @@ const ModalContainer = ({ children, close, splash = false }) => (
       <div className="close" onClick={close}>
         <CloseIcon />
       </div>
+      {!!externalUrl ? (
+        <div className="openInNewTab">
+          <Link href={externalUrl}>
+            <a><ExternalLink /></a>
+          </Link>
+        </div>
+      ) : null}
     </div>
     <style jsx>{`
       .container {
@@ -37,10 +51,19 @@ const ModalContainer = ({ children, close, splash = false }) => (
       .close {
         cursor: pointer;
         position: absolute;
-        top: 0.4em;
-        right: 0.5em;
+        top: 0.4rem;
+        right: 0.8rem;
         color: ${theme.lightLowContrast};
-        font-size: 1.3em;
+        font-size: 1.3rem;
+      }
+
+      .openInNewTab {
+        cursor: pointer;
+        position: absolute;
+        top: 0.5rem;
+        right: 2.4rem;
+        color: ${theme.lightLowContrast};
+        font-size: 1.1rem;
       }
 
       @media screen and (max-width: 900px) {

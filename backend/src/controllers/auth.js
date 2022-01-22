@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const { User } = require("../models/index");
+const { errors } = require("../client-error");
 
 exports.auth = async function (req, res, next) {
   if (!req.user) {
@@ -72,7 +73,7 @@ exports.login = async function (req, res) {
 
   if (response?.status === 200 && user && profile) {
     const [localUser] = await User.findOrCreate({
-      where: { username: profile.name },
+      where: { uuid: profile.id },
       defaults: {
         username: profile.name,
         remoteId: user.id,
@@ -81,18 +82,53 @@ exports.login = async function (req, res) {
     });
 
     res.send(
-      signToken({
-        username: localUser.username,
-        uuid: localUser.uuid,
-      })
+      signToken(localUser.username, localUser.uuid)
     );
   } else {
     res.status(403).send("Invalid credentials");
   }
 };
 
-const signToken = function (payload) {
-  return jwt.sign(payload, "secret");
+exports.loginClient = async (req, res) => {
+  const { accessToken } = req.body;
+  const uuid = req.body.uuid?.replace("-", "");
+
+  // Validate if accessToken and uuid combination is valid
+  const response = await axios
+    .post("https://sessionserver.mojang.com/session/minecraft/join", {
+      accessToken,
+      selectedProfile: uuid,
+    })
+    .catch((err) => err.response);
+
+  if (response.status !== 204) {
+    errors.UNAUTHORIZED.send(res);
+    return;
+  }
+
+  const username = await axios
+    .get("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid)
+    .then((res) => res.data?.name)
+    .catch((err) => {});
+
+  if (!username) {
+    errors.SERVER_ERROR.send(res);
+    return;
+  }
+
+  const [localUser] = await User.findOrCreate({
+    where: { uuid },
+    defaults: {
+      username,
+      uuid,
+    },
+  });
+
+  res.send(signToken(localUser.username, localUser.uuid));
+};
+
+const signToken = function (username, uuid) {
+  return jwt.sign({username, uuid}, "secret");
 };
 
 const verifyToken = function (token) {

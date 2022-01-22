@@ -7,7 +7,7 @@ const { Build } = require("./Build");
 const { UserFollows } = require("./junctions/UserFollows");
 
 // Define empty junction tables
-const UserSaves = sequelize.define("userSaves", {}, {
+const UserBookmarks = sequelize.define("userBookmarks", {}, {
   timestamps: false,
 });
 
@@ -33,7 +33,7 @@ User.belongsToMany(Build, {
 User.hasMany(Build, { as: "builds", foreignKey: "creatorUuid" });
 Build.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });
 
-User.belongsToMany(Build, { through: UserSaves, as: "saves" });
+User.belongsToMany(Build, { through: UserBookmarks, as: "bookmarks" });
 
 Collection.hasMany(Build);
 Build.belongsTo(Collection);

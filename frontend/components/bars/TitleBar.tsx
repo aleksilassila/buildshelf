@@ -41,16 +41,16 @@ const TitleBar = ({ active = null, dim = false }) => {
               Collections
             </div>
           </Link>
-          <Link href="/creators">
-            <div className={`${active === "creators" && "active"} clickable`}>
-              Creators
-            </div>
-          </Link>
-          <Link href="/about">
-            <div className={`${active === "about" && "active"} clickable`}>
-              About
-            </div>
-          </Link>
+          {/*<Link href="/creators">*/}
+          {/*  <div className={`${active === "creators" && "active"} clickable`}>*/}
+          {/*    Creators*/}
+          {/*  </div>*/}
+          {/*</Link>*/}
+          {/*<Link href="/about">*/}
+          {/*  <div className={`${active === "about" && "active"} clickable`}>*/}
+          {/*    About*/}
+          {/*  </div>*/}
+          {/*</Link>*/}
           {userObject?.username ? (
             <Link href="/upload">
               <div className={`${active === "upload" && "active"} clickable`}>

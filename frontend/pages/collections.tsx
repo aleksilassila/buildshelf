@@ -6,7 +6,7 @@ import theme from "../constants/theme";
 import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
 import { useApiFeed } from "../components/hooks/api";
-import { Collection } from "../interfaces/Builds";
+import { Collection } from "../interfaces/ApiResponses";
 import {
   SortingBar,
   SortingBarLeft,

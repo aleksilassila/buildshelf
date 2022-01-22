@@ -19,7 +19,7 @@ module.exports = {
           description: "A beautiful medieval town.",
           creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
           totalFavorites: 0,
-          image: "1.jpg",
+          image: ["1.jpg"],
           createdAt: new Date(),
           updatedAt: new Date(),
         },

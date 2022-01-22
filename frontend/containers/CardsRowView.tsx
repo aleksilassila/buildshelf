@@ -1,5 +1,5 @@
 import BuildCard from "../components/BuildCard";
-import { Build } from "../interfaces/Builds";
+import { Build } from "../interfaces/ApiResponses";
 import BuildPage from "../components/modals/BuildPage";
 import { useState } from "react";
 import theme from "../constants/theme";

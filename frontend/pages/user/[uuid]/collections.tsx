@@ -1,9 +1,9 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
-import useApi from "../../../components/hooks/api";
-import {Collection} from "../../../interfaces/Builds";
+import {Collection} from "../../../interfaces/ApiResponses";
 import {useRouter} from "next/router";
 import ListView from "../../../containers/ListView";
 import CollectionCard from "../../../components/CollectionCard";
+import {useApi} from "../../../components/hooks/api";
 
 const Collections = () => {
   const router = useRouter();
@@ -17,9 +17,9 @@ const Collections = () => {
 
   return (
     <ProfilePage tabName="collections" count={collections?.length}>
-      <ListView>
+      <ListView loading={loading} error={error}>
         {(collections || []).map((item, index) => (
-          <CollectionCard key={index} collection={item}/>
+          <CollectionCard key={index} collection={item} />
         ))}
       </ListView>
     </ProfilePage>
