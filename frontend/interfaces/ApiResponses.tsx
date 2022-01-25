@@ -20,21 +20,33 @@ export interface Build {
   id: number;
   title: string;
   description: string;
-  buildFile: string;
+  buildFile: {
+    filename: string,
+    version: number,
+    minecraftDataVersion: number,
+    enclosingSize: {
+      x: number,
+      y: number,
+      z: number,
+    },
+    blockCount: number,
+    md5: string,
+  };
   images: string[];
   totalDownloads: number;
-  totalFavorites: number;
+  totalSaves: number;
   creator?: User;
   tags: Tag[];
   category: Category;
   collection?: Collection;
   createdAt: string;
-  isFavorite?: boolean;
+  updatedAt: string;
+  isSaved?: boolean;
 }
 
 export interface User {
   username: string;
   uuid: string;
-  favorites?: Build[];
+  saves?: Build[];
   follows?: User[];
 }

@@ -55,7 +55,7 @@ const Home = () => {
       <div className="introduction">
         <h2>The most ambitious Minecraft build library at your hands</h2>
         <p>
-          Litematica Library is a place to store, share and browse all kinds on
+          Litematica Library is a place to find, store and share all kinds of
           Minecraft builds and projects. You can download Litematica mod{" "}
           <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">
             here

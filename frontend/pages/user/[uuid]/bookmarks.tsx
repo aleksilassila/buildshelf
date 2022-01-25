@@ -1,25 +1,24 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
 import CardsGridView from "../../../containers/CardsGridView";
+import {useApi} from "../../../components/hooks/api";
 import {Build} from "../../../interfaces/ApiResponses";
 import {useRouter} from "next/router";
-import {useApi} from "../../../components/hooks/api";
 
-const Favorites = () => {
+const Saves = () => {
   const router = useRouter();
   const { uuid } = router.query;
 
   const [builds, loading, error] = useApi<Build[]>(
-    "/user/" + uuid + "/favorites",
+    "/user/" + uuid + "/bookmarks",
     { params: { uuid } },
-    [uuid]
+    [uuid], true
   );
 
   return (
-    <ProfilePage tabName="favorites" count={builds?.length}>
+    <ProfilePage tabName="bookmarks" count={builds?.length}>
       <CardsGridView builds={builds || []} error={error} loading={loading} />
     </ProfilePage>
   );
 };
 
-
-export default Favorites;
+export default Saves;

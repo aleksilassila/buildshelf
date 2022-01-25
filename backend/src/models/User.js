@@ -18,8 +18,8 @@ User.prototype.toJSON = async function (user = null) {
   return {
     username: this.username,
     uuid: this.uuid,
-    favorites: this.favoriteBuilds
-      ? await Promise.all(this.favoriteBuilds.map((b) => b.toJSON()))
+    saves: this.savedBuilds
+      ? await Promise.all(this.savedBuilds.map((b) => b.toJSON()))
       : undefined,
     follows: this.follows
       ? await Promise.all(this.follows.map((u) => u.toJSON()))

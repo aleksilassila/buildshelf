@@ -15,19 +15,19 @@ const BuildTags = sequelize.define("buildTags", {}, {
   timestamps: false,
 });
 
-const UserFavoriteCollections = sequelize.define("userFavoriteCollections", {}, {
+const UserCollectionBookmarks = sequelize.define("userCollectionBookmarks", {}, {
   timestamps: false,
 });
 
-const UserFavoriteBuilds = sequelize.define("userFavoriteBuilds", {}, {
+const UserSavedBuilds = sequelize.define("userSavedBuilds", {}, {
   timestamps: false,
 });
 
 // User.belongsToMany(Build, { through: "userFavorites", as: "favorites" });
 // Build.belongsToMany(User, { through: "userFavoriteBuilds", as: "favoriteBuilds" });
 User.belongsToMany(Build, {
-  through: UserFavoriteBuilds,
-  as: "favoriteBuilds",
+  through: UserSavedBuilds,
+  as: "savedBuilds",
 });
 
 User.hasMany(Build, { as: "builds", foreignKey: "creatorUuid" });
@@ -60,8 +60,8 @@ User.belongsToMany(User, {
 // User.belongsToMany(Collection, { through: "userFavoriteCollections", as: "favoriteCollections" });
 // Collection.belongsToMany(User, { through: "userFavoriteCollections", as: "favoriteCollections" });
 User.belongsToMany(Collection, {
-  through: UserFavoriteCollections,
-  as: "favoriteCollections",
+  through: UserCollectionBookmarks,
+  as: "collectionBookmarks",
 });
 
 module.exports = {

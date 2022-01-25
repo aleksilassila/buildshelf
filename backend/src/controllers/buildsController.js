@@ -165,7 +165,7 @@ exports.getBuilds = async function (req, res) {
   if (sort === "new") {
     searchQuery.order = [["createdAt", "DESC"]];
   } else if (sort === "top") {
-    searchQuery.order = [["totalFavorites", "DESC"]];
+    searchQuery.order = [["totalSaves", "DESC"]];
   }
 
   const builds = await Build.findAll({
@@ -187,25 +187,40 @@ exports.getBuilds = async function (req, res) {
 
 exports.getFollowedBuilds = async function (req, res) {
   const user = req.user;
+  const follows = (await user.getFollows()).map(u => u.uuid);
 
-  let builds = [];
-
-  (
-    await user.getFollows({
-      attributes: [],
-      include: ["builds"],
-    })
-  ).map((user) => (builds = builds.concat(user.builds)));
-
-  builds = builds.sort(function (b1, b2) {
-    return b1.uploadedAt < b2.uploadedAt
-      ? -1
-      : b1.uploadedAt > b2.uploadedAt
-      ? 1
-      : 0;
+  const builds = await Build.findAll({
+    order: [["createdAt", "DESC"]],
+    include: {
+      model: User,
+      as: "creator",
+      where: {
+        uuid: { [Op.in]: follows },
+      },
+    },
   });
 
-  res.send(await Promise.all(builds.map((build) => build.toJSON(req.user))));
+  res.send(await Promise.all(builds.map((b) => b.toJSON(req.user))));
+
+  //
+  // let builds = [];
+  //
+  // (
+  //   await user.getFollows({
+  //     attributes: [],
+  //     include: ["builds"],
+  //   })
+  // ).map((user) => (builds = builds.concat(user.builds)));
+  //
+  // builds = builds.sort(function (b1, b2) {
+  //   return b1.uploadedAt < b2.uploadedAt
+  //     ? -1
+  //     : b1.uploadedAt > b2.uploadedAt
+  //     ? 1
+  //     : 0;
+  // });
+  //
+  // res.send(await Promise.all(builds.map((build) => build.toJSON(req.user))));
 };
 
 exports.getBuild = async function (req, res) {
@@ -219,16 +234,17 @@ exports.getBuild = async function (req, res) {
   }).catch((err) => {});
 
   if (!build) {
-    res.status(404).send("Build not found");
+    errors.NOT_FOUND.send(res, "Build not found");
     return;
   }
+
   res.send(await build.toJSON(req.user));
 };
 
-exports.favorite = async function (req, res) {
+exports.save = async function (req, res) {
   const user = req.user;
   const { buildId } = req.params;
-  const addFavorite = req.body.favorite;
+  const shouldSave = req.body.save;
 
   const build = await Build.findOne({
     where: {
@@ -237,27 +253,23 @@ exports.favorite = async function (req, res) {
   }).catch((err) => {});
 
   if (!build) {
-    res.status(404).send("Build not found");
+    errors.NOT_FOUND.send(res, "Build not found");
     return;
   }
 
-  const inFavorites = await user.hasFavoriteBuild(build);
+  const isSaved = await user.hasSavedBuild(build);
 
-  if (addFavorite && !inFavorites) {
-    await user.addFavoriteBuild(build);
-  } else if (!addFavorite && inFavorites) {
-    await user.removeFavoriteBuild(build);
+  if (shouldSave && !isSaved) {
+    await user.addSavedBuild(build);
+  } else if (!shouldSave && isSaved) {
+    await user.removeSavedBuild(build);
   }
 
   // await build.save();
 
-  await build.updateTotalFavorites();
+  await build.updateTotalSaves();
 
-  res
-    .status(200)
-    .send(
-      addFavorite ? "Build added to favorites" : "Build removed from favorites"
-    );
+  res.status(200).send(shouldSave ? "Build saved" : "Build unsaved");
 };
 
 exports.download = function (req, res) {};

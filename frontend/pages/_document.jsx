@@ -109,6 +109,10 @@ class MyDocument extends Document {
             .markdown p {
               margin: revert;
             }
+            
+            .margin-bottom {
+              margin-bottom: 0.5rem;
+            }
           `}
         </style>
       </Html>

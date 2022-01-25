@@ -19,14 +19,14 @@ const ProfileNavBar = ({ user, isOwnProfile }: Props) => {
           <a>Profile</a>
         </Link>
         <Link href={"/user/" + user.uuid + "/builds"}>
-          <a>{isOwnProfile ? "Your Builds" : "Builds 40"}</a>
+          <a>{isOwnProfile ? "Your Builds" : "Builds"}</a>
         </Link>
-        <Link href={"/user/" + user.uuid + "/favorites"}>
-          <a>Favorite Builds</a>
+        <Link href={"/user/" + user.uuid + "/saves"}>
+          <a>Saved Builds</a>
         </Link>
         {isOwnProfile && (
-          <Link href={"/user/" + user.uuid + "/saved"}>
-            <a>Saved Builds</a>
+          <Link href={"/user/" + user.uuid + "/bookmarks"}>
+            <a>Bookmarks</a>
           </Link>
         )}
       </div>

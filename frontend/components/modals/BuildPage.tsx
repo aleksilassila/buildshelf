@@ -14,6 +14,8 @@ import NetworkError from "../statuses/NetworkError";
 import { useApi } from "../hooks/api";
 import TitleSubtitlePicture from "../TitleSubtitlePicture";
 import ReactMarkdown from "react-markdown";
+import theme from "../../constants/theme";
+import minecraftDataVersions from "../../constants/minecraftDataVersions";
 
 interface Props {
   buildId: number | string;
@@ -28,18 +30,18 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
     buildId,
   ]);
 
-  const [FBData, setFBData] = useState({
+  const [SBData, setSBData] = useState({
     active: true,
-    isBuildFavorite: false,
-    favoriteCount: 0,
+    isBuildSaved: false,
+    saveCount: 0,
   });
 
   useEffect(() => {
     if (loading || error) return;
-    setFBData({
-      favoriteCount: build.totalFavorites,
+    setSBData({
       active: false,
-      isBuildFavorite: build.isFavorite,
+      saveCount: build.totalSaves,
+      isBuildSaved: build.isSaved,
     });
   }, [build]);
 
@@ -74,6 +76,9 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
       </Container>
     );
   }
+  const mdv = build?.buildFile?.minecraftDataVersion;
+  const minecraftDataVersionString =
+    mdv in minecraftDataVersions ? "(" + minecraftDataVersions[mdv] + ")" : "";
 
   return (
     <Container>
@@ -107,10 +112,10 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
               </Button>
             </Link>
           ) : userObject ? (
-            <FavoriteButton
+            <SaveButton
               buildId={buildId}
-              fbData={FBData}
-              setFBData={setFBData}
+              sbData={SBData}
+              setSBData={setSBData}
             />
           ) : null}
         </div>
@@ -118,12 +123,27 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
       {Separator}
       <ImageCollection images={build.images} />
       {Separator}
-      <div className="build-details">
+      <div className="build-info">
         <div className="build-description markdown">
           <ReactMarkdown>{build.description}</ReactMarkdown>
         </div>
-        <div className="build-info">
-          <span>{new Date(build.createdAt).toDateString()}</span>
+        <div className="info-separator">{Separator}</div>
+        <div className="build-details">
+          <h3 className="margin-bottom">Build Details</h3>
+          <div>Total saves: {build.totalSaves}</div>
+          <div>Block count: {build?.buildFile?.blockCount}</div>
+          <div>
+            Build dimensions: {build?.buildFile?.enclosingSize?.x}x
+            {build?.buildFile?.enclosingSize?.y}x
+            {build?.buildFile?.enclosingSize?.z}
+          </div>
+          <div>Litematic version: {build?.buildFile?.version}</div>
+          <div>
+            Minecraft data version: {build?.buildFile?.minecraftDataVersion}{" "}
+            {minecraftDataVersionString}
+          </div>
+          <div>Created: {new Date(build?.createdAt).toDateString()}</div>
+          <div>Updated: {new Date(build?.updatedAt).toDateString()}</div>
         </div>
       </div>
       <style jsx>
@@ -175,24 +195,53 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
             margin-bottom: 0.5em;
           }
 
-          .build-details {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
+          .build-info {
+            display: flex;
+            flex-wrap: wrap;
             //display: flex;
             //flex-direction: row;
             //flex-wrap: wrap;
             //justify-content: space-between;
           }
-          
+
           .build-description {
-            min-width: 300px;
+            min-width: 450px;
             max-width: 600px;
-            flex: 1 1 0;
+            flex: 2 2 0;
             margin: 0 1em;
           }
+
+          .build-details {
+            flex: 1 1 0;
+            border: 1px solid ${theme.lightLowContrast};
+            background-color: ${theme.lightHighContrast};
+            padding: 1em;
+            border-radius: 4px;
+            height: fit-content;
+            min-width: 300px;
+          }
+
+          .build-details > div {
+            color: ${theme.darkLowContrast};
+            font-weight: 500;
+          }
+
+          .info-separator {
+            display: none;
+          }
           
-          .build-info {
-          
+          @media screen and (max-width: 750px) {  
+            .build-info {
+              flex-direction: column;
+            }
+            
+            .build-info > * {
+              min-width: 0;
+            }
+            
+            .info-separator {
+              display: block;
+            }
           }
         `}
       </style>
@@ -200,62 +249,56 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
   );
 };
 
-const FavoriteButton = ({ buildId, fbData, setFBData }) => {
+const SaveButton = ({ buildId, sbData, setSBData }) => {
   const userObject = Auth.getUser();
 
-  const addToFavorites = () => {
-    if (fbData.active) return;
+  const saveBuild = () => {
+    if (sbData.active) return;
 
-    setFBData({ active: true, ...fbData });
+    setSBData({ active: true, ...sbData });
 
     axios
       .post(
-        process.env.BACKEND_ENDPOINT + `/build/${buildId}/favorite`,
+        process.env.BACKEND_ENDPOINT + `/build/${buildId}/save`,
         {
-          favorite: !fbData.isBuildFavorite,
+          save: !sbData.isBuildSaved,
         },
         { params: { token: userObject.token } }
       )
       .then((res) => {
-        const newFavoriteCount =
-          fbData.favoriteCount + (!fbData.isBuildFavorite ? 1 : -1);
+        const newSaveCount = sbData.saveCount + (!sbData.isBuildSaved ? 1 : -1);
 
-        setFBData({
+        setSBData({
           active: false,
-          isBuildFavorite:
-            res.status === 200
-              ? !fbData.isBuildFavorite
-              : fbData.isBuildFavorite,
-          favoriteCount:
-            res.status === 200 ? newFavoriteCount : fbData.favoriteCount,
+          isBuildSaved:
+            res.status === 200 ? !sbData.isBuildSaved : sbData.isBuildSaved,
+          saveCount: res.status === 200 ? newSaveCount : sbData.saveCount,
         });
       })
-      .catch((err) => setFBData({ active: false, ...fbData }));
+      .catch((err) => setSBData({ active: false, ...sbData }));
   };
 
-  const favoriteButtonData: MultipleButtonData[] = [
+  const saveButtonData: MultipleButtonData[] = [
     {
       content: (
         <span style={{ fontWeight: 600 }}>
-          <Heart /> {fbData.favoriteCount}
+          <Heart /> {sbData.saveCount}
         </span>
       ),
       unclickable: true,
-      active: fbData.isBuildFavorite,
+      active: sbData.isBuildSaved,
     },
     {
       content: (
-        <span onClick={addToFavorites}>
-          {fbData.isBuildFavorite
-            ? "Remove from favorites"
-            : "Add to favorites"}
+        <span onClick={saveBuild}>
+          {sbData.isBuildSaved ? "Unsave build" : "Save build"}
         </span>
       ),
-      active: fbData.active,
+      active: sbData.active,
     },
   ];
 
-  return <MultipleButton data={favoriteButtonData} />;
+  return <MultipleButton data={saveButtonData} />;
 };
 
 export default BuildPage;

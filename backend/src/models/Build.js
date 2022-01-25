@@ -1,42 +1,58 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, NOW } = require("sequelize");
 const { sequelize } = require("../database");
 
-const Build = sequelize.define("build", {
-  title: { type: DataTypes.STRING, allowNull: false },
-  description: { type: DataTypes.TEXT, allowNull: false },
-  buildFile: { type: DataTypes.JSONB, allowNull: false },
-  images: DataTypes.ARRAY(DataTypes.STRING),
-  totalDownloads: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
-    allowNull: false,
+const Build = sequelize.define(
+  "build",
+  {
+    title: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT, allowNull: false },
+    buildFile: { type: DataTypes.JSONB, allowNull: false },
+    images: DataTypes.ARRAY(DataTypes.STRING),
+    totalDownloads: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
+    },
+    totalSaves: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: NOW,
+    },
   },
-  totalFavorites: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
-    allowNull: false,
-  },
-});
+  { timestamps: false }
+);
 
-Build.prototype.countTotalFavorites = function () {
-  return sequelize.model("userFavoriteBuilds").count({
+Build.prototype.countTotalSaves = function () {
+  return sequelize.model("userSavedBuilds").count({
     where: {
       buildId: this.id,
     },
   });
 };
 
-Build.prototype.updateTotalFavorites = async function () {
-  this.totalFavorites = await this.countTotalFavorites();
+Build.prototype.updateTotalSaves = async function () {
+  this.totalSaves = await this.countTotalSaves();
   await this.save();
 };
 
 Build.prototype.toJSON = async function (user = null) {
-  let isFavorite = user
-    ? !!(await user.getFavoriteBuilds({
-        attributes: ["id"],
-        where: { id: this.id },
-      }))?.length
+  let isSaved = user
+    ? !!(
+        await user.getSavedBuilds({
+          attributes: ["id"],
+          where: { id: this.id },
+        })
+      )?.length
     : undefined;
 
   return {
@@ -46,13 +62,14 @@ Build.prototype.toJSON = async function (user = null) {
     buildFile: this.buildFile,
     images: this.images,
     totalDownloads: this.totalDownloads,
-    totalFavorites: this.totalFavorites,
+    totalSaves: this.totalSaves,
     creator: this.creator ? await this.creator.toJSON() : undefined,
     category: await this.getCategory(),
     tags: await this.getTags(),
     collection: this.collection ? await this.collection.toJSON() : undefined,
     createdAt: this.createdAt,
-    isFavorite,
+    updatedAt: this.updatedAt,
+    isSaved,
   };
 };
 

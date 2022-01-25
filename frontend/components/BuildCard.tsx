@@ -47,7 +47,7 @@ const BuildCard = ({ build, openBuild }: Props) => {
           <span className="creator">{build.creator?.username}</span>
         </a>
         <span className="favorites">
-          <Heart /> {build.totalFavorites}
+          <Heart /> {build.totalSaves}
         </span>
         <div className="description-container">
           <span className="description">
@@ -116,7 +116,7 @@ const BuildCard = ({ build, openBuild }: Props) => {
 
           .favorites {
             font-weight: 600;
-            color: ${theme.lightLowContrast};
+            color: ${build.isSaved ? theme.layout : theme.lightLowContrast};
           }
 
           .description-container {

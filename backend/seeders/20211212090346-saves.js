@@ -11,7 +11,7 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    await queryInterface.bulkInsert('userFavoriteBuilds',
+    await queryInterface.bulkInsert('userSavedBuilds',
       [
         {
           userUuid: "f2cc1eadd681243467e4e11476c27df2",
@@ -28,7 +28,7 @@ module.exports = {
       ], {});
 
     await queryInterface.bulkUpdate('builds', {
-        totalFavorites: 1,
+        totalSaves: 1,
     }, { id: [99991, 99992, 99993] });
   },
 
@@ -39,7 +39,7 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    await queryInterface.bulkDelete('userFavoriteBuilds', {
+    await queryInterface.bulkDelete('userSavedBuilds', {
         userUuid: "f2cc1eadd681243467e4e11476c27df2",
         buildId: [99991, 99992, 99993]
     }, {});

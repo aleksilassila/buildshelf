@@ -10,6 +10,7 @@ const Separator = (
           margin: 1em 0;
           border-radius: 20px;
           width: auto;
+          flex-shrink: 0;
         }
       `}
     </style>

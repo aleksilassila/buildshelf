@@ -5,8 +5,8 @@ const userController = require("../controllers/userController");
 const {validateBody} = require("../utils");
 
 userRoutes.get("/user/:uuid", userController.getUser);
-userRoutes.get("/user/:uuid/favorites", userController.getUserFavorites);
-// userRoutes.get("/user/:uuid/saves", auth, userController.getUserSaves);
+userRoutes.get("/user/:uuid/saves", userController.getSaves);
+userRoutes.get("/user/:uuid/bookmarks", auth, userController.getBookmarks);
 userRoutes.post("/user/:uuid/follow", auth,   validateBody({
     type: "object",
     properties: {

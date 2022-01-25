@@ -31,7 +31,7 @@ const ProfilePage = ({
   bannerUrl = null,
   children,
 }: {
-  tabName?: "profile" | "favorites" | "collections";
+  tabName?: "profile" | "saves" | "collections" | "bookmarks";
   count?: number;
   bannerUrl?: string;
   children?: JSX.Element;
@@ -173,7 +173,7 @@ const ProfilePage = ({
 interface ProfileNavBarProps {
   user: User;
   isOwnProfile: boolean;
-  tabName?: "profile" | "favorites" | "collections";
+  tabName?: "profile" | "saves" | "collections" | "bookmarks";
   count: number;
 }
 
@@ -197,11 +197,17 @@ const ProfileNavBar = ({
           Collections {getCount("collections")}
         </div>
       </Link>
-      <Link href={"/user/" + user.uuid + "/favorites"}>
-        <div className={`${tabName === "favorites" && "active"} item`}>
-          Favorites {getCount("favorites")}
+      <Link href={"/user/" + user.uuid + "/saves"}>
+        <div className={`${tabName === "saves" && "active"} item`}>
+          Saves {getCount("saves")}
         </div>
       </Link>
+
+      {isOwnProfile ? <Link href={"/user/" + user.uuid + "/bookmarks"}>
+        <div className={`${tabName === "bookmarks" && "active"} item`}>
+          Saves {getCount("bookmarks")}
+        </div>
+      </Link> : null}
       <style jsx>
         {`
           .profile-bar {

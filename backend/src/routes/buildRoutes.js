@@ -112,16 +112,16 @@ buildRoutes.get(
 
 buildRoutes.get("/build/:buildId", buildsController.getBuild);
 buildRoutes.post(
-  "/build/:buildId/favorite",
+  "/build/:buildId/save",
   auth,
   validateBody({
     type: "object",
     properties: {
-      favorite: { type: "boolean" },
+      save: { type: "boolean" },
     },
-    required: ["favorite"],
+    required: ["save"],
   }),
-  buildsController.favorite
+  buildsController.save
 );
 buildRoutes.post(
   "/build/:buildId/bookmark",

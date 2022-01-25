@@ -95,14 +95,19 @@ const TitleBar = ({ active = null, dim = false }) => {
             Collections
           </div>
         </a>
-        <a href={"/user/" + userObject?.uuid + "/favorites"}>
+        <a href={"/user/" + userObject?.uuid + "/saves"}>
           <div className={`${active === "favorites" && "active"} clickable`}>
-            Favorites
+            Saves
+          </div>
+        </a>
+        <a href={"/user/" + userObject?.uuid + "/bookmarks"}>
+          <div className={`${active === "bookmarks" && "active"} clickable`}>
+            Bookmarks
           </div>
         </a>
         <div
           onClick={logOut}
-          className={`${active === "" && "active"} clickable`}
+          className="clickable"
         >
           Log out
         </div>

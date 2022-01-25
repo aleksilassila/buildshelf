@@ -7,6 +7,7 @@ import {useRouter} from "next/router";
 import Loading from "../../components/statuses/Loading";
 import NetworkError from "../../components/statuses/NetworkError";
 import ImageCollection from "../../components/ImageCollection";
+import CardsGridView from "../../containers/CardsGridView";
 
 const CollectionPage = () => {
   const {collectionId} = useRouter().query;
@@ -62,6 +63,7 @@ const CollectionPage = () => {
         </div>
         {collection.images ? <><ImageCollection images={collection.images} />{Separator}</> : null}
         {Separator}
+        <CardsGridView builds={collection?.builds || []} loading={loading} error={error} />
       </div>
       <style jsx>{`
         .collection {
