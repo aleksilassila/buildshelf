@@ -40,6 +40,7 @@ const Button = ({ children, onClick, primary = false, danger = false }) => {
           transition: background-color 100ms linear;
           display: flex;
           align-items: center;
+          flex: 0 0 auto;
         }
 
         .button:hover {

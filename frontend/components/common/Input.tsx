@@ -1,4 +1,5 @@
 import theme from "../../constants/theme";
+import {useRef} from "react";
 
 interface Props {
   value: string;
@@ -23,6 +24,8 @@ const Input = ({
   onBlur = () => {},
   children,
 }: Props) => {
+  const focusRef = useRef(null);
+
   const handleEnterKeyDown = (e) => {
     if (e.key === "Enter") {
       if (onEnter) {
@@ -34,7 +37,7 @@ const Input = ({
   };
 
   return (
-    <div className="input">
+    <div className="input" onClick={() => focusRef.current.focus()}>
       {children}
       {textArea ? (
         <textarea
@@ -42,6 +45,7 @@ const Input = ({
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           onBlur={onBlur}
+          ref={focusRef}
         />
       ) : (
         <input
@@ -51,18 +55,20 @@ const Input = ({
           type={type}
           onKeyDown={handleEnterKeyDown}
           onBlur={onBlur}
+          ref={focusRef}
         />
       )}
       <style jsx>
         {`
             .input {
               width: 100%;
-              height: ${height};
               border: 1px solid ${theme.lightLowContrast};
               border-radius: 4px;
-              padding: 0.4em 1em;
               display: flex;
               align-items: center;
+              height: ${textArea ? "min-content" : height};
+              padding-left: 1em;
+              cursor: text;
             }
   
             input,
@@ -72,6 +78,12 @@ const Input = ({
               background-color: #00000000;
               font-family: inherit;
               resize: vertical;
+              flex: 1 1 auto;
+              padding: 0.4em 1em 0.4em 0;
+            }
+            
+            textarea {
+              height: ${height};
             }
             
             .input, .input > :global(*) {

@@ -342,7 +342,7 @@ const Upload = () => {
 
           .input-button-container > :global(*:not(:last-child)) {
             margin-right: 0.5em;
-            flex: 1 0 auto;
+            flex: 1 1 auto;
           }
 
           .upload {
