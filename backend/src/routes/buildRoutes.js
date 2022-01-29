@@ -1,6 +1,6 @@
 const buildsController = require("../controllers/buildsController");
 const { Router } = require("express");
-const { auth } = require("../controllers/auth");
+const { auth, moderatorAuth } = require("../controllers/auth");
 const multer = require("multer");
 const config = require("../config");
 const { validateQuery, validateBody } = require("../utils");
@@ -95,22 +95,19 @@ buildRoutes.get(
       title: { type: "string" },
       sort: { enum: ["top", "new"] },
       uuid: { type: "string" },
+      approved: { type: "boolean" },
       timespan: { type: "number" },
       offset: { type: "number", minimum: 0 },
       amount: { type: "number", minimum: 1, maximum: 50 },
     },
     required: [],
   }),
-  buildsController.getBuilds
+  buildsController.search
 );
 
-buildRoutes.get(
-  "/builds/get/followed",
-  auth,
-  buildsController.getFollowedBuilds
-);
+buildRoutes.get("/builds/get/followed", auth, buildsController.getFollowed);
 
-buildRoutes.get("/build/:buildId", buildsController.getBuild);
+buildRoutes.get("/build/:buildId", buildsController.get);
 buildRoutes.post(
   "/build/:buildId/save",
   auth,
@@ -134,6 +131,36 @@ buildRoutes.post(
     required: ["bookmark"],
   }),
   buildsController.bookmark
+);
+
+buildRoutes.put(
+  "/build/:buildId",
+  auth,
+  validateBody({
+    type: "object",
+    properties: {
+      title: { type: "string", maxLength: 255 },
+      description: { type: "string" },
+      // category: { type: "string" },
+      collectionId: { type: "number" },
+      // tags: { type: "string" },
+    },
+    required: [],
+  }),
+  buildsController.update
+);
+
+buildRoutes.post(
+  "/build/:buildId/approve",
+  moderatorAuth,
+  validateBody({
+    type: "object",
+    properties: {
+      approve: { type: "boolean" },
+    },
+    required: ["approve"],
+  }),
+  buildsController.approve
 );
 
 module.exports = buildRoutes;

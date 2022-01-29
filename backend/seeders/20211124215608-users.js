@@ -18,6 +18,7 @@ module.exports = {
       uuid: "f2cc1eadd681243467e4e11476c27df2",
       createdAt: new Date(),
       updatedAt: new Date(),
+      moderator: false,
     }], {});
   },
 

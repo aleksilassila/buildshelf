@@ -63,6 +63,7 @@ const Input = ({
             .input {
               width: 100%;
               border: 1px solid ${theme.lightLowContrast};
+              box-shadow: 0 1px 0 0 ${theme.lightLowContrast}55;
               border-radius: 4px;
               display: flex;
               align-items: center;

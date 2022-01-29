@@ -28,6 +28,16 @@ const Build = sequelize.define(
       allowNull: false,
       defaultValue: NOW,
     },
+    approved: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true, // FIXME prod
+    },
+    private: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   { timestamps: false }
 );
@@ -45,7 +55,21 @@ Build.prototype.updateTotalSaves = async function () {
   await this.save();
 };
 
+Build.prototype.hasAccess = function (user = null) {
+  if (this.private || !this.approved) {
+    if (!user || user.uuid !== this.creator?.uuid) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 Build.prototype.toJSON = async function (user = null) {
+  if (!this.hasAccess(user)) {
+    return undefined;
+  }
+
   let isSaved = user
     ? !!(
         await user.getSavedBuilds({
@@ -71,6 +95,12 @@ Build.prototype.toJSON = async function (user = null) {
     updatedAt: this.updatedAt,
     isSaved,
   };
+};
+
+Build.toJSONArray = function (builds, user = null) {
+  return Promise.all(builds.map((b) => b.toJSON(user))).then((res) =>
+    res.filter((i) => i !== undefined)
+  );
 };
 
 module.exports = { Build };

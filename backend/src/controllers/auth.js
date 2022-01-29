@@ -3,6 +3,15 @@ const axios = require("axios");
 const { User } = require("../models/index");
 const { errors } = require("../client-error");
 
+exports.moderatorAuth = async function (req, res, next) {
+  if (!req.user || !req.user.moderator) {
+    // Make it seem like route does not exist
+    // res.status(403).send("Unauthenticated");
+  } else {
+    next();
+  }
+}
+
 exports.auth = async function (req, res, next) {
   if (!req.user) {
     res.status(403).send("Unauthenticated");

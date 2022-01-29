@@ -14,7 +14,10 @@ const validator = new Validator();
 module.exports.searchQueryBuilder = (query) => {
   const { timespan, offset, amount } = query;
 
-  const where = {};
+  const where = {
+    approved: true,
+    private: false,
+  };
   let _offset = 0;
   let _amount = 20;
 

@@ -12,6 +12,11 @@ const User = sequelize.define("user", {
     allowNull: false,
   },
   remoteId: DataTypes.UUID,
+  moderator: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true, // FIXME prod
+    allowNull: false,
+  }
 });
 
 User.prototype.toJSON = async function (user = null) {

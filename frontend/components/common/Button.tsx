@@ -28,6 +28,7 @@ const Button = ({ children, onClick, primary = false, danger = false }) => {
       <style jsx>{`
         .button {
           border: 1px solid ${theme.lightLowContrast};
+          box-shadow: 0 1px 0 0 ${theme.lightLowContrast}55;
           background-color: ${theme.lightHighContrast};
           color: ${theme.darkMediumContrast};
           font-weight: 500;
