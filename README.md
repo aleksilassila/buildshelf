@@ -16,6 +16,19 @@ The project runs inside Docker. Get started with
 To seed the database with test data, run
 `npm run seed` inside `backend/`
 
+## .env
+Create a `.env` file in the root directory of the project.
+Docker will use this file to set environment variables.
+```
+DB_URL=postgres://post:post@db/post
+BACKEND_ENDPOINT=http://localhost:9000/api
+FRONTEND_ENDPOINT=http://localhost:3000
+
+MICROSOFT_REDIRECT_URI=http://localhost:3000/login
+MICROSOFT_CLIENT_ID=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f
+MICROSOFT_CLIENT_SECRET=
+```
+
 
 ## Screenshots
 Landing page

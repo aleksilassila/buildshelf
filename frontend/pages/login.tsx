@@ -13,23 +13,28 @@ const Login = () => {
   const [error, setError] = useState(null);
 
   const router = useRouter();
+  const { code } = router.query;
+
+  const handleUserJWT = (token, setError) => {
+    const userObject = jwt.decode(token);
+    if (!userObject) {
+      setError("Error occurred while trying to log in.");
+    } else {
+      userObject.token = token;
+      window.localStorage.setItem("user", JSON.stringify(userObject));
+      router.push("/");
+    }
+  }
 
   const submitLogin = async () => {
     axios
-      .post("http://localhost:9000/api/login", {
+      .post("http://localhost:9000/api/login/mojang", {
         username,
         password,
       })
       .then((res) => {
         if (res.status === 200) {
-          const userObject = jwt.decode(res.data);
-          if (!userObject) {
-            setError("Error occurred while trying to log in.");
-          } else {
-            userObject.token = res.data;
-            window.localStorage.setItem("user", JSON.stringify(userObject));
-            router.push("/");
-          }
+          handleUserJWT(res.data, setError);
         } else {
           setError("Invalid credentials.");
         }
@@ -39,7 +44,20 @@ const Login = () => {
       });
   };
 
-  if (error) {
+  if (code && !error) {
+    axios.post("http://localhost:9000/api/login/microsoft", { code })
+      .then((res) => {
+        if (res.status === 200) {
+          handleUserJWT(res.data, setError);
+        } else {
+          setError("Error occurred while signing in.");
+        }
+      })
+      .catch((err) => {
+        setError(err);
+      });
+
+    return <div>Loading...</div>;
   }
 
   return (
@@ -68,9 +86,12 @@ const Login = () => {
           />
           <div className="submit">
             <Button onClick={submitLogin}>Log In</Button>
-            <Button onClick={() => {}}>Log in via Microsoft</Button>
+            <Button onClick={() => {
+              router.push(`https://login.live.com/oauth20_authorize.srf?client_id=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f&scope=XboxLive.signin%20offline_access&redirect_uri=http://localhost:3000/login&response_type=code`);
+            }} primary>Log in via Microsoft</Button>
           </div>
         </form>
+        <span>{error?.message}</span>
       </div>
       <style jsx>{`
         .container {

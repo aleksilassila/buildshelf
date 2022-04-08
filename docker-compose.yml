@@ -23,6 +23,10 @@ services:
       DB_URL: ${DB_URL}
       BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
       FRONTEND_ENDPOINT: ${FRONTEND_ENDPOINT}
+
+      MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
+      MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
+      MICROSOFT_REDIRECT_URI: ${MICROSOFT_REDIRECT_URI}
     depends_on:
       - db
 
@@ -32,6 +36,7 @@ services:
       - ./frontend:/usr/src/app
     environment:
       BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
+      MICROSOFT_REDIRECT_URI: ${MICROSOFT_REDIRECT_URI}
     ports:
       - 3000:3000
 

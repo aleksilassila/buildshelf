@@ -1,9 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+require('dotenv').config();
 
 const tagsController = require("./src/controllers/tagsController");
 const categoriesController = require("./src/controllers/categoriesController");
-const { optionalAuth, login, loginClient} = require("./src/controllers/auth");
+const { optionalAuth, loginMojang, loginClient, loginMicrosoft} = require("./src/controllers/auth");
 
 const { sequelize } = require("./src/database");
 const { errors } = require("./src/client-error");
@@ -34,7 +35,8 @@ api.use(optionalAuth);
 
 api.get("/tags", tagsController.getTags);
 api.get("/categories", categoriesController.getCategories);
-api.post("/login", login);
+api.post("/login/mojang", loginMojang);
+api.post("/login/microsoft", loginMicrosoft);
 api.post("/login/token", loginClient)
 
 api.use(users);
