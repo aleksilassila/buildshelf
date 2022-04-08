@@ -124,69 +124,60 @@ exports.create = async function (req, res) {
 
 // FIXME clean this
 exports.search = async function (req, res) {
-  const { tags, collection, category, title, sort, uuid, approved } = req.query;
+  const {
+    tags,
+    collection,
+    category,
+    title,
+    sort,
+    uuid,
+    approved,
+    includePrivate,
+  } = req.query;
   const searchQuery = searchQueryBuilder(req.query);
 
-  let tagsWhere = undefined;
-
-  // Tags
-  if (tags) {
-    tagsWhere = {
-      name: {
-        [Op.in]: tags.split(",").map((i) => i.toLowerCase()),
-      },
-    };
-  }
-
-  // Collection
-  if (collection) {
-    searchQuery.where.collectionId = parseInt(collection);
-  }
-
-  // Category
-  if (category) {
-    searchQuery.where.categoryName = {
-      [Op.startsWith]: category,
-    };
-  }
-
-  // Title
-  if (title) {
-    searchQuery.where.title = {
-      [Op.iLike]: "%" + title + "%",
-    };
-  }
-
-  if (uuid) {
-    searchQuery.where.creatorUuid = uuid;
-  }
-
-  if (approved) {
-    searchQuery.where.approved = approved;
-  }
-
   // Sorting order
-  if (sort === "new") {
-    searchQuery.order = [["createdAt", "DESC"]];
-  } else if (sort === "top") {
-    searchQuery.order = [["totalSaves", "DESC"]];
-  }
+  const where = {
+    collectionId: parseInt(collection) || undefined,
+    categoryName: category ? { [Op.startsWith]: category } : undefined,
+    title: title
+      ? {
+          [Op.iLike]: "%" + title + "%",
+        }
+      : undefined,
+    creatorUuid: uuid,
+    approved,
+    ...(!(req.user?.moderator && includePrivate) && { private: false }),
+  };
 
-  const builds = await Build.findAll({
+  Build.findAll({
     ...searchQuery,
+    where: Object.fromEntries(
+      Object.entries(where).filter(([k, v]) => v !== undefined)
+    ),
+    ...(sort === "new" && { order: [["createdAt", "DESC"]] }),
+    ...(sort === "top" && { order: [["totalSaves", "DESC"]] }),
     include: [
       {
         model: Tag,
-        where: tagsWhere,
+        ...(tags && {
+          where: {
+            name: {
+              [Op.in]: tags.split(",").map((i) => i.toLowerCase()),
+            },
+          },
+        }),
       },
       {
         model: User,
         as: "creator",
       },
     ],
-  });
-
-  res.send(await Build.toJSONArray(builds, req.user));
+  })
+    .then(async (builds) => {
+      res.send(await Build.toJSONArray(builds, req.user));
+    })
+    .catch((err) => errors.SERVER_ERROR.send(res));
 };
 
 exports.getFollowed = async function (req, res) {

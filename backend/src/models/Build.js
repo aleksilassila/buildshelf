@@ -56,6 +56,7 @@ Build.prototype.updateTotalSaves = async function () {
 };
 
 Build.prototype.hasAccess = function (user = null) {
+  if (user?.moderator === true) return true;
   if (this.private || !this.approved) {
     if (!user || user.uuid !== this.creator?.uuid) {
       return false;
@@ -93,6 +94,8 @@ Build.prototype.toJSON = async function (user = null) {
     collection: this.collection ? await this.collection.toJSON() : undefined,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
+    private: this.private,
+    ...(!!user?.moderator && { approved: this.approved }),
     isSaved,
   };
 };

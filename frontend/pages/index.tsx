@@ -5,8 +5,8 @@ import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
 import Auth from "../utils/auth";
 import theme from "../constants/theme";
-import { useApi } from "../components/hooks/api";
-import { Build } from "../interfaces/ApiResponses";
+import {useApi} from "../components/hooks/api";
+import {Build} from "../interfaces/ApiResponses";
 
 const Home = () => {
   const [topData, topLoading, topError] = useApi<Build[]>(
@@ -51,7 +51,7 @@ const Home = () => {
 
   return (
     <div className="home">
-      <TitleBar active="home" />
+      <TitleBar active="home"/>
       <div className="introduction">
         <h2>The most ambitious Minecraft build library at your hands</h2>
         <p>
@@ -82,15 +82,17 @@ const Home = () => {
             </Link>
           </CardsRowView>
         </div>
-        <div className="page-container">
-          <CardsGridView
-            builds={followedData || []}
-            error={followedError}
-            loading={followedLoading}
-          >
-            <h2>{!!followedData ? "Followed creators" : messages.loading}</h2>
-          </CardsGridView>
-        </div>
+        {followedData?.length !== 0 ? (
+          <div className="page-container">
+            <CardsGridView
+              builds={followedData || []}
+              error={followedError}
+              loading={followedLoading}
+            >
+              <h2>{followedData ? "Followed creators" : messages.loading}</h2>
+            </CardsGridView>
+          </div>
+        ) : null}
       </div>
       <style jsx>{`
         .home {
@@ -104,7 +106,7 @@ const Home = () => {
         }
 
         .content {
-          background-color: ${theme.light}; //hsl(147deg 21% 95%)
+          background-color: ${theme.lightHighContrast}; //hsl(147deg 21% 95%)
         }
 
         .row-heading-link:hover {

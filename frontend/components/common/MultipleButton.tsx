@@ -27,7 +27,7 @@ const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
         {`
           .multiple-button {
             border: 1px solid ${theme.lightLowContrast};
-            box-shadow: 0 1px 0 0 ${theme.lightLowContrast}55;
+            box-shadow: ${theme.bottomShadow};
             background-color: ${theme.lightHighContrast};
             border-radius: 4px;
             height: 2.2rem;

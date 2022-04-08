@@ -33,7 +33,7 @@ class MyDocument extends Document {
             html {
               margin: 0;
               padding: 0;
-              background-color: ${theme.lightHighContrast};
+              background-color: ${theme.lightMediumContrast};
             }
 
             h1,
@@ -112,6 +112,12 @@ class MyDocument extends Document {
             
             .margin-bottom {
               margin-bottom: 0.5rem;
+            }
+            
+            .flex {
+              display: flex;
+              flex-direction: column;
+              flex-grow: 1;
             }
           `}
         </style>

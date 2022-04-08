@@ -87,9 +87,9 @@ const CollectionCard = ({ collection }: Props) => {
 
         .card-right {
           border: 1px solid ${theme.lightLowContrast};
-          background-color: ${theme.light};
           border-bottom-right-radius: 4px;
           border-top-right-radius: 4px;
+          background-color: ${theme.light};
           flex: 1 0 auto;
           display: flex;
           flex-direction: column;

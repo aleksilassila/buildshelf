@@ -96,6 +96,7 @@ buildRoutes.get(
       sort: { enum: ["top", "new"] },
       uuid: { type: "string" },
       approved: { type: "boolean" },
+      includePrivate: { type: "boolean" },
       timespan: { type: "number" },
       offset: { type: "number", minimum: 0 },
       amount: { type: "number", minimum: 1, maximum: 50 },

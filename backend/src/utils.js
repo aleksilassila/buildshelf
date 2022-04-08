@@ -14,10 +14,7 @@ const validator = new Validator();
 module.exports.searchQueryBuilder = (query) => {
   const { timespan, offset, amount } = query;
 
-  const where = {
-    approved: true,
-    private: false,
-  };
+  const where = {};
   let _offset = 0;
   let _amount = 20;
 
@@ -43,7 +40,10 @@ module.exports.searchQueryBuilder = (query) => {
   };
 };
 
-const castIntegers = (validator) =>
+/**
+ * Casts request parameter strings to correct types if possible
+ */
+const castTypes = (validator) =>
   function (object, key, schema, options, ctx) {
     const value = object[key];
     if (typeof value === "undefined") return;
@@ -62,6 +62,8 @@ const castIntegers = (validator) =>
       // If the type is "number" but the instance is not a number, cast it
       if (schema.type === "number" && typeof value !== "number") {
         object[key] = parseFloat(value);
+      } else if (schema.type === "boolean" && typeof value !== "boolean") {
+        object[key] = value === "true" ? true : value === "false" ? false : value;
       }
     }
   };
@@ -69,7 +71,7 @@ const castIntegers = (validator) =>
 module.exports.validateBody = (schema) => {
   return function (req, res, next) {
     const validation = validator.validate(req.body, schema, {
-      preValidateProperty: castIntegers(validator),
+      preValidateProperty: castTypes(validator),
     });
 
     if (validation.valid) {
@@ -85,7 +87,7 @@ module.exports.validateBody = (schema) => {
 module.exports.validateQuery = (schema) => {
   return function (req, res, next) {
     const validation = validator.validate(req.query, schema, {
-      preValidateProperty: castIntegers(validator),
+      preValidateProperty: castTypes(validator),
     });
 
     if (validation.valid) {
