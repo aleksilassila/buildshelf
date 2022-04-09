@@ -3,6 +3,7 @@ export interface UserObject {
   token: string;
   uuid: string;
   iat: number;
+  isLoggedIn: () => boolean;
 }
 
 class Auth {
@@ -11,11 +12,19 @@ class Auth {
    * @return UserObject or null
    */
   static getUser = function (): UserObject {
+    let userObject;
+
     try {
-      return JSON.parse(window.localStorage.getItem("user"));
+      userObject = JSON.parse(window.localStorage.getItem("user"));
     } catch {
-      return null;
+      userObject = {};
     }
+
+    userObject.isLoggedIn = () => {
+      return !!userObject.token;
+    };
+
+    return userObject;
   };
 
   static setUser = function (userObject: UserObject) {

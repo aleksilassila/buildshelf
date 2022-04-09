@@ -3,10 +3,15 @@ import CardsGridView from "../../../containers/CardsGridView";
 import { Build } from "../../../interfaces/ApiResponses";
 import { useRouter } from "next/router";
 import {useApi} from "../../../components/hooks/api";
+import Button from "../../../components/common/Button";
+import Link from "next/link";
+import Auth from "../../../utils/auth";
 
 const Builds = () => {
   const router = useRouter();
   const { uuid } = router.query;
+
+  const userObject = Auth.getUser();
 
   const [builds, loading, error] = useApi<Build[]>(
     "/builds/get",
@@ -14,9 +19,13 @@ const Builds = () => {
     [uuid]
   );
 
+  const CreateBuild = () => <div>
+    <Link href="/upload"><Button onClick={() => {}} primary>Upload Build</Button></Link>
+  </div>
+
   return (
     <ProfilePage count={builds?.length}>
-      <CardsGridView builds={builds || []}  error={error} loading={loading}/>
+      {builds?.length === 0 && userObject.isLoggedIn() ? <CreateBuild /> : <CardsGridView builds={builds || []} error={error} loading={loading} />}
     </ProfilePage>
   );
 };

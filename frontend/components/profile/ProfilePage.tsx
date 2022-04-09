@@ -85,7 +85,7 @@ const ProfilePage = ({
             <div className="avatar" />
             <h2 className="username">{user.username}</h2>
           </div>
-          {userObject !== null ? (
+          {userObject.isLoggedIn() && userObject.uuid !== uuid ? (
             <Button onClick={follow} primary={!followed}>
               <Heart style={{ height: "0.8em" }} />
               {NBSP}
