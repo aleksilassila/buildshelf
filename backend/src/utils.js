@@ -98,8 +98,13 @@ module.exports.validateQuery = (schema) => {
   };
 };
 
-module.exports.parseLitematic = async (filename) => {
+module.exports.parseSimplifiedLitematic = async (filename) => {
   return await parse(await fs.promises.readFile(filename))
     .then((result) => simplify(result.parsed))
+    .catch((err) => ({}));
+};
+
+module.exports.parseLitematic = async (filename) => {
+  return await parse(await fs.promises.readFile(filename))
     .catch((err) => ({}));
 };

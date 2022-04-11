@@ -1,0 +1,8 @@
+language.name=English
+language.region=US
+language.code=en_US
+
+litematica-library.gui.button.publish=Publish
+
+litematica-library.gui.button.open_library_browser=Litematica Library
+litematica-library.gui.button.hover.open_library_browser=Opens Litematica Library in browser

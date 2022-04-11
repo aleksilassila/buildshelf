@@ -205,7 +205,7 @@ const ProfileNavBar = ({
 
       {isOwnProfile ? <Link href={"/user/" + user.uuid + "/bookmarks"}>
         <div className={`${tabName === "bookmarks" && "active"} item`}>
-          Saves {getCount("bookmarks")}
+          Bookmarks {getCount("bookmarks")}
         </div>
       </Link> : null}
       <style jsx>

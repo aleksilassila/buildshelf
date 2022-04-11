@@ -1,7 +1,7 @@
 const { Category, User } = require("../models");
 const { Op } = require("sequelize");
 const { Build, Collection, Tag } = require("../models/index");
-const { searchQueryBuilder, parseLitematic } = require("../utils");
+const { searchQueryBuilder, parseSimplifiedLitematic } = require("../utils");
 const { errors } = require("../client-error");
 const fs = require("fs");
 const validateJSON = require("jsonschema").validate;
@@ -46,9 +46,9 @@ exports.create = async function (req, res) {
     return;
   }
 
-  const litematic = await parseLitematic(req.files?.buildFile[0].path);
+  const simpleLitematic = await parseSimplifiedLitematic(req.files?.buildFile[0].path);
 
-  if (!validateJSON(litematic, litematicSchema).valid) {
+  if (!validateJSON(simpleLitematic, litematicSchema).valid) {
     errors.BAD_REQUEST.send(res, "Error parsing litematic file.");
     return;
   }
@@ -97,14 +97,14 @@ exports.create = async function (req, res) {
     category,
     buildFile: {
       filename: buildFile.filename,
-      version: litematic.Version,
-      minecraftDataVersion: litematic.MinecraftDataVersion,
+      version: simpleLitematic.Version,
+      minecraftDataVersion: simpleLitematic.MinecraftDataVersion,
       enclosingSize: {
-        x: litematic.Metadata?.EnclosingSize?.x,
-        y: litematic.Metadata?.EnclosingSize?.y,
-        z: litematic.Metadata?.EnclosingSize?.z,
+        x: simpleLitematic.Metadata?.EnclosingSize?.x,
+        y: simpleLitematic.Metadata?.EnclosingSize?.y,
+        z: simpleLitematic.Metadata?.EnclosingSize?.z,
       },
-      blockCount: litematic.Metadata?.TotalBlocks,
+      blockCount: simpleLitematic.Metadata?.TotalBlocks,
       md5: hashSum.digest("hex"),
     },
   });

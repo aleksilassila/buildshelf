@@ -1,4 +1,4 @@
-const { Collection, Build } = require("../models/index");
+const { Collection } = require("../models/index");
 const { Op } = require("sequelize");
 const { searchQueryBuilder } = require("../utils");
 const {errors} = require("../client-error");

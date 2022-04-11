@@ -11,6 +11,7 @@ const { errors } = require("./src/client-error");
 const builds = require("./src/routes/buildRoutes");
 const users = require("./src/routes/userRoutes");
 const collections = require("./src/routes/collectionRoutes");
+const client = require("./src/routes/clientRoutes");
 const errorMiddleware = require("./src/client-error").middleware;
 
 const app = express();
@@ -42,6 +43,7 @@ api.post("/login/token", loginClient)
 api.use(users);
 api.use(collections);
 api.use(builds);
+api.use(client);
 
 app.use("/api", api);
 
