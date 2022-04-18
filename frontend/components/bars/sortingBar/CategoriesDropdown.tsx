@@ -1,5 +1,5 @@
 import Dropdown from "../../common/Dropdown";
-import {useApi} from "../../hooks/api";
+import {useApi} from "../../../utils/api";
 import {Category} from "../../../interfaces/ApiResponses";
 
 const CategoriesDropdown = ({ category, doSearch }) => {

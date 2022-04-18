@@ -5,7 +5,7 @@ import CollectionCard from "../components/CollectionCard";
 import theme from "../constants/theme";
 import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
-import { useApiFeed } from "../components/hooks/api";
+import { useApiFeed } from "../utils/api";
 import { Collection } from "../interfaces/ApiResponses";
 import {
   SortingBar,

@@ -3,7 +3,7 @@ import { useState } from "react";
 import Input from "../common/Input";
 import { Category } from "../../interfaces/ApiResponses";
 import SearchIcon from "../icons/SearchIcon";
-import { useApi } from "../hooks/api";
+import { useApi } from "../../utils/api";
 
 const SortingBar = ({ children }) => {
   return (

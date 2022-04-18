@@ -9,7 +9,7 @@ import theme from "../../constants/theme";
 import Button from "../common/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
-import { useApi } from "../hooks/api";
+import { useApi } from "../../utils/api";
 
 /*
 when joined?

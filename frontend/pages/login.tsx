@@ -28,7 +28,7 @@ const Login = () => {
 
   const submitLogin = async () => {
     axios
-      .post("http://localhost:9000/api/login/mojang", {
+      .post(process.env.BACKEND_ENDPOINT + "/login/mojang", {
         username,
         password,
       })
@@ -45,7 +45,7 @@ const Login = () => {
   };
 
   if (code && !error) {
-    axios.post("http://localhost:9000/api/login/microsoft", { code })
+    axios.post(process.env.BACKEND_ENDPOINT + "/login/microsoft", { code })
       .then((res) => {
         if (res.status === 200) {
           handleUserJWT(res.data, setError);

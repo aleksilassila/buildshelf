@@ -11,7 +11,7 @@ import Button from "../common/Button";
 import Link from "next/link";
 import Loading from "../statuses/Loading";
 import NetworkError from "../statuses/NetworkError";
-import { useApi } from "../hooks/api";
+import { useApi } from "../../utils/api";
 import TitleSubtitlePicture from "../TitleSubtitlePicture";
 import ReactMarkdown from "react-markdown";
 import theme from "../../constants/theme";

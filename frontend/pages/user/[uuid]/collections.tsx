@@ -3,7 +3,7 @@ import {Collection} from "../../../interfaces/ApiResponses";
 import {useRouter} from "next/router";
 import ListView from "../../../containers/ListView";
 import CollectionCard from "../../../components/CollectionCard";
-import {useApi} from "../../../components/hooks/api";
+import {useApi} from "../../../utils/api";
 
 const Collections = () => {
   const router = useRouter();

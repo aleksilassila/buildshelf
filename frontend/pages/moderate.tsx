@@ -1,5 +1,5 @@
 import TitleBar from "../components/bars/TitleBar";
-import { useApiFeed } from "../components/hooks/api";
+import { useApiFeed } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
 import InfinityScroll from "../containers/InfinityScroll";
 import theme from "../constants/theme";

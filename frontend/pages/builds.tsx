@@ -4,7 +4,7 @@ import CardsGridView from "../containers/CardsGridView";
 import { useState } from "react";
 import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
-import { useApiFeed } from "../components/hooks/api";
+import { useApiFeed } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
 import {
   SortingBar,

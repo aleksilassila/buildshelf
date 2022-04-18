@@ -5,7 +5,7 @@ import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
 import Auth from "../utils/auth";
 import theme from "../constants/theme";
-import {useApi} from "../components/hooks/api";
+import {useApi} from "../utils/api";
 import {Build} from "../interfaces/ApiResponses";
 
 const Home = () => {
