@@ -48,7 +48,7 @@ const TitleBar = ({
     return (
       <Link href={href}>
         <li
-          className={`mx-2.5 ${isActive ? "text-green-600" : "cursor-pointer"}`}
+          className={`mx-2.5 ${isActive ? "text-green-500" : "cursor-pointer"}`}
         >
           {children}
         </li>
@@ -57,14 +57,14 @@ const TitleBar = ({
   };
 
   return (
-    <div className="">
-      <div className="flex flex-row justify-between h-14 items-center px-6 font-medium">
+    <div className="font-medium">
+      <div className="flex flex-row justify-between h-14 items-center px-6">
         <Link href="/">
           <h1 className="font-black uppercase text-lg cursor-pointer tracking-wide">
             Buildshelf
           </h1>
         </Link>
-        <ul className="flex flex-row">
+        <ul className="flex flex-row items-center">
           <NavLink identifier="home" href="/">
             Home
           </NavLink>
@@ -80,7 +80,9 @@ const TitleBar = ({
                 Upload
               </NavLink>
               <div
-                className="mx-2.5 cursor-pointer"
+                className={`cursor-pointer ${
+                  showProfileBar ? "bg-green-400 text-slate-50" : "bg-none"
+                } rounded-md px-2.5 py-1.5`}
                 onClick={() => setShowProfileBar((p) => !p)}
               >
                 {userObject.username}
@@ -95,24 +97,10 @@ const TitleBar = ({
           )}
         </ul>
       </div>
-
-      {/*// .profile-bar {*/}
-      {/*//   background-color: ${theme.light};*/}
-      {/*//   color: ${theme.dark};*/}
-      {/*//   z-index: 2;*/}
-      {/*//   position: relative;*/}
-      {/*//   display: flex;*/}
-      {/*//   justify-content: flex-end;*/}
-      {/*//   padding: 0 1.2em;*/}
-      {/*//   align-items: center;*/}
-      {/*//   height: ${showProfileBar ? "2.5em" : 0};*/}
-      {/*//   overflow: hidden;*/}
-      {/*//   transition: height 100ms linear;*/}
-      {/*// }*/}
       <ul
-        className={`z-10 relative flex items-center justify-center overflow-hidden ${
-          showProfileBar ? "h-14" : "h-0"
-        } bg-stone-100`}
+        className={`z-10 relative flex items-center justify-end overflow-hidden ${
+          showProfileBar ? "h-12" : "h-0"
+        } bg-stone-100 px-6 border-t-2 border-t-stone-200 transition-all duration-100 ease-linear`}
       >
         <NavLink href={"/user/" + userObject?.uuid} identifier="profile">
           Builds
@@ -135,7 +123,7 @@ const TitleBar = ({
         >
           Bookmarks
         </NavLink>
-        <div onClick={logOut} className="clickable">
+        <div onClick={logOut} className="cursor-pointer">
           Log out
         </div>
       </ul>

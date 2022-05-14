@@ -105,7 +105,9 @@ const Home = () => {
                 error={followedError}
                 loading={followedLoading}
               >
-                <h2>{followedData ? "Followed creators" : messages.loading}</h2>
+                <h2 className="font-bold text-xl">
+                  {followedData ? "Followed creators" : messages.loading}
+                </h2>
               </CardsGridView>
             </PageContainer>
           ) : null}

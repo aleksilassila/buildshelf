@@ -41,8 +41,8 @@ const CardsRowView = ({ builds, children }: Props) => {
   return (
     <div className="cards-row-view">
       <BuildPage buildId={buildId} setBuildPage={setBuildId} modal={true} />
-      <div className="heading-container">
-        <div className="heading">{children}</div>
+      <div className="border-gray-200 border-solid border-0 box-border flex flex-row items-center justify-between">
+        <div>{children}</div>
         <div className="heading-controls">
           <div onClick={onClickPrevious} style={{ marginRight: "0.5em" }}>
             <ArrowLeft />
@@ -55,7 +55,7 @@ const CardsRowView = ({ builds, children }: Props) => {
       <div className="cards-container">
         {getBuildList(builds).map((build: Build, index) => {
           return (
-            <div className="card" key={index}>
+            <div className="flex-auto m-2" key={index}>
               <BuildCard build={build} openBuild={setBuildId} />
             </div>
           );
@@ -63,24 +63,12 @@ const CardsRowView = ({ builds, children }: Props) => {
       </div>
       <style jsx>
         {`
-          .heading-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-          }
-
           .cards-container {
             display: flex;
             flex-wrap: wrap;
             overflow: hidden;
             height: calc(250px + 1em);
             margin: 0 -0.5em;
-          }
-
-          .card {
-            flex: 1 1 auto;
-            margin: 0.5em 0.5em;
           }
 
           .heading-controls {
@@ -99,7 +87,7 @@ const CardsRowView = ({ builds, children }: Props) => {
             cursor: pointer;
             background-color: ${theme.lightHighContrast};
           }
-          
+
           .cards-row-view:hover .heading-controls {
             opacity: 1;
           }
