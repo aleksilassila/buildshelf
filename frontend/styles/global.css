@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply font-body;
+    min-height: 100vh;
+  }
+}
+
+.page {
+  display: flex;
+}

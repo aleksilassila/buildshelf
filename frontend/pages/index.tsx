@@ -5,8 +5,9 @@ import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
 import Auth from "../utils/auth";
 import theme from "../constants/theme";
-import {useApi} from "../utils/api";
-import {Build} from "../interfaces/ApiResponses";
+import { useApi } from "../utils/api";
+import { Build } from "../interfaces/ApiResponses";
+import Styled from "../components/Styled";
 
 const Home = () => {
   const [topData, topLoading, topError] = useApi<Build[]>(
@@ -49,71 +50,67 @@ const Home = () => {
    *  - New dedicated search page?
    * */
 
+  const PageContainer = ({ children }) => (
+    <div className="mb-16">{children}</div>
+  );
+
+  const CategoryLink = ({ href, text }) => (
+    <Link href={href}>
+      <h2 className="font-bold text-xl cursor-pointer hover:underline">
+        {text}
+      </h2>
+    </Link>
+  );
+
   return (
-    <div className="home">
-      <TitleBar active="home"/>
-      <div className="introduction">
-        <h2>The most ambitious Minecraft build library at your hands</h2>
-        <p>
-          Litematica Library is a place to find, store and share all kinds of
-          Minecraft builds and projects. You can download Litematica mod{" "}
-          <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">
-            here
-          </a>
-          .
-        </p>
-      </div>
-      <div className="content">
-        <div className="page-container">
-          <CardsRowView builds={topData || []}>
-            <Link href="/builds">
-              <h2 className="row-heading-link">
-                {!!topData ? "Popular builds right now" : messages.loading}
-              </h2>
-            </Link>
-          </CardsRowView>
+    <div className="min-h-screen flex flex-col">
+      <TitleBar active="home" />
+      <div className="flex flex-col flex-1 mx-8">
+        <div className="my-24 mx-auto max-w-5xl">
+          <h2 className={theme.text.bold}>
+            The most ambitious Minecraft build library at your hands
+          </h2>
+          <p className="tracking-wide">
+            Buildshelf is a place to find, store and share all kinds of
+            Minecraft builds and projects. This project mainly utilises a
+            minecraft blueprinting mod called Litematica. You can download
+            Litematica{" "}
+            <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">
+              here
+            </a>
+            .
+          </p>
         </div>
-        <div className="page-container">
-          <CardsRowView builds={newData || []}>
-            <Link href="/builds">
-              <h2 className="row-heading-link">
-                {!!newData ? "New builds" : messages.loading}
-              </h2>
-            </Link>
-          </CardsRowView>
+        <div className="">
+          <PageContainer>
+            <CardsRowView builds={topData || []}>
+              <CategoryLink
+                href="/builds"
+                text={!!topData ? "Popular builds right now" : messages.loading}
+              />
+            </CardsRowView>
+          </PageContainer>
+          <PageContainer>
+            <CardsRowView builds={newData || []}>
+              <CategoryLink
+                href="/builds"
+                text={!!newData ? "New builds" : messages.loading}
+              />
+            </CardsRowView>
+          </PageContainer>
+          {followedData?.length !== 0 ? (
+            <PageContainer>
+              <CardsGridView
+                builds={followedData || []}
+                error={followedError}
+                loading={followedLoading}
+              >
+                <h2>{followedData ? "Followed creators" : messages.loading}</h2>
+              </CardsGridView>
+            </PageContainer>
+          ) : null}
         </div>
-        {followedData?.length !== 0 ? (
-          <div className="page-container">
-            <CardsGridView
-              builds={followedData || []}
-              error={followedError}
-              loading={followedLoading}
-            >
-              <h2>{followedData ? "Followed creators" : messages.loading}</h2>
-            </CardsGridView>
-          </div>
-        ) : null}
       </div>
-      <style jsx>{`
-        .home {
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-        }
-
-        .introduction {
-          margin: 6em 5vw;
-        }
-
-        .content {
-          background-color: ${theme.lightHighContrast}; //hsl(147deg 21% 95%)
-        }
-
-        .row-heading-link:hover {
-          cursor: pointer;
-          text-decoration: underline;
-        }
-      `}</style>
     </div>
   );
 };
