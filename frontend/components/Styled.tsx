@@ -1,8 +1,20 @@
 import React from "react";
 
 const Styled =
-  ({ className }) =>
-  ({ children }: { children: React.ReactChildren }) =>
-    <div className={className}>{children}</div>;
+  (classes) =>
+  ({
+    children,
+    className,
+    ...rest
+  }: {
+    children: any;
+    className?: string;
+    rest?: any;
+  }) =>
+    (
+      <div className={classes + " " + className} {...rest}>
+        {children}
+      </div>
+    );
 
 export default Styled;

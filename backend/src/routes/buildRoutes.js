@@ -50,6 +50,8 @@ const upload = multer({
   },
 });
 
+buildRoutes.get("/files/id/:buildId", buildsController.downloadBuild);
+
 buildRoutes.post(
   "/build/create",
   auth,

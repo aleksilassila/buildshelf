@@ -42,25 +42,25 @@ public class Api {
         object.addProperty("accessToken", mcAccessToken);
         object.addProperty("uuid", uuid.toString());
 
-        System.out.println("Authenticating...");
+        System.out.println("Authenticating to API...");
         HttpResponse<String> res = wait(post("/login/token", object));
 
-        if (res != null) {
-            System.out.println("Connected!");
+        if (res != null && res.statusCode() == 200) {
+            System.out.println("Authenticated!");
             return res.body();
         } else {
-            System.out.println("Authentication failed!");
+            System.out.println("Authentication failed! Response body: " + (res != null ? res.body() : "null"));
         }
 
         return null;
     }
 
-    public Map<String, String> getRemoteBuilds() {
-        Map<String, String> builds = new HashMap<>();
+    public Map<Integer, LitematicFile> getRemoteBuilds() {
+        Map<Integer, LitematicFile> builds = new HashMap<>();
 
-        HttpResponse<String> res = wait(get("/user/" + uuid.toString() + "/saves"));
+        HttpResponse<String> res = wait(get("/sync/fetch", new HashMap<>(){{put("token", token);}}));
 
-        if (res.statusCode() != 200) {
+        if (res == null || res.statusCode() != 200) {
             System.out.println("Unable to fetch builds.");
             return builds;
         }
@@ -70,42 +70,38 @@ public class Api {
 
             for (int i = 0; i < buildsObjects.size(); i++) {
                 JsonObject build = buildsObjects.get(i).getAsJsonObject();
-                JsonElement name = build.get("name");
-                JsonElement buildFile = build.get("buildFile");
-                JsonElement md5 = buildFile.isJsonObject() ? buildFile.getAsJsonObject().get("md5") : null;
+                int id = build.get("id").getAsInt();
+                String md5 =  build.get("md5").getAsString();
+                String name = build.get("name").getAsString();
+                String url =  build.get("url").getAsString();
+                String updatedAt =  build.get("updatedAt").getAsString();
 
-                if (name.isJsonPrimitive() && md5 != null && md5.isJsonPrimitive())
-                    builds.put(name.getAsString(), md5.getAsString());
+                builds.put(id, new LitematicFile(id, name + ".litematic", md5));
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return builds;
     }
 
-    public void updateBuilds(List<String> toUpdate) {
-        for (String buildId : toUpdate) {
-            HttpResponse<String> response = wait(get("/build/" + buildId));
-            if (response.statusCode() != 200) {
-                System.out.println("Failed to fetch build " + buildId);
-                continue;
-            }
+    public void fetchBuilds(List<LitematicFile> toUpdate) {
+        for (LitematicFile file : toUpdate) {
+            HttpResponse<Path> response = downloadFile(file.id, file.file);
 
-            try {
-                JsonObject object = JsonParser.parseString(response.body()).getAsJsonObject();
-                String filename = object.get("buildFile").getAsJsonObject().get("filename").getAsString();
-
-                downloadFile(filename, DataManager.getSchematicsBaseDirectory().toPath().resolve(filename));
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (response != null && response.statusCode() == 200) {
+                System.out.println("Downloaded file " + file.filename);
+            } else {
+                System.out.println("Failed to download file " + file.filename);
             }
         }
     }
 
-    public static @Nullable HttpResponse<Path> downloadFile(String filename, Path output) {
-        System.out.println("Downloading " + filename + " to " + output);
+    public static @Nullable HttpResponse<Path> downloadFile(int buildId, Path output) {
+        System.out.println("Downloading " + buildId + " to " + output);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ENDPOINT + "/files/" + filename))
+                .uri(URI.create(ENDPOINT + "/files/id/" + buildId))
                 .build();
 
         try {

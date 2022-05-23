@@ -5,10 +5,10 @@ import { Collection } from "../../interfaces/ApiResponses";
 import ModalContainer from "../../containers/ModalContainer";
 import messages from "../../constants/messages";
 import Status from "../statuses/Status";
-import Table from "../common/Table";
-import Button from "../common/Button";
+import Table from "../ui/Table";
+import Button from "../ui/Button";
 import Separator from "../utils/Separator";
-import Input from "../common/Input";
+import Input from "../ui/Input";
 
 const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
   const [data, setData] = useState<Collection[] | null>(null);

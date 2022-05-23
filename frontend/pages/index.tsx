@@ -33,19 +33,12 @@ const Home = () => {
    * TODO:
    *  - Edit and manage own builds
    *    - Markdown
-   *  - Sync files
-   *    - Favorites -> Syncs?
    *  - Favorite collections
    *  - Browse creators
    *  - Finish builds page filters, search
-   *  - Markdown in build description
-   *  - Finish dropdowns?
    *  - Improve buttons and create multiplebutton variation
-   *  - Improve title bar
-   *    - Dropdown with logout and more links there
    *  - Administration tools
    *  - Api documentation
-   *  - Infinite scroll
    *  - Update card row behavior?
    *  - New dedicated search page?
    * */

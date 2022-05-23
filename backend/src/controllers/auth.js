@@ -10,7 +10,7 @@ exports.moderatorAuth = async function (req, res, next) {
   } else {
     next();
   }
-}
+};
 
 exports.auth = async function (req, res, next) {
   if (!req.user) {
@@ -83,9 +83,7 @@ exports.loginMojang = async function (req, res) {
   if (response?.status === 200 && user && profile) {
     const [localUser] = await getDBUser(profile.id, profile.name, user.id);
 
-    res.send(
-      signToken(localUser.username, localUser.uuid)
-    );
+    res.send(signToken(localUser.username, localUser.uuid));
   } else {
     res.status(403).send("Invalid credentials");
   }
@@ -100,13 +98,16 @@ exports.loginMicrosoft = async (req, res) => {
   }
 
   const msResponse = await axios
-    .post("https://login.live.com/oauth20_token.srf", new URLSearchParams({
-      client_id: process.env.MICROSOFT_CLIENT_ID,
-      client_secret: process.env.MICROSOFT_CLIENT_SECRET,
-      code,
-      grant_type: "authorization_code",
-      redirect_uri: process.env.MICROSOFT_REDIRECT_URI,
-    }))
+    .post(
+      "https://login.live.com/oauth20_token.srf",
+      new URLSearchParams({
+        client_id: process.env.MICROSOFT_CLIENT_ID,
+        client_secret: process.env.MICROSOFT_CLIENT_SECRET,
+        code,
+        grant_type: "authorization_code",
+        redirect_uri: process.env.MICROSOFT_REDIRECT_URI,
+      })
+    )
     .catch((err) => err.response);
 
   if (msResponse?.status !== 200) {
@@ -114,24 +115,32 @@ exports.loginMicrosoft = async (req, res) => {
     return;
   }
 
-  const { access_token: msAccessToken, refresh_token: msRefreshToken, expires_in: msExpiresIn } = msResponse.data;
+  const {
+    access_token: msAccessToken,
+    refresh_token: msRefreshToken,
+    expires_in: msExpiresIn,
+  } = msResponse.data;
   console.log("MS response", msResponse.data);
 
   const xblResponse = await axios
-    .post("https://user.auth.xboxlive.com/user/authenticate", {
-      Properties: {
+    .post(
+      "https://user.auth.xboxlive.com/user/authenticate",
+      {
+        Properties: {
           AuthMethod: "RPS",
           SiteName: "user.auth.xboxlive.com",
           RpsTicket: `d=${msAccessToken}`,
+        },
+        RelyingParty: "http://auth.xboxlive.com",
+        TokenType: "JWT",
       },
-      RelyingParty: "http://auth.xboxlive.com",
-      TokenType: "JWT"
-    }, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       }
-    })
+    )
     .catch((err) => err.response);
 
   if (xblResponse?.status !== 200) {
@@ -144,21 +153,23 @@ exports.loginMicrosoft = async (req, res) => {
   console.log("XBL response", xblResponse.data);
 
   const xstsResponse = await axios
-    .post("https://xsts.auth.xboxlive.com/xsts/authorize", {
-      Properties: {
+    .post(
+      "https://xsts.auth.xboxlive.com/xsts/authorize",
+      {
+        Properties: {
           SandboxId: "RETAIL",
-          UserTokens: [
-              xblAccessToken,
-          ]
+          UserTokens: [xblAccessToken],
+        },
+        RelyingParty: "rp://api.minecraftservices.com/",
+        TokenType: "JWT",
       },
-      "RelyingParty": "rp://api.minecraftservices.com/",
-      "TokenType": "JWT"
-    }, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       }
-    })
+    )
     .catch((err) => err.response);
 
   if (xstsResponse?.status !== 200) {
@@ -171,10 +182,14 @@ exports.loginMicrosoft = async (req, res) => {
   console.log("XSTS response", xstsResponse.data);
 
   const minecraftApiResponse = await axios
-    .post("https://api.minecraftservices.com/authentication/login_with_xbox", {
-      identityToken: `XBL3.0 x=${xstsUserHash};${xstsAccessToken}`,
-      }, {})
-      .catch((err) => err.response);
+    .post(
+      "https://api.minecraftservices.com/authentication/login_with_xbox",
+      {
+        identityToken: `XBL3.0 x=${xstsUserHash};${xstsAccessToken}`,
+      },
+      {}
+    )
+    .catch((err) => err.response);
 
   if (minecraftApiResponse?.status !== 200) {
     res.status(500).send("Error occurred during Minecraft authentication.");
@@ -182,12 +197,13 @@ exports.loginMicrosoft = async (req, res) => {
   }
 
   const { access_token: minecraftAccessToken } = minecraftApiResponse.data;
+  console.log("Minecraft API response", minecraftApiResponse.data);
 
   const minecraftProfileResponse = await axios
     .get("https://api.minecraftservices.com/minecraft/profile", {
       headers: {
-        "Authorization": `Bearer ${minecraftAccessToken}`,
-      }
+        Authorization: `Bearer ${minecraftAccessToken}`,
+      },
     })
     .catch((err) => err.response);
 
@@ -196,51 +212,43 @@ exports.loginMicrosoft = async (req, res) => {
     return;
   }
 
-  const { name: username, id: uuid, id: remoteId} = minecraftProfileResponse.data;
+  const {
+    name: username,
+    id: uuid,
+    id: remoteId,
+  } = minecraftProfileResponse.data;
 
   const localUser = await getDBUser(uuid, username, remoteId);
 
   if (localUser) {
-    res.send(
-      signToken(localUser.username, localUser.uuid)
-    );
+    res.send(signToken(localUser.username, localUser.uuid));
   } else {
     res.status(403).send("Invalid credentials");
   }
-}
+};
 
 exports.loginClient = async (req, res) => {
   const { accessToken } = req.body;
-  const uuid = req.body.uuid?.replace("-", "");
 
   // Validate if accessToken and uuid combination is valid
   const response = await axios
-    .post("https://sessionserver.mojang.com/session/minecraft/join", {
-      accessToken,
-      selectedProfile: uuid,
+    .get("https://api.minecraftservices.com/minecraft/profile", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     })
     .catch((err) => err.response);
 
-  if (response.status !== 204) {
+  if (response.status !== 200 || !response?.data?.id || !response?.data?.name) {
     errors.UNAUTHORIZED.send(res);
     return;
   }
 
-  const username = await axios
-    .get("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid)
-    .then((res) => res.data?.name)
-    .catch((err) => {});
-
-  if (!username) {
-    errors.SERVER_ERROR.send(res);
-    return;
-  }
-
   const [localUser] = await User.findOrCreate({
-    where: { uuid },
+    where: { uuid: response.data.id },
     defaults: {
-      username,
-      uuid,
+      username: response.data.name,
+      uuid: response.data.id,
     },
   });
 
@@ -249,19 +257,19 @@ exports.loginClient = async (req, res) => {
 
 const getDBUser = async (uuid, defaultUsername, defaultRemoteId) => {
   const [localUser] = await User.findOrCreate({
-      where: { uuid },
-      defaults: {
-        username: defaultUsername,
-        remoteId: defaultRemoteId,
-        uuid,
-      },
-    }).catch(err => [undefined]);
+    where: { uuid },
+    defaults: {
+      username: defaultUsername,
+      remoteId: defaultRemoteId,
+      uuid,
+    },
+  }).catch((err) => [undefined]);
 
   return localUser;
 };
 
 const signToken = function (username, uuid) {
-  return jwt.sign({username, uuid}, "secret");
+  return jwt.sign({ username, uuid }, "secret");
 };
 
 const verifyToken = function (token) {

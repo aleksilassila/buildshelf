@@ -1,7 +1,12 @@
 const { Category, User } = require("../models");
 const { Op } = require("sequelize");
 const { Build, Collection, Tag } = require("../models/index");
-const { searchQueryBuilder, parseSimplifiedLitematic } = require("../utils");
+const {
+  searchQueryBuilder,
+  parseSimplifiedLitematic,
+  parseLitematic,
+  writeLitematic,
+} = require("../utils");
 const { errors } = require("../client-error");
 const fs = require("fs");
 const validateJSON = require("jsonschema").validate;
@@ -41,20 +46,21 @@ const litematicSchema = {
 };
 
 exports.create = async function (req, res) {
+  const { description, title, category, collectionId } = req.body;
+
   if (req.files?.buildFile === undefined) {
     errors.BAD_REQUEST.send(res);
     return;
   }
 
-  const simpleLitematic = await parseSimplifiedLitematic(req.files?.buildFile[0].path);
+  const buildFile = req.files?.buildFile[0];
+
+  const simpleLitematic = await parseSimplifiedLitematic(buildFile?.path);
 
   if (!validateJSON(simpleLitematic, litematicSchema).valid) {
     errors.BAD_REQUEST.send(res, "Error parsing litematic file.");
     return;
   }
-
-  const buildFile = req.files?.buildFile[0];
-  const { description, title, category, collectionId } = req.body;
 
   const tags =
     req.body.tags
@@ -84,10 +90,6 @@ exports.create = async function (req, res) {
     }
   }
 
-  // Calculate build file hash
-  const hashSum = crypto.createHash("md5");
-  hashSum.update(fs.readFileSync(buildFile.path));
-
   const build = await Build.create({
     title,
     description,
@@ -105,10 +107,35 @@ exports.create = async function (req, res) {
         z: simpleLitematic.Metadata?.EnclosingSize?.z,
       },
       blockCount: simpleLitematic.Metadata?.TotalBlocks,
-      md5: hashSum.digest("hex"),
+      md5: "",
     },
   });
 
+  // Add file id to the build file
+  const { parsed: litematicWithId } = await parseLitematic(buildFile.path);
+
+  if (litematicWithId?.value?.Metadata?.value) {
+    litematicWithId.value.Metadata.value.Id = {
+      type: "int",
+      value: build.id,
+    };
+  }
+
+  await writeLitematic(buildFile.path, litematicWithId).then(async () => {
+    // Calculate build file hash
+    const hashSum = crypto.createHash("md5");
+    hashSum.update(fs.readFileSync(buildFile.path));
+
+    // Update md5 hash
+    await build.update({
+      buildFile: {
+        ...build.buildFile,
+        md5: hashSum.digest("hex"),
+      },
+    });
+  });
+
+  // Add tags
   for (const name of tags) {
     const [instance] = await Tag.findOrCreate({
       where: { name },
@@ -198,6 +225,31 @@ exports.getFollowed = async function (req, res) {
   res.send(await Build.toJSONArray(builds, user));
 };
 
+exports.downloadBuild = async function (req, res) {
+  const { buildId } = req.params;
+  const build = await Build.findByPk(parseInt(buildId)).catch(() => undefined);
+
+  if (!build) {
+    errors.NOT_FOUND.send(res, "Build not found.");
+    return;
+  }
+
+  if (!build.approved) {
+    errors.NOT_FOUND.send(res, "Build not found.");
+    return;
+  }
+
+  if (build.private && (await build.getCreator()).uuid !== req.user?.uuid) {
+    errors.NOT_FOUND.send(res, "Build not found.");
+    return;
+  }
+
+  res.download(
+    "./uploads/" + build.buildFile.filename,
+    build.buildFile.filename
+  );
+};
+
 exports.get = async function (req, res) {
   const { buildId } = req.params;
 
@@ -246,8 +298,6 @@ exports.save = async function (req, res) {
 
   res.status(200).send(shouldSave ? "Build saved" : "Build unsaved");
 };
-
-exports.download = function (req, res) {};
 
 exports.bookmark = async function (req, res) {
   const user = req.user;

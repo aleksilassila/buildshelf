@@ -1,46 +1,30 @@
-import Dropdown from "../../common/Dropdown";
-import {useApi} from "../../../utils/api";
-import {Category} from "../../../interfaces/ApiResponses";
+import * as Dropdown from "../../ui/Dropdown";
+import { useApi } from "../../../utils/api";
+import { Category } from "../../../interfaces/ApiResponses";
 
-const CategoriesDropdown = ({ category, doSearch }) => {
+const CategoriesDropdown = ({ doSearch }) => {
   const [categories, loading, error] = useApi<Category[]>(
     "/categories",
     {},
     []
   );
 
-  const data = {
-    items:
-      !categories?.length
-        ? [
-          {
-            content: "Error",
-            onClick: () => {
-            },
-          },
-        ]
-        : [
-          {
-            content: "All Categories",
-            onClick: () => doSearch(""),
-          },
-        ].concat(
-          categories.map((c) => ({
-            content: c.name.charAt(0).toUpperCase() + c.name.slice(1),
-            onClick: () => doSearch(c.name),
-          }))
-        ),
-  };
+  return (
+    <Dropdown.Root
+      onValueChange={(category) => doSearch(category === "all" ? "" : category)}
+      defaultValue="all"
+    >
+      <Dropdown.Group>
+        <Dropdown.Label>Category</Dropdown.Label>
+        <Dropdown.Item value="all">All Categories</Dropdown.Item>
+        {categories?.map((item, index) => (
+          <Dropdown.Item key={index} value={item.name}>
+            {item.name?.charAt(0)?.toUpperCase() + item.name?.slice(1)}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Group>
+    </Dropdown.Root>
+  );
+};
 
-    return (
-      <Dropdown data={data}>
-        <div>
-          {category
-            ? category.charAt(0).toUpperCase() + category.slice(1)
-            : "All Categories"}
-        </div>
-      </Dropdown>
-    );
-}
-
-  export default CategoriesDropdown;
+export default CategoriesDropdown;

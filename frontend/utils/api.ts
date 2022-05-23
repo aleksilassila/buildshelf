@@ -2,13 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Auth from "./auth";
 import axios, { AxiosRequestConfig } from "axios";
 
-const routes = {
-  
-}
+const routes = {};
 
-const responses = {
-
-}
+const responses = {};
 
 const useApi = <S>(
   uri: string,
@@ -30,7 +26,7 @@ const useApi = <S>(
   const userObject = Auth.getUser();
 
   const fetch = useCallback((_config = config) => {
-    if (values.loading || (userObject === null && requiresAuth)) return;
+    if (values.loading || (!userObject.isLoggedIn() && requiresAuth)) return;
 
     setValues({ ...values, loading: true });
 

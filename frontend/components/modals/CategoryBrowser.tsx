@@ -1,13 +1,13 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import ModalContainer from "../../containers/ModalContainer";
 import Status from "../statuses/Status";
 import messages from "../../constants/messages";
 import NetworkError from "../statuses/NetworkError";
-import Table, {TableData} from "../common/Table";
-import Button from "../common/Button";
+import Table, { TableData } from "../ui/Table";
+import Button from "../ui/Button";
 
-const CategoryBrowser = ({show, setShow, setCategory}) => {
+const CategoryBrowser = ({ show, setShow, setCategory }) => {
   const [data, setData] = useState<{ name: string }[]>(null);
   const [error, setError] = useState(null);
 
@@ -17,8 +17,7 @@ const CategoryBrowser = ({show, setShow, setCategory}) => {
       .then((res) => {
         setData(res.data || []);
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   }, []);
 
   if (!show) return null;
@@ -44,21 +43,29 @@ const CategoryBrowser = ({show, setShow, setCategory}) => {
   const categoriesTableData: TableData = {
     rows: data.map((category, index) => [
       {
-        content: <Button onClick={(e) => {
-          setCategory(category.name)
-          setShow(false);
-        }}>Select</Button>
+        content: (
+          <Button
+            onClick={(e) => {
+              setCategory(category.name);
+              setShow(false);
+            }}
+          >
+            Select
+          </Button>
+        ),
       },
       {
-        content: <span>{category.name}</span>
-      }
-    ])
-  }
+        content: <span>{category.name}</span>,
+      },
+    ]),
+  };
 
-  return <ModalContainer close={() => setShow(false)}>
-    <h2>Browse categories</h2>
-    <Table data={categoriesTableData}  />
-  </ModalContainer>
+  return (
+    <ModalContainer close={() => setShow(false)}>
+      <h2>Browse categories</h2>
+      <Table data={categoriesTableData} />
+    </ModalContainer>
+  );
 };
 
 export default CategoryBrowser;

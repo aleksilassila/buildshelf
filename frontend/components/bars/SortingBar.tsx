@@ -1,6 +1,6 @@
-import Dropdown from "../common/Dropdown";
+import Dropdown from "../ui/Dropdown";
 import { useState } from "react";
-import Input from "../common/Input";
+import Input from "../ui/Input";
 import { Category } from "../../interfaces/ApiResponses";
 import SearchIcon from "../icons/SearchIcon";
 import { useApi } from "../../utils/api";
@@ -21,7 +21,7 @@ const SortingBar = ({ children }) => {
           .space {
             margin-right: 0.5em;
           }
-          
+
           :global(.left > *:not(:last-child)) {
             margin-right: 0.5em;
           }

@@ -5,10 +5,19 @@
 @layer base {
   html, body {
     @apply font-body;
+    padding: 0 !important;
     min-height: 100vh;
   }
 }
 
 .page {
   display: flex;
+}
+
+.page-container-lg {
+  padding: 6rem 5vw;
+}
+
+.page-container {
+  padding: 1rem 5vw;
 }

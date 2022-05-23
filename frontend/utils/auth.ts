@@ -15,13 +15,13 @@ class Auth {
     let userObject;
 
     try {
-      userObject = JSON.parse(window.localStorage.getItem("user"));
+      userObject = JSON.parse(window.localStorage.getItem("user")) || {};
     } catch {
       userObject = {};
     }
 
     userObject.isLoggedIn = () => {
-      return !!userObject.token;
+      return !!userObject?.token;
     };
 
     return userObject;

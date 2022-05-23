@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import axios from "axios";
 import jwt from "jsonwebtoken";
-import Input from "../components/common/Input";
-import Button from "../components/common/Button";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
 import theme from "../constants/theme";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ const Login = () => {
       window.localStorage.setItem("user", JSON.stringify(userObject));
       router.push("/");
     }
-  }
+  };
 
   const submitLogin = async () => {
     axios
@@ -45,7 +45,8 @@ const Login = () => {
   };
 
   if (code && !error) {
-    axios.post(process.env.BACKEND_ENDPOINT + "/login/microsoft", { code })
+    axios
+      .post(process.env.BACKEND_ENDPOINT + "/login/microsoft", { code })
       .then((res) => {
         if (res.status === 200) {
           handleUserJWT(res.data, setError);
@@ -86,9 +87,16 @@ const Login = () => {
           />
           <div className="submit">
             <Button onClick={submitLogin}>Log In</Button>
-            <Button onClick={() => {
-              router.push(`https://login.live.com/oauth20_authorize.srf?client_id=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f&scope=XboxLive.signin%20offline_access&redirect_uri=http://localhost:3000/login&response_type=code`);
-            }} primary>Log in via Microsoft</Button>
+            <Button
+              onClick={() => {
+                router.push(
+                  `https://login.live.com/oauth20_authorize.srf?client_id=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f&scope=XboxLive.signin%20offline_access&redirect_uri=http://localhost:3000/login&response_type=code`
+                );
+              }}
+              primary
+            >
+              Log in via Microsoft
+            </Button>
           </div>
         </form>
         <span>{error?.message}</span>

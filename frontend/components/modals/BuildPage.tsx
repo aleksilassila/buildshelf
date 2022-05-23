@@ -1,21 +1,21 @@
 import { Build } from "../../interfaces/ApiResponses";
 import ImageCollection from "../ImageCollection";
 import Separator from "../utils/Separator";
-import MultipleButton, { MultipleButtonData } from "../common/MultipleButton";
+import MultipleButton, { MultipleButtonData } from "../ui/MultipleButton";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Auth from "../../utils/auth";
 import ModalContainer from "../../containers/ModalContainer";
 import Heart from "../icons/Heart";
-import Button from "../common/Button";
+import Button from "../ui/Button";
 import Link from "next/link";
 import Loading from "../statuses/Loading";
 import NetworkError from "../statuses/NetworkError";
 import { useApi } from "../../utils/api";
 import TitleSubtitlePicture from "../TitleSubtitlePicture";
-import ReactMarkdown from "react-markdown";
 import theme from "../../constants/theme";
 import minecraftDataVersions from "../../constants/minecraftDataVersions";
+import Markdown from "../Markdown";
 
 interface Props {
   buildId: number | string;
@@ -125,7 +125,7 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
       {Separator}
       <div className="build-info">
         <div className="build-description markdown">
-          <ReactMarkdown>{build.description}</ReactMarkdown>
+          <Markdown>{build.description}</Markdown>
         </div>
         <div className="info-separator">{Separator}</div>
         <div className="build-details">
@@ -229,16 +229,16 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
           .info-separator {
             display: none;
           }
-          
-          @media screen and (max-width: 750px) {  
+
+          @media screen and (max-width: 750px) {
             .build-info {
               flex-direction: column;
             }
-            
+
             .build-info > * {
               min-width: 0;
             }
-            
+
             .info-separator {
               display: block;
             }

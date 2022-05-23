@@ -63,7 +63,8 @@ const castTypes = (validator) =>
       if (schema.type === "number" && typeof value !== "number") {
         object[key] = parseFloat(value);
       } else if (schema.type === "boolean" && typeof value !== "boolean") {
-        object[key] = value === "true" ? true : value === "false" ? false : value;
+        object[key] =
+          value === "true" ? true : value === "false" ? false : value;
       }
     }
   };
@@ -105,6 +106,11 @@ module.exports.parseSimplifiedLitematic = async (filename) => {
 };
 
 module.exports.parseLitematic = async (filename) => {
-  return await parse(await fs.promises.readFile(filename))
-    .catch((err) => ({}));
+  return await parse(await fs.promises.readFile(filename)).catch((err) => ({}));
+};
+
+module.exports.writeLitematic = async (filename, nbtData) => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(filename, writeUncompressed(nbtData), () => resolve());
+  });
 };

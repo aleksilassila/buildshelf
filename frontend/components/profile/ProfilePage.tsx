@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import TitleBar from "../bars/TitleBar";
+import TitleBar, { ActiveSub } from "../bars/TitleBar";
 import Auth from "../../utils/auth";
 import { useState } from "react";
 import axios from "axios";
 import { User } from "../../interfaces/ApiResponses";
 import theme from "../../constants/theme";
-import Button from "../common/Button";
+import Button from "../ui/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
 import { useApi } from "../../utils/api";
@@ -31,7 +31,7 @@ const ProfilePage = ({
   bannerUrl = null,
   children,
 }: {
-  tabName?: "profile" | "saves" | "collections" | "bookmarks";
+  tabName?: ActiveSub;
   count?: number;
   bannerUrl?: string;
   children?: JSX.Element;
@@ -173,7 +173,7 @@ const ProfilePage = ({
 interface ProfileNavBarProps {
   user: User;
   isOwnProfile: boolean;
-  tabName?: "profile" | "saves" | "collections" | "bookmarks";
+  tabName?: ActiveSub;
   count: number;
 }
 
@@ -203,11 +203,13 @@ const ProfileNavBar = ({
         </div>
       </Link>
 
-      {isOwnProfile ? <Link href={"/user/" + user.uuid + "/bookmarks"}>
-        <div className={`${tabName === "bookmarks" && "active"} item`}>
-          Bookmarks {getCount("bookmarks")}
-        </div>
-      </Link> : null}
+      {isOwnProfile ? (
+        <Link href={"/user/" + user.uuid + "/bookmarks"}>
+          <div className={`${tabName === "bookmarks" && "active"} item`}>
+            Bookmarks {getCount("bookmarks")}
+          </div>
+        </Link>
+      ) : null}
       <style jsx>
         {`
           .profile-bar {

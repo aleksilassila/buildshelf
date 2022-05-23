@@ -9,11 +9,16 @@ import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class LitematicaMixinMod implements ModInitializer {
+	public static Api api = new Api();
+	public static MinecraftClient mc = MinecraftClient.getInstance();
+
 	public static ImmutableList<IConfigBase> getConfigList() {
 		List<IConfigBase> list = new java.util.ArrayList<>(Configs.Generic.OPTIONS);
 
@@ -28,6 +33,12 @@ public class LitematicaMixinMod implements ModInitializer {
 		list.add(SYNC_BUILDS);
 
 		return ImmutableList.copyOf(list);
+	}
+
+	public static void sendChatMessage(String message) {
+		if (mc != null && mc.player != null) {
+			mc.player.sendMessage(Text.of(message), false);
+		}
 	}
 
 	@Override

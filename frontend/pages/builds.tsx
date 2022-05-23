@@ -11,13 +11,15 @@ import {
   SortingBarLeft,
   SortingBarRight,
 } from "../components/bars/SortingBar";
-import SortDropdown from "../components/bars/sortingBar/SortDropdown";
+// import SortDropdown from "../components/bars/sortingBar/SortDropdown";
+import * as Dropdown from "../components/ui/Dropdown";
 import SearchInput from "../components/bars/sortingBar/SearchInput";
 import CategoriesDropdown from "../components/bars/sortingBar/CategoriesDropdown";
+import { Banner, BannerSubtitle, BannerTitle } from "../components/Banner";
 
 const Builds = () => {
   const [params, setParams] = useState({
-    sort: "Top",
+    sort: "top",
     title: "",
     category: "",
   });
@@ -56,19 +58,28 @@ const Builds = () => {
   };
 
   return (
-    <div className="builds">
+    <div className="flex flex-col min-h-screen">
       <TitleBar active="builds" />
-      <div className="large-page-container">
-        <h1>Builds</h1>
-        <p>Browse popular builds</p>
-      </div>
+      <Banner url="/mockImages/landscape.png">
+        <BannerTitle>Builds</BannerTitle>
+        <BannerSubtitle>Browse popular builds</BannerSubtitle>
+      </Banner>
       <div className="page-container">
         <SortingBar>
           <SortingBarLeft>
-            <SortDropdown
-              sort={params.sort}
-              doSearch={(sort) => doSearch({ sort })}
-            />
+            <Dropdown.Root
+              onValueChange={(sort) =>
+                doSearch({ sort: sort === "popular" ? "top" : sort })
+              }
+              defaultValue={params.sort}
+            >
+              <Dropdown.Group>
+                <Dropdown.Label>Sort By</Dropdown.Label>
+                <Dropdown.Item value="popular">Popular</Dropdown.Item>
+                <Dropdown.Item value="top">Top</Dropdown.Item>
+                <Dropdown.Item value="new">New</Dropdown.Item>
+              </Dropdown.Group>
+            </Dropdown.Root>
             <SearchInput
               doSearch={(title) => doSearch({ title })}
               placeholder="Search builds by title"
@@ -98,17 +109,6 @@ const Builds = () => {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-          }
-
-          .large-page-container {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-              url("/mockImages/landscape.png") no-repeat center center;
-            background-size: cover;
-          }
-
-          .large-page-container > * {
-            color: ${theme.light};
-            text-align: center;
           }
 
           .page-container {

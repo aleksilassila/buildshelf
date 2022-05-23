@@ -12,13 +12,14 @@ import {
   SortingBarLeft,
   SortingBarRight,
 } from "../components/bars/SortingBar";
-import SortDropdown from "../components/bars/sortingBar/SortDropdown";
+import * as Dropdown from "../components/ui/Dropdown";
 import SearchInput from "../components/bars/sortingBar/SearchInput";
 import CategoriesDropdown from "../components/bars/sortingBar/CategoriesDropdown";
+import { Banner, BannerSubtitle, BannerTitle } from "../components/Banner";
 
 const Collections = () => {
   const [params, setParams] = useState({
-    sort: "Top",
+    sort: "top",
     name: "",
     category: "",
   });
@@ -60,17 +61,26 @@ const Collections = () => {
   return (
     <div className="collections">
       <TitleBar active="collections" />
-      <div className="large-page-container">
-        <h1>Collections</h1>
-        <p>Browse popular build collections</p>
-      </div>
+      <Banner url="/mockImages/village.png">
+        <BannerTitle>Collections</BannerTitle>
+        <BannerSubtitle>Browse popular build collections</BannerSubtitle>
+      </Banner>
       <div className="page-container">
         <SortingBar>
           <SortingBarLeft>
-            <SortDropdown
-              sort={params.sort}
-              doSearch={(sort) => doSearch({ sort })}
-            />
+            <Dropdown.Root
+              onValueChange={(sort) =>
+                doSearch({ sort: sort === "popular" ? "top" : sort })
+              }
+              defaultValue={params.sort}
+            >
+              <Dropdown.Group>
+                <Dropdown.Label>Sort By</Dropdown.Label>
+                <Dropdown.Item value="popular">Popular</Dropdown.Item>
+                <Dropdown.Item value="top">Top</Dropdown.Item>
+                <Dropdown.Item value="new">New</Dropdown.Item>
+              </Dropdown.Group>
+            </Dropdown.Root>
             <SearchInput
               doSearch={(name) => doSearch({ name })}
               placeholder="Search collections"
@@ -79,7 +89,6 @@ const Collections = () => {
           <SortingBarRight>
             <CategoriesDropdown
               doSearch={(category) => doSearch({ category })}
-              category={params.category}
             />
           </SortingBarRight>
         </SortingBar>

@@ -3,18 +3,20 @@ import TitleBar from "../components/bars/TitleBar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CollectionsManager from "../components/modals/CollectionsManager";
-import Separator from "../components/utils/Separator";
-import Input from "../components/common/Input";
-import FileSelect from "../components/common/FileSelect";
-import Table, { TableData } from "../components/common/Table";
-import Button from "../components/common/Button";
+import Input from "../components/ui/Input";
+import FileSelect from "../components/ui/FileSelect";
+import Button from "../components/ui/Button";
 import MultipleButton, {
   MultipleButtonData,
-} from "../components/common/MultipleButton";
+} from "../components/ui/MultipleButton";
 import theme from "../constants/theme";
 import CategoryBrowser from "../components/modals/CategoryBrowser";
 import Localstorage from "../utils/localstorage";
-import Message from "../components/common/Message";
+import Message from "../components/ui/Message";
+import Styled from "../components/Styled";
+import Markdown from "../components/Markdown";
+import * as LabelPrimitive from "@radix-ui/react-label";
+import Tag from "../components/ui/Tag";
 
 interface FormData {
   title: string;
@@ -43,6 +45,23 @@ const initialFormData = {
   collectionId: "",
   collectionDescription: "",
 };
+
+const Section = ({
+  children,
+  htmlFor,
+  className,
+}: {
+  children: any;
+  htmlFor?: string;
+  className?: string;
+}) => (
+  <LabelPrimitive.Root htmlFor={htmlFor} className={`py-4 mx-6 ${className}`}>
+    {children}
+  </LabelPrimitive.Root>
+);
+
+const Tip = Styled("text-xs text-stone-700 mt-2");
+const Label = Styled("font-medium mb-2");
 
 const Upload = () => {
   const [formData, setFormData] = useState<FormData>(
@@ -167,15 +186,6 @@ const Upload = () => {
     );
   }
 
-  const tagsTableData: TableData = {
-    rows: formData.tags.map((tag, index) => [
-      { content: <span>{tag}</span> },
-      { content: <Button onClick={removeTag(tag)}>Remove</Button> },
-    ]),
-    horizontalBorders: true,
-    verticalBorders: true,
-  };
-
   const collectionsButtonData: MultipleButtonData[] = [
     {
       content: formData.collectionName || "No collection selected",
@@ -188,51 +198,77 @@ const Upload = () => {
   ];
 
   return (
-    <div className="container">
+    <div className="flex flex-col min-h-screen">
       <TitleBar active="upload" />
-      <form onSubmit={(e) => e.preventDefault()}>
-        <h2>Upload a build</h2>
-        {Separator}
-        <div className="section">
-          <label>Title</label>
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="rounded border border-stone-200 bg-stone-100 shadow grid grid-cols-1 divide-y divide-stone-200 m-6 md:mx-auto max-w-screen-lg"
+      >
+        <Section>
+          <h2 className={theme.text.bold}>Upload a build</h2>
+        </Section>
+        <Section htmlFor="title">
+          <Label>Title</Label>
           <Input
+            id="title"
             value={formData.title}
             setValue={changeField("title")}
             placeholder="Title"
           />
-        </div>
-        <div className="section">
-          <label>Description</label>
-          <Input
-            value={formData.description}
-            setValue={changeField("description")}
-            placeholder="Description"
-            height="5em"
-            textArea
-          />
-        </div>
-        <div className="section">
-          <label>Build File</label>
+        </Section>
+        <Section>
+          <Label>Description</Label>
+          <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 h-fit">
+            <Input
+              value={formData.description}
+              setValue={changeField("description")}
+              placeholder="Description"
+              height="8rem"
+              textArea
+            />
+            <Markdown className="bg-stone-50 p-2 rounded border border-stone-200 overflow-y-scroll">
+              {formData.description}
+            </Markdown>
+          </div>
+          <Tip>
+            Supports{" "}
+            <a
+              href="https://www.markdownguide.org/cheat-sheet/"
+              className="hover:underline text-green-500"
+            >
+              markdown
+            </a>{" "}
+            syntax
+          </Tip>
+        </Section>
+        <Section>
+          <Label>Build File</Label>
           <FileSelect
             files={formData.buildFile}
             setFiles={(files) => changeField("buildFile")(files[0])}
             accept=".litematic, application/gzip"
           />
-          <span className="tip">Supported extensions: .litematica</span>
-        </div>
-        <div className="section">
-          <label>Images</label>
+          <Tip>Supported extensions: .litematica</Tip>
+        </Section>
+        <Section>
+          <Label>Images</Label>
           <FileSelect
             files={formData.images}
             multiple={true}
             setFiles={changeField("images")}
             accept="image/png, image/jpeg, image/gif"
           />
-          <span className="tip">Supported extensions: .png, .jpg</span>
-        </div>
-        <div className="section tags">
-          <label>Tags</label>
-          <Table data={tagsTableData} />
+          <Tip>Supported extensions: .png, .jpg</Tip>
+        </Section>
+        <Section>
+          <div className="mb-2 flex flex-row gap-3">
+            <Label className="mb-0">Tags</Label>
+            <Tag.Root>
+              {formData.tags.map((tag, index) => (
+                <Tag.Item onRemove={removeTag(tag)}>{tag}</Tag.Item>
+              ))}
+            </Tag.Root>
+          </div>
           <div className="input-button-container">
             <Input
               value={formData.tagsInput}
@@ -242,13 +278,13 @@ const Upload = () => {
             />
             <Button onClick={addTag}>Add</Button>
           </div>
-          <span className="tip">
+          <Tip>
             Add up to three tags. Tags should be adjectives that describe your
             building. For example: diagonal, medieval, easy
-          </span>
-        </div>
-        <div className="section">
-          <label>Category</label>
+          </Tip>
+        </Section>
+        <Section>
+          <Label>Category</Label>
           <div className="input-button-container">
             <Input
               value={formData.category}
@@ -264,10 +300,10 @@ const Upload = () => {
             setShow={setShowCategoryBrowser}
             setCategory={setCategory}
           />
-          <span className="tip">A noun describing the type of the build.</span>
-        </div>
-        <div className="section">
-          <label>Add to a Build Collection</label>
+          <Tip>A noun describing the type of the build.</Tip>
+        </Section>
+        <Section>
+          <Label>Add to a Build Collection</Label>
           <div>
             <MultipleButton data={collectionsButtonData} />
           </div>
@@ -276,7 +312,7 @@ const Upload = () => {
             setShowMenu={setShowCollectionsManager}
             setCollection={setCollection}
           />
-        </div>
+        </Section>
         <Message visible={!!response} close={() => setResponse(null)} success>
           <span>Build created.</span>
         </Message>
@@ -284,15 +320,14 @@ const Upload = () => {
           <h3>An error occurred</h3>
           {error?.message}
         </Message>
-        {Separator}
-        <div className="section upload">
+        <Section className="flex flex-row justify-between">
           <Button onClick={submitData} primary>
             Upload
           </Button>
           <Button onClick={() => setFormData(initialFormData)} danger>
             Clear
           </Button>
-        </div>
+        </Section>
       </form>
       <style jsx>
         {`
@@ -300,24 +335,6 @@ const Upload = () => {
             display: flex;
             flex-direction: column;
             background-color: ${theme.light};
-          }
-
-          form {
-            padding: 2em;
-            border-radius: 4px;
-            border: 1px solid ${theme.lightMediumContrast};
-            background-color: ${theme.lightHighContrast};
-            margin: 2em auto;
-            display: flex;
-            flex-direction: column;
-            max-width: 700px;
-            width: 100%;
-          }
-
-          label {
-            font-weight: 500;
-            margin-bottom: 0.3em;
-            display: inline-block;
           }
 
           .section {

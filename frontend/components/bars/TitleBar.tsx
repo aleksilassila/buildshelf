@@ -6,16 +6,17 @@ import ChevronDown from "../icons/ChevronDown";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
-type ActiveName =
+export type ActiveName = ActiveMain | ActiveSub;
+
+export type ActiveMain =
   | "home"
   | "builds"
   | "collections"
   | "creators"
   | "upload"
-  | "login"
-  | "profile"
-  | "favorites"
-  | "bookmarks";
+  | "login";
+
+export type ActiveSub = "profile" | "collections" | "saves" | "bookmarks";
 
 const TitleBar = ({
   active = null,
@@ -36,14 +37,14 @@ const TitleBar = ({
 
   const NavLink = ({
     href,
-    identifier,
+    name,
     children,
   }: {
     href: string;
-    identifier: ActiveName;
+    name: ActiveName;
     children: React.ReactNode;
   }) => {
-    const isActive = identifier === active;
+    const isActive = name === active;
 
     return (
       <Link href={href}>
@@ -65,18 +66,18 @@ const TitleBar = ({
           </h1>
         </Link>
         <ul className="flex flex-row items-center">
-          <NavLink identifier="home" href="/">
+          <NavLink name="home" href="/">
             Home
           </NavLink>
-          <NavLink identifier="builds" href="/builds">
+          <NavLink name="builds" href="/builds">
             Builds
           </NavLink>
-          <NavLink identifier="collections" href="/collections">
+          <NavLink name="collections" href="/collections">
             Collections
           </NavLink>
           {userObject?.username ? (
             <>
-              <NavLink identifier="upload" href="/upload">
+              <NavLink name="upload" href="/upload">
                 Upload
               </NavLink>
               <div
@@ -91,7 +92,7 @@ const TitleBar = ({
               </div>
             </>
           ) : (
-            <NavLink identifier="login" href="/login">
+            <NavLink name="login" href="/login">
               Log In
             </NavLink>
           )}
@@ -102,24 +103,21 @@ const TitleBar = ({
           showProfileBar ? "h-12" : "h-0"
         } bg-stone-100 px-6 border-t-2 border-t-stone-200 transition-all duration-100 ease-linear`}
       >
-        <NavLink href={"/user/" + userObject?.uuid} identifier="profile">
+        <NavLink href={"/user/" + userObject?.uuid} name="profile">
           Builds
         </NavLink>
         <NavLink
           href={"/user/" + userObject?.uuid + "/collections"}
-          identifier="collections"
+          name="collections"
         >
           Collections
         </NavLink>
-        <NavLink
-          href={"/user/" + userObject?.uuid + "/saves"}
-          identifier="favorites"
-        >
+        <NavLink href={"/user/" + userObject?.uuid + "/saves"} name="saves">
           Saves
         </NavLink>
         <NavLink
           href={"/user/" + userObject?.uuid + "/bookmarks"}
-          identifier="bookmarks"
+          name="bookmarks"
         >
           Bookmarks
         </NavLink>

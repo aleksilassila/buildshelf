@@ -12,6 +12,7 @@ module.exports = {
       sans: fontBody,
       body: fontBody,
       display: fontDisplay,
+      monospace: ["monospace"],
     },
   },
   plugins: [],

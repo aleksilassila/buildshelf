@@ -1,4 +1,4 @@
-import Input from "../../common/Input";
+import Input from "../../ui/Input";
 import { useState } from "react";
 import SearchIcon from "../../icons/SearchIcon";
 
