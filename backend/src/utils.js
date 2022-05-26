@@ -78,8 +78,6 @@ module.exports.validateBody = (schema) => {
     if (validation.valid) {
       next();
     } else {
-      console.log(validation.errors);
-      console.log(req.body);
       errors.BAD_REQUEST.send(res);
     }
   };

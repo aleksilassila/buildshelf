@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-const CloseIcon = () => <FontAwesomeIcon icon={faTimes} />;
+const CloseIcon = ({ ...rest }) => <FontAwesomeIcon {...rest} icon={faTimes} />;
 
-export default CloseIcon
+export default CloseIcon;

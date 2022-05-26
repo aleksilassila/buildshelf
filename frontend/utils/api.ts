@@ -142,4 +142,15 @@ const useApiFeed = <S>(
   ];
 };
 
-export { useApi, useApiFeed, routes, responses };
+const apiRequest = async (config) => {
+  return axios({
+    ...config,
+    url: process.env.BACKEND_ENDPOINT + config.url,
+    params: {
+      ...config.params,
+      token: Auth.getUser()?.token,
+    },
+  });
+};
+
+export { useApi, useApiFeed, apiRequest, routes, responses };

@@ -1,6 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
-const ExternalLink = () => <FontAwesomeIcon icon={faExternalLinkAlt} />;
+const ExternalLink = ({ ...rest }) => (
+  <FontAwesomeIcon {...rest} icon={faExternalLinkAlt} />
+);
 
-export default ExternalLink
+export default ExternalLink;

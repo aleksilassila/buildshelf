@@ -1,13 +1,12 @@
-const { DataTypes, NOW } = require("sequelize");
+const { DataTypes, NOW, Op } = require("sequelize");
 const { sequelize } = require("../database");
+const { Image } = require("./Image");
 
 const Build = sequelize.define(
   "build",
   {
     title: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
-    buildFile: { type: DataTypes.JSONB, allowNull: false },
-    images: DataTypes.ARRAY(DataTypes.STRING),
     totalDownloads: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -42,6 +41,12 @@ const Build = sequelize.define(
   { timestamps: false }
 );
 
+Build.prototype.setImagesById = async function (imageIds) {
+  return this.setImages(
+    await Image.findAll({ where: { id: { [Op.in]: imageIds } } })
+  );
+};
+
 Build.prototype.countTotalSaves = function () {
   return sequelize.model("userSavedBuilds").count({
     where: {
@@ -58,7 +63,7 @@ Build.prototype.updateTotalSaves = async function () {
 Build.prototype.hasAccess = function (user = null) {
   if (user?.moderator === true) return true;
   if (this.private || !this.approved) {
-    if (!user || user.uuid !== this.creator?.uuid) {
+    if (!user || user?.uuid !== this.creator?.uuid) {
       return false;
     }
   }
@@ -84,8 +89,10 @@ Build.prototype.toJSON = async function (user = null) {
     id: this.id,
     title: this.title,
     description: this.description,
-    buildFile: this.buildFile,
-    images: this.images,
+    buildFile: await this.getBuildFile(),
+    images: this.images
+      ? await Promise.all(this.images.map((i) => i.toJSON()))
+      : undefined,
     totalDownloads: this.totalDownloads,
     totalSaves: this.totalSaves,
     creator: this.creator ? await this.creator.toJSON() : undefined,

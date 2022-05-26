@@ -1,0 +1,10 @@
+<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Frame 1">
+<rect width="18" height="18" fill="white"/>
+<g id="box">
+<path d="M17 5V13L9 17L1 13V5L9 1L17 5Z" fill="black"/>
+<path d="M9 17V9M9 17L17 13V5M9 17L1 13V5M9 9L17 5M9 9L1 5M17 5L9 1L1 5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<path id="xray" d="M9 3.16667V14.8333C9 15.5883 8.19552 16.0709 7.52941 15.7157L2.02941 12.7824C1.70355 12.6086 1.5 12.2693 1.5 11.9V6.1C1.5 5.73069 1.70355 5.39144 2.02941 5.21765L7.52941 2.28431C8.19552 1.92906 9 2.41175 9 3.16667Z" fill="white"/>
+</g>
+</svg>

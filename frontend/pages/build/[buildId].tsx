@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import TitleBar from "../../components/bars/TitleBar";
 import useAxios from "axios-hooks";
-import BuildPage from "../../components/modals/BuildPage";
+import * as BuildPage from "../../components/BuildPage";
 
 const Build = ({}) => {
   const router = useRouter();
@@ -14,7 +14,7 @@ const Build = ({}) => {
   return (
     <div>
       <TitleBar />
-      <BuildPage buildId={buildId} modal={false} />
+      <BuildPage.Static buildId={buildId} />
     </div>
   );
 };

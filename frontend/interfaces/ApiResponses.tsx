@@ -1,3 +1,5 @@
+import { Use } from "trough";
+
 export interface Tag {
   name: string;
 }
@@ -20,19 +22,8 @@ export interface Build {
   id: number;
   title: string;
   description: string;
-  buildFile: {
-    filename: string,
-    version: number,
-    minecraftDataVersion: number,
-    enclosingSize: {
-      x: number,
-      y: number,
-      z: number,
-    },
-    blockCount: number,
-    md5: string,
-  };
-  images: string[];
+  buildFile: BuildFile;
+  images: Image[];
   totalDownloads: number;
   totalSaves: number;
   creator?: User;
@@ -49,4 +40,24 @@ export interface User {
   uuid: string;
   saves?: Build[];
   follows?: User[];
+}
+
+export interface Image {
+  id: number;
+  filename: string;
+  createdAt: string;
+  updatedAt: string;
+  creator?: User;
+}
+
+export interface BuildFile {
+  id: number;
+  filename: string;
+  version: number;
+  minecraftDataVersion: number;
+  x: number;
+  y: number;
+  z: number;
+  blockCount: number;
+  md5: string;
 }

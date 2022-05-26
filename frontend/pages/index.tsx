@@ -31,6 +31,9 @@ const Home = () => {
 
   /*
    * TODO:
+   *  - Implement private (paid) builds
+   *  - Redesign front page
+   *    - "Add litematica extension portion"
    *  - Edit and manage own builds
    *    - Markdown
    *  - Favorite collections

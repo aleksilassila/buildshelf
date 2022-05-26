@@ -11,6 +11,17 @@ const { errors } = require("../client-error");
 const fs = require("fs");
 const validateJSON = require("jsonschema").validate;
 const crypto = require("crypto");
+const { Image } = require("../models/Image");
+const { BuildFile } = require("../models/BuildFile");
+
+const hasAccess = (res, build, user, message = "Build not found.") => {
+  if (!build || !build.hasAccess(user)) {
+    errors.NOT_FOUND.send(res, message);
+    return false;
+  }
+
+  return true;
+};
 
 const litematicSchema = {
   type: "object",
@@ -46,16 +57,16 @@ const litematicSchema = {
 };
 
 exports.create = async function (req, res) {
-  const { description, title, category, collectionId } = req.body;
+  const { description, title, category, collectionId, imageIds } = req.body;
+  const file = req.file;
 
-  if (req.files?.buildFile === undefined) {
+  if (file === undefined) {
     errors.BAD_REQUEST.send(res);
     return;
   }
 
-  const buildFile = req.files?.buildFile[0];
-
-  const simpleLitematic = await parseSimplifiedLitematic(buildFile?.path);
+  // Validate litematic file
+  const simpleLitematic = await parseSimplifiedLitematic(file?.path);
 
   if (!validateJSON(simpleLitematic, litematicSchema).valid) {
     errors.BAD_REQUEST.send(res, "Error parsing litematic file.");
@@ -68,12 +79,8 @@ exports.create = async function (req, res) {
       .slice(0, 3)
       .map((i) => i.toLowerCase().substring(0, 255)) || [];
 
-  const images = req.files?.images?.length
-    ? req.files.images.map((i) => i.filename)
-    : [];
-
   if (category) {
-    if (!(await Category.findOne({ where: { name: category } }))) {
+    if (!(await Category.findByPk(category))) {
       errors.NOT_FOUND.send(res, "Category not found.");
       return;
     }
@@ -90,29 +97,32 @@ exports.create = async function (req, res) {
     }
   }
 
+  const buildFile = await BuildFile.create({
+    filename: file.filename,
+    version: simpleLitematic.Version,
+    minecraftDataVersion: simpleLitematic.MinecraftDataVersion,
+    x: simpleLitematic.Metadata?.EnclosingSize?.x,
+    y: simpleLitematic.Metadata?.EnclosingSize?.y,
+    z: simpleLitematic.Metadata?.EnclosingSize?.z,
+    blockCount: simpleLitematic.Metadata?.TotalBlocks,
+    md5: "",
+  });
+
   const build = await Build.create({
     title,
     description,
-    images,
     creatorUuid: req.user.uuid,
     collectionId,
     category,
-    buildFile: {
-      filename: buildFile.filename,
-      version: simpleLitematic.Version,
-      minecraftDataVersion: simpleLitematic.MinecraftDataVersion,
-      enclosingSize: {
-        x: simpleLitematic.Metadata?.EnclosingSize?.x,
-        y: simpleLitematic.Metadata?.EnclosingSize?.y,
-        z: simpleLitematic.Metadata?.EnclosingSize?.z,
-      },
-      blockCount: simpleLitematic.Metadata?.TotalBlocks,
-      md5: "",
-    },
+    buildFileId: buildFile.id,
   });
 
+  await build.setImagesById(imageIds);
+
   // Add file id to the build file
-  const { parsed: litematicWithId } = await parseLitematic(buildFile.path);
+  const { parsed: litematicWithId } = await parseLitematic(
+    "uploads/" + buildFile.filename
+  );
 
   if (litematicWithId?.value?.Metadata?.value) {
     litematicWithId.value.Metadata.value.Id = {
@@ -121,19 +131,21 @@ exports.create = async function (req, res) {
     };
   }
 
-  await writeLitematic(buildFile.path, litematicWithId).then(async () => {
-    // Calculate build file hash
-    const hashSum = crypto.createHash("md5");
-    hashSum.update(fs.readFileSync(buildFile.path));
+  await writeLitematic("uploads/" + buildFile.filename, litematicWithId).then(
+    async () => {
+      // Calculate build file hash
+      const hashSum = crypto.createHash("md5");
+      hashSum.update(fs.readFileSync("uploads/" + buildFile.filename));
 
-    // Update md5 hash
-    await build.update({
-      buildFile: {
-        ...build.buildFile,
-        md5: hashSum.digest("hex"),
-      },
-    });
-  });
+      // Update md5 hash
+      await build.update({
+        buildFile: {
+          ...build.buildFile,
+          md5: hashSum.digest("hex"),
+        },
+      });
+    }
+  );
 
   // Add tags
   for (const name of tags) {
@@ -199,6 +211,7 @@ exports.search = async function (req, res) {
         model: User,
         as: "creator",
       },
+      { model: Image, as: "images" },
     ],
   })
     .then(async (builds) => {
@@ -253,15 +266,11 @@ exports.downloadBuild = async function (req, res) {
 exports.get = async function (req, res) {
   const { buildId } = req.params;
 
-  const build = await Build.findOne({
-    where: {
-      id: buildId,
-    },
-    include: ["collection", "creator"],
+  const build = await Build.findByPk(buildId, {
+    include: ["collection", "creator", "images"],
   }).catch((err) => {});
 
-  if (!build || !build.hasAccess(req.user)) {
-    errors.NOT_FOUND.send(res, "Build not found");
+  if (!hasAccess(res, build, req.user)) {
     return;
   }
 
@@ -273,14 +282,9 @@ exports.save = async function (req, res) {
   const { buildId } = req.params;
   const shouldSave = req.body.save;
 
-  const build = await Build.findOne({
-    where: {
-      id: buildId,
-    },
-  }).catch((err) => {});
+  const build = await Build.findByPk(buildId).catch((err) => {});
 
-  if (!build || !build.hasAccess(req.user)) {
-    errors.NOT_FOUND.send(res, "Build not found");
+  if (!hasAccess(res, build, req.user)) {
     return;
   }
 
@@ -304,14 +308,9 @@ exports.bookmark = async function (req, res) {
   const { buildId } = req.params;
   const addBookmark = req.body.bookmark;
 
-  const build = await Build.findOne({
-    where: {
-      id: buildId,
-    },
-  }).catch((err) => {});
+  const build = await Build.findByPk(buildId).catch((err) => {});
 
-  if (!build || !build.hasAccess(req.user)) {
-    errors.NOT_FOUND.send(res);
+  if (!hasAccess(res, build, req.user)) {
     return;
   }
 
@@ -328,14 +327,14 @@ exports.bookmark = async function (req, res) {
 
 exports.update = async function (req, res) {
   const user = req.user;
+  const { description, title, collectionId, imageIds } = req.body;
   const { buildId } = req.params;
-  const build = Build.findOne({
-    where: { id: buildId },
+
+  const build = await Build.findByPk(buildId, {
     include: ["collection", "creator"],
   }).catch(() => {});
 
-  if (!build || !build.hasAccess(user)) {
-    errors.NOT_FOUND.send(res, "Build not found.");
+  if (!hasAccess(res, build, user)) {
     return;
   }
 
@@ -344,26 +343,25 @@ exports.update = async function (req, res) {
     return;
   }
 
-  const { description, title, collectionId } = req.body;
-
-  build.set({
-    description: description || build.description,
-    title: title || build.title,
-    collectionId: collectionId || build.collectionId,
-  });
-
-  build.save().then(() => res.send("OK"));
+  await build
+    .update({
+      description: description || build.description,
+      title: title || build.title,
+      collectionId: collectionId || build.collectionId,
+    })
+    .then(async () => {
+      if (imageIds) {
+        await build.setImagesById(imageIds);
+      }
+    })
+    .then(() => res.send("OK"));
 };
 
 exports.approve = async function (req, res) {
   const { buildId } = req.params;
   const approve = req.body.approve;
 
-  const build = Build.findOne({
-    where: {
-      id: buildId,
-    },
-  }).catch(() => {});
+  const build = Build.findByPk(buildId).catch(() => {});
 
   if (!build) {
     errors.NOT_FOUND.send(res);
@@ -372,4 +370,26 @@ exports.approve = async function (req, res) {
 
   build.approved = approve;
   build.save().then(() => res.send("OK"));
+};
+
+exports.uploadImages = async function (req, res) {
+  const images = req.files;
+
+  if (!images || !images.length) {
+    errors.BAD_REQUEST.send(res);
+    return;
+  }
+
+  await Image.bulkCreate(
+    images.map((i) => ({
+      filename: i.filename,
+      creatorUuid: req.user?.uuid,
+    }))
+  ).then(async (images) =>
+    res.send(await Promise.all(images.map((i) => i.toJSON())))
+  );
+
+  // const images = req.files?.images?.length
+  //   ? req.files.images.map((i) => i.filename)
+  //   : [];
 };

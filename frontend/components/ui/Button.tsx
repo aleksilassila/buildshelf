@@ -1,72 +1,42 @@
 import theme from "../../constants/theme";
-import { useState } from "react";
+import React, { useState } from "react";
 
-const Button = ({ children, onClick, primary = false, danger = false }) => {
+interface Props {
+  onClick: (any?) => void;
+  children?: React.ReactNode;
+  className?: string;
+  primary?: boolean;
+  danger?: boolean;
+  disabled?: boolean;
+}
+
+const Button = ({
+  children,
+  onClick,
+  className,
+  disabled = false,
+  primary = false,
+  ...rest
+}: Props) => {
   const [isFocused, setIsFocused] = useState(false);
-
-  const handleClick = (e) => {
-    if (!danger) {
-      onClick(e);
-    } else {
-      if (isFocused) {
-        onClick();
-        e.target.blur();
-      } else {
-        setIsFocused(true);
-      }
-    }
-  };
 
   return (
     <div
-      className={`button ${danger && "danger"} ${primary && "primary"}`}
+      className={`${theme.ui.spacing} ${theme.ui.borders} ${theme.ui.outline}
+          whitespace-nowrap cursor-pointer font-medium text-stone-700
+          active:bg-stone-200 ${
+            primary && !disabled
+              ? "text-white bg-green-400 border-stone-200 active:bg-green-500"
+              : "bg-white"
+          } ${
+        disabled && "cursor-default opacity-70 active:bg-white"
+      } ${className}`}
       onBlur={() => setIsFocused(false)}
-      onClick={handleClick}
+      onClick={disabled ? () => {} : onClick}
       tabIndex={0}
+      {...rest}
     >
       {children}
-      <style jsx>{`
-        .button {
-          border: 1px solid ${theme.lightLowContrast};
-          box-shadow: ${theme.bottomShadow};
-          background-color: ${theme.lightHighContrast};
-          color: ${theme.darkMediumContrast};
-          font-weight: 500;
-          border-radius: 4px;
-          height: 2.2rem;
-          font-size: 0.9em;
-
-          padding: 0.4em 1em;
-          cursor: pointer;
-          transition: background-color 100ms linear;
-          display: flex;
-          align-items: center;
-          flex: 0 0 auto;
-        }
-
-        .button:hover {
-          background-color: ${theme.lightMediumContrast};
-        }
-
-        .primary {
-          background-color: ${theme.layout};
-          color: ${theme.lightHighContrast};
-          font-weight: 500;
-          text-align: center;
-          border: 1px solid ${theme.layout};
-        }
-
-        .primary:hover {
-          background-color: ${theme.layoutDark};
-          border: 1px solid ${theme.layoutDark};
-        }
-
-        .danger:focus {
-          background-color: ${theme.red};
-          color: ${theme.lightHighContrast};
-          border: 1px solid ${theme.redLight};
-        }
-      `}</style>
     </div>
   );
 };

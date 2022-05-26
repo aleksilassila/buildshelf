@@ -61,7 +61,9 @@ const BuildCard = ({ build, openBuild }: Props) => {
         {`
           .container {
             background-image: url("${build?.images?.length
-              ? process.env.BACKEND_ENDPOINT + "/files/" + build?.images[0]
+              ? process.env.BACKEND_ENDPOINT +
+                "/files/" +
+                build?.images[0].filename
               : "/blueprint.jpeg"}");
             background-position: center;
             background-size: cover;

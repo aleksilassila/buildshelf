@@ -13,10 +13,15 @@ import theme from "../constants/theme";
 import CategoryBrowser from "../components/modals/CategoryBrowser";
 import Localstorage from "../utils/localstorage";
 import Message from "../components/ui/Message";
-import Styled from "../components/Styled";
 import Markdown from "../components/Markdown";
-import * as LabelPrimitive from "@radix-ui/react-label";
 import Tag from "../components/ui/Tag";
+import * as Form from "../components/form/Form";
+import useFormData from "../hooks/useFormData";
+import FormMarkdownEditor from "../components/form/FormMarkdownEditor";
+import { apiRequest } from "../utils/api";
+import ImageUpload from "../components/form/ImageUpload";
+import { Toast, useToast } from "../components/ui/toast";
+import { Image } from "../interfaces/ApiResponses";
 
 interface FormData {
   title: string;
@@ -24,7 +29,7 @@ interface FormData {
   buildFile: File | null;
   tags: string[];
   tagsInput: string;
-  images: File[];
+  images: Image[];
   category: string;
   collectionSearch: string;
   collectionName: string;
@@ -32,7 +37,7 @@ interface FormData {
   collectionDescription: string;
 }
 
-const initialFormData = {
+const initialFormData: FormData = {
   title: "",
   description: "",
   buildFile: null,
@@ -46,48 +51,28 @@ const initialFormData = {
   collectionDescription: "",
 };
 
-const Section = ({
-  children,
-  htmlFor,
-  className,
-}: {
-  children: any;
-  htmlFor?: string;
-  className?: string;
-}) => (
-  <LabelPrimitive.Root htmlFor={htmlFor} className={`py-4 mx-6 ${className}`}>
-    {children}
-  </LabelPrimitive.Root>
-);
-
-const Tip = Styled("text-xs text-stone-700 mt-2");
-const Label = Styled("font-medium mb-2");
-
 const Upload = () => {
-  const [formData, setFormData] = useState<FormData>(
-    Localstorage.get("uploadFormData") || initialFormData
+  const [formData, setFormData, changeField] = useFormData<FormData>(
+    initialFormData,
+    "uploadFormData"
   );
+
+  // Toast props
+  const [toast, toastProps] = useToast();
 
   const [showCollectionsManager, setShowCollectionsManager] = useState(false);
   const [showCategoryBrowser, setShowCategoryBrowser] = useState(false);
 
-  const [response, setResponse] = useState(null);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
-    Localstorage.set("uploadFormData", {
-      ...formData,
-      buildFile: initialFormData.buildFile,
-      images: initialFormData.images,
-    });
+    if (typeof window !== "undefined") {
+      Localstorage.set("uploadFormData", {
+        ...formData,
+        buildFile: initialFormData.buildFile,
+      });
+    }
   }, [formData]);
 
-  const changeField = (field) => (value) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
-  };
+  if (formData === null) return <div />;
 
   const submitData = (e) => {
     e.preventDefault();
@@ -98,7 +83,7 @@ const Upload = () => {
     data.append("description", formData.description);
     data.append("buildFile", formData.buildFile);
     for (const image of formData.images) {
-      data.append("images", image);
+      data.append("imageIds[]", image.id.toString());
     }
     data.append("category", formData.category);
     if (formData.collectionId) {
@@ -115,10 +100,10 @@ const Upload = () => {
       headers: { "Content-Type": "multipart/form-data" },
     })
       .then((res) => {
-        setResponse(res.data);
+        toast("Build Created", "Build created successfully.");
         setFormData(initialFormData);
       })
-      .catch((err) => setError(err));
+      .catch((err) => toast("Error Occurred", err?.message));
   };
 
   const addTag = (e) => {
@@ -140,7 +125,6 @@ const Upload = () => {
 
   const removeTag = (tagName) => (e) => {
     e.preventDefault();
-    console.log("Removing", tagName);
     if (formData.tags.includes(tagName)) {
       const tags = formData.tags;
       tags.splice(tags.indexOf(tagName), 1);
@@ -165,14 +149,6 @@ const Upload = () => {
       category,
     });
   };
-
-  // const validate = () => {
-  //   const errors = [];
-  //
-  //   if (!formData.title) {
-  //     err
-  //   }
-  // }
 
   const userObject = Auth.getUser();
 
@@ -200,37 +176,27 @@ const Upload = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <TitleBar active="upload" />
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className="rounded border border-stone-200 bg-stone-100 shadow grid grid-cols-1 divide-y divide-stone-200 m-6 md:mx-auto max-w-screen-lg"
-      >
-        <Section>
+      <Form.Root>
+        <Form.Section>
           <h2 className={theme.text.bold}>Upload a build</h2>
-        </Section>
-        <Section htmlFor="title">
-          <Label>Title</Label>
+        </Form.Section>
+        <Form.Section htmlFor="title">
+          <Form.Label>Title</Form.Label>
           <Input
             id="title"
             value={formData.title}
             setValue={changeField("title")}
             placeholder="Title"
           />
-        </Section>
-        <Section>
-          <Label>Description</Label>
-          <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 h-fit">
-            <Input
-              value={formData.description}
-              setValue={changeField("description")}
-              placeholder="Description"
-              height="8rem"
-              textArea
-            />
-            <Markdown className="bg-stone-50 p-2 rounded border border-stone-200 overflow-y-scroll">
-              {formData.description}
-            </Markdown>
-          </div>
-          <Tip>
+        </Form.Section>
+        <Form.Section>
+          <Form.Label>Description</Form.Label>
+          <FormMarkdownEditor
+            placeholder="Description"
+            setValue={changeField("description")}
+            value={formData.description}
+          />
+          <Form.Tip>
             Supports{" "}
             <a
               href="https://www.markdownguide.org/cheat-sheet/"
@@ -239,30 +205,32 @@ const Upload = () => {
               markdown
             </a>{" "}
             syntax
-          </Tip>
-        </Section>
-        <Section>
-          <Label>Build File</Label>
+          </Form.Tip>
+        </Form.Section>
+        <Form.Section>
+          <Form.Label>Build File</Form.Label>
           <FileSelect
             files={formData.buildFile}
             setFiles={(files) => changeField("buildFile")(files[0])}
             accept=".litematic, application/gzip"
           />
-          <Tip>Supported extensions: .litematica</Tip>
-        </Section>
-        <Section>
-          <Label>Images</Label>
-          <FileSelect
-            files={formData.images}
-            multiple={true}
-            setFiles={changeField("images")}
-            accept="image/png, image/jpeg, image/gif"
+          <Form.Tip>Supported extensions: .litematica</Form.Tip>
+        </Form.Section>
+        <Form.Section>
+          <Form.Label>Images</Form.Label>
+          <ImageUpload
+            initialImages={formData.images}
+            uploadCallback={(res) => {
+              if (res.status === 200) {
+                changeField("images")(res.data);
+              }
+            }}
           />
-          <Tip>Supported extensions: .png, .jpg</Tip>
-        </Section>
-        <Section>
+          <Form.Tip>Supported extensions: .png, .jpg</Form.Tip>
+        </Form.Section>
+        <Form.Section>
           <div className="mb-2 flex flex-row gap-3">
-            <Label className="mb-0">Tags</Label>
+            <Form.Label className="mb-0">Tags</Form.Label>
             <Tag.Root>
               {formData.tags.map((tag, index) => (
                 <Tag.Item onRemove={removeTag(tag)}>{tag}</Tag.Item>
@@ -278,13 +246,13 @@ const Upload = () => {
             />
             <Button onClick={addTag}>Add</Button>
           </div>
-          <Tip>
+          <Form.Tip>
             Add up to three tags. Tags should be adjectives that describe your
             building. For example: diagonal, medieval, easy
-          </Tip>
-        </Section>
-        <Section>
-          <Label>Category</Label>
+          </Form.Tip>
+        </Form.Section>
+        <Form.Section>
+          <Form.Label>Category</Form.Label>
           <div className="input-button-container">
             <Input
               value={formData.category}
@@ -300,10 +268,10 @@ const Upload = () => {
             setShow={setShowCategoryBrowser}
             setCategory={setCategory}
           />
-          <Tip>A noun describing the type of the build.</Tip>
-        </Section>
-        <Section>
-          <Label>Add to a Build Collection</Label>
+          <Form.Tip>A noun describing the type of the build.</Form.Tip>
+        </Form.Section>
+        <Form.Section>
+          <Form.Label>Add to a Build Collection</Form.Label>
           <div>
             <MultipleButton data={collectionsButtonData} />
           </div>
@@ -312,38 +280,23 @@ const Upload = () => {
             setShowMenu={setShowCollectionsManager}
             setCollection={setCollection}
           />
-        </Section>
-        <Message visible={!!response} close={() => setResponse(null)} success>
-          <span>Build created.</span>
-        </Message>
-        <Message visible={!!error} close={() => setError(null)} danger>
-          <h3>An error occurred</h3>
-          {error?.message}
-        </Message>
-        <Section className="flex flex-row justify-between">
+        </Form.Section>
+        <Form.Section className="flex flex-row justify-between">
           <Button onClick={submitData} primary>
             Upload
           </Button>
           <Button onClick={() => setFormData(initialFormData)} danger>
             Clear
           </Button>
-        </Section>
-      </form>
+        </Form.Section>
+      </Form.Root>
+      <Toast toastProps={toastProps} />
       <style jsx>
         {`
           .container {
             display: flex;
             flex-direction: column;
             background-color: ${theme.light};
-          }
-
-          .section {
-            margin: 0.5em 0;
-          }
-
-          .tip {
-            font-size: 0.7em;
-            color: ${theme.darkLowContrast};
           }
 
           .tags > :global(.table) {

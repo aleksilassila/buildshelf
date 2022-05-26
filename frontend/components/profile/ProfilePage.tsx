@@ -75,29 +75,43 @@ const ProfilePage = ({
   }
 
   return (
-    <div>
+    <div className="flex flex-col">
       <TitleBar active={isOwnProfile ? tabName : null} />
-      <div className="profile-banner">
-        <div className="profile-banner-content">
-          <div />
-          <div className="user-stats">{/*<span>Builds: 13</span>*/}</div>
-          <div className="user-info">
-            <div className="avatar" />
-            <h2 className="username">{user.username}</h2>
+      <div
+        className="bg-cover"
+        style={{
+          background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+              url("${bannerUrl || "/blueprint.jpeg"}") no-repeat center center`,
+        }}
+      >
+        <div className="h-40 md:h-56 p-4 backdrop-blur-sm grid grid-cols-2 grid-rows-2 md:p-6">
+          {/*<div className="">/!*<span>Builds: 13</span>*!/</div>*/}
+          <div className="row-start-2 col-start-1 flex items-end">
+            <div className="flex flex-row items-center gap-2 md:gap-4">
+              <div
+                style={{
+                  backgroundImage: `url('https://crafatar.com/avatars/${user.uuid}')`,
+                }}
+                className={`w-10 h-10 bg-contain bg-center bg-no-repeat md:w-12 md:h-12`}
+              />
+              <h2 className="text-white font-bold text-lg md:text-xl">
+                {user.username}
+              </h2>
+            </div>
           </div>
           {userObject.isLoggedIn() && userObject.uuid !== uuid ? (
-            <Button onClick={follow} primary={!followed}>
-              <Heart style={{ height: "0.8em" }} />
-              {NBSP}
-              {followed ? "Unfollow" : "Follow"}
-            </Button>
-          ) : (
-            <div />
-          )}
+            <div className="row-start-2 col-start-2 flex items-end justify-end">
+              <Button onClick={follow} primary={!followed}>
+                <Heart style={{ height: "0.8em" }} />
+                {NBSP}
+                {followed ? "Unfollow" : "Follow"}
+              </Button>
+            </div>
+          ) : null}
         </div>
         {/*<div className="profile-mask" />*/}
       </div>
-      <div className="medium-page-container">
+      <div className="border-t-2 border-t-stone-300 py-6 px-4 md:px-8 lg:px-16">
         <ProfileNavBar
           user={user}
           tabName={tabName}
@@ -106,66 +120,6 @@ const ProfilePage = ({
         />
         {children}
       </div>
-      <style jsx>
-        {`
-          .profile-banner {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-              url("${bannerUrl || "/blueprint.jpeg"}") no-repeat center center;
-            background-size: cover;
-          }
-
-          .medium-page-container {
-            border-top: 3px solid ${theme.lightLowContrast};
-          }
-
-          .profile-banner-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            padding: 2em;
-            backdrop-filter: blur(2px);
-            //background: linear-gradient(
-            //  180deg,
-            //  rgba(0, 0, 0, 0) 0%,
-            //  rgba(0, 0, 0, 0) 40%,
-            //  rgba(0, 0, 0, 0.7) 100%
-            //);
-            min-height: 200px;
-          }
-
-          .profile-banner-content > :global(.button) {
-            align-self: end;
-            justify-self: right;
-          }
-
-          .user-info {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            align-self: end;
-          }
-
-          .username {
-            color: ${theme.lightHighContrast};
-          }
-
-          .avatar {
-            background: url("https://crafatar.com/avatars/${user.uuid}");
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            width: 2.5em;
-            height: 2.5em;
-            display: inline-block;
-            margin-right: 0.5em;
-          }
-
-          .user-stats,
-          .user-stats > :global(*) {
-            color: ${theme.lightHighContrast};
-          }
-        `}
-      </style>
     </div>
   );
 };
@@ -202,7 +156,6 @@ const ProfileNavBar = ({
           Saves {getCount("saves")}
         </div>
       </Link>
-
       {isOwnProfile ? (
         <Link href={"/user/" + user.uuid + "/bookmarks"}>
           <div className={`${tabName === "bookmarks" && "active"} item`}>

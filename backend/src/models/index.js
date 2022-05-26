@@ -4,27 +4,56 @@ const { Tag } = require("./Tag");
 const { Category } = require("./Category");
 const { User } = require("./User");
 const { Build } = require("./Build");
-const { UserFollows } = require("./junctions/UserFollows");
+const { Image } = require("./Image");
+const { BuildFile } = require("./BuildFile");
+const { DataTypes } = require("sequelize");
 
 // Define empty junction tables
-const UserBookmarks = sequelize.define("userBookmarks", {}, {
-  timestamps: false,
-});
+const UserBookmarks = sequelize.define(
+  "userBookmarks",
+  {},
+  {
+    timestamps: false,
+  }
+);
 
-const BuildTags = sequelize.define("buildTags", {}, {
-  timestamps: false,
-});
+const BuildTags = sequelize.define(
+  "buildTags",
+  {},
+  {
+    timestamps: false,
+  }
+);
 
-const UserCollectionBookmarks = sequelize.define("userCollectionBookmarks", {}, {
-  timestamps: false,
-});
+const UserCollectionBookmarks = sequelize.define(
+  "userCollectionBookmarks",
+  {},
+  {
+    timestamps: false,
+  }
+);
 
-const UserSavedBuilds = sequelize.define("userSavedBuilds", {}, {
-  timestamps: false,
-});
+const UserSavedBuilds = sequelize.define(
+  "userSavedBuilds",
+  {},
+  {
+    timestamps: false,
+  }
+);
 
-// User.belongsToMany(Build, { through: "userFavorites", as: "favorites" });
-// Build.belongsToMany(User, { through: "userFavoriteBuilds", as: "favoriteBuilds" });
+const BuildImages = sequelize.define("buildImages", {}, { timestamps: false });
+
+const UserFollows = sequelize.define(
+  "userFollows",
+  {
+    followerUuid: DataTypes.STRING,
+    followedUuid: DataTypes.STRING,
+  },
+  {
+    timestamps: false,
+  }
+);
+
 User.belongsToMany(Build, {
   through: UserSavedBuilds,
   as: "savedBuilds",
@@ -63,6 +92,32 @@ User.belongsToMany(Collection, {
   through: UserCollectionBookmarks,
   as: "collectionBookmarks",
 });
+
+// Files
+Image.belongsToMany(Build, {
+  through: BuildImages,
+  as: "builds",
+});
+
+Build.belongsToMany(Image, {
+  through: BuildImages,
+  as: "images",
+});
+
+User.hasMany(Image, { as: "images", foreignKey: "creatorUuid" });
+Image.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });
+
+Build.belongsTo(BuildFile, {
+  as: "buildFile",
+  foreignKey: "buildFileId",
+});
+BuildFile.hasOne(Build, {
+  as: "build",
+  foreignKey: "buildFileId",
+});
+
+User.hasMany(BuildFile, { as: "buildFile", foreignKey: "creatorUuid" });
+BuildFile.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });
 
 module.exports = {
   Build,

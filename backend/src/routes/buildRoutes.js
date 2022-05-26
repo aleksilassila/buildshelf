@@ -26,7 +26,7 @@ const upload = multer({
   storage,
   limits: {
     // parts: 6,
-    fileSize: "15MB",
+    fileSize: 1024 * 1024 * 15,
   },
   fileFilter: function (req, file, cb) {
     switch (file.fieldname) {
@@ -40,7 +40,7 @@ const upload = multer({
         break;
       }
       case "images": {
-        if (!/image\/png|image\/jpge|image\/gif/.test(file.mimetype)) {
+        if (!/image\/png|image\/jpeg|image\/gif/.test(file.mimetype)) {
           return cb(null, false);
         }
         break;
@@ -55,10 +55,7 @@ buildRoutes.get("/files/id/:buildId", buildsController.downloadBuild);
 buildRoutes.post(
   "/build/create",
   auth,
-  upload.fields([
-    { name: "buildFile", maxCount: 1 },
-    { name: "images", maxCount: 4 },
-  ]),
+  upload.single("buildFile"),
   validateBody({
     type: "object",
     properties: {
@@ -67,13 +64,13 @@ buildRoutes.post(
       category: { type: "string" },
       collectionId: { type: "number" },
       tags: { type: "string" },
-      // tags: {
-      //   type: "array",
-      //   items: { type: "string" },
-      //   minItems: 0,
-      //   uniqueItems: true,
-      //   maxItems: 3,
-      // },
+      imageIds: {
+        type: "array",
+        items: { type: "string" },
+        minItems: 0,
+        maxItems: 3,
+        uniqueItems: true,
+      },
     },
     required: ["title", "description"],
   }),
@@ -146,6 +143,12 @@ buildRoutes.put(
       description: { type: "string" },
       // category: { type: "string" },
       collectionId: { type: "number" },
+      imageIds: {
+        type: "array",
+        items: { type: "number" },
+        minItems: 0,
+        maxItems: 5,
+      },
       // tags: { type: "string" },
     },
     required: [],
@@ -164,6 +167,13 @@ buildRoutes.post(
     required: ["approve"],
   }),
   buildsController.approve
+);
+
+buildRoutes.post(
+  "/images/upload",
+  auth,
+  upload.array("images", 5),
+  buildsController.uploadImages
 );
 
 module.exports = buildRoutes;

@@ -12,6 +12,7 @@ interface Props {
   onBlur?: () => void;
   children?: JSX.Element;
   id?: string;
+  className?: string;
 }
 
 const Input = ({
@@ -25,6 +26,7 @@ const Input = ({
   onBlur = () => {},
   children,
   id,
+  className,
   ...rest
 }: Props) => {
   const focusRef = useRef(null);
@@ -41,9 +43,11 @@ const Input = ({
 
   return (
     <div
-      className={`w-full border border-stone-300 rounded-md flex items-center ${
-        textArea ? "h-min" : "h-10"
-      } pl-4 cursor-text input focus-within:ring ring-offset-1 ring-green-200 bg-stone-50`}
+      className={`input ${theme.ui.outline} ${theme.ui.borders} ${
+        theme.ui.spacing
+      } w-full ${
+        textArea && "h-min"
+      } px-0 pl-4 cursor-text bg-white ${className}`}
       onClick={() => focusRef.current.focus()}
       {...rest}
     >
@@ -51,7 +55,7 @@ const Input = ({
       {textArea ? (
         <textarea
           id={id}
-          value={value}
+          defaultValue={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           onBlur={onBlur}

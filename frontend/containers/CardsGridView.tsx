@@ -1,6 +1,6 @@
 import BuildCard from "../components/BuildCard";
 import { Build } from "../interfaces/ApiResponses";
-import BuildPage from "../components/modals/BuildPage";
+import * as BuildPage from "../components/BuildPage";
 import { useState } from "react";
 import NetworkError from "../components/statuses/NetworkError";
 import Empty from "../components/statuses/Empty";
@@ -26,7 +26,11 @@ const CardsGridView = ({ builds, loading, error, children = null }: Props) => {
 
   return (
     <div className="builds-list">
-      <BuildPage buildId={buildId} setBuildPage={setBuildId} modal={true} />
+      <BuildPage.Floating
+        buildId={buildId}
+        setBuildPage={setBuildId}
+        modal={true}
+      />
       {children}
       <div className="cards-container">
         {builds.map((build: Build, index) => {

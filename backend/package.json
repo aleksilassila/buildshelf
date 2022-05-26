@@ -6,8 +6,8 @@
     "license": "",
     "scripts": {
         "start": "nodemon app.js",
-        "seed": "npx sequelize-cli db:seed:all",
-        "undo-seed": "npx sequelize-cli db:seed:undo:all"
+        "seed": "npx sequelize-cli db:seed:all --debug",
+        "undo-seed": "npx sequelize-cli db:seed:undo:all --debug"
     },
     "dependencies": {
         "axios": "^0.21.4",

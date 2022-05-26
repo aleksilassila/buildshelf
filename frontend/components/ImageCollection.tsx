@@ -1,43 +1,34 @@
-interface Props {
-  images: string[];
-}
+import * as ScrollArea from "@radix-ui/react-scroll-area";
+import CloseIcon from "./icons/CloseIcon";
+import { Image } from "../interfaces/ApiResponses";
 
-const ImageCollection = ({ images }: Props) => {
+const ImageCollection: ({
+  images,
+  remove,
+}: {
+  images: Image[];
+  remove?: (id: number) => void | null;
+}) => JSX.Element = ({ images, remove = null }) => {
   return (
-    <div className="container">
-      <div className="images-container">
-        {images.map((url, key) => (
-          <img src={process.env.BACKEND_ENDPOINT + "/files/" + url} key={key} />
-        ))}
-      </div>
-      <style jsx>
-        {`
-          .images-container {
-            display: flex;
-            flex-direction: row;
-            overflow: scroll;
-            flex-wrap: nowrap;
-          }
-
-          img {
-            max-height: 350px;
-            border-radius: 4px;
-          }
-
-          .images-container > img {
-            margin-right: 2em;
-          }
-
-          .images-container > img:last-child {
-            margin-right: 0;
-          }
-
-          ::-webkit-scrollbar {
-            width: 0;
-            display: none;
-          }
-        `}
-      </style>
+    <div className="flex gap-2 overflow-x-scroll h-48 md:h-56 lg:h-64 xl:h-76 pb-2">
+      {images.map((image, key) => {
+        return (
+          <div key={key} className="relative group">
+            {remove != null ? (
+              <div
+                onClick={() => remove(image.id)}
+                className="hidden group-hover:flex absolute top-1.5 right-1.5 bg-stone-50 hover:bg-stone-200 text-stone-600 hover:text-stone-800 w-6 h-6 rounded-full items-center justify-center cursor-pointer"
+              >
+                <CloseIcon className="w-3 h-3" />
+              </div>
+            ) : null}
+            <img
+              className={`rounded-xl max-w-none h-full`}
+              src={`${process.env.BACKEND_ENDPOINT}/files/${image.filename}`}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

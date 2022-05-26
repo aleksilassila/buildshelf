@@ -1,29 +1,63 @@
-import { Build } from "../../interfaces/ApiResponses";
-import ImageCollection from "../ImageCollection";
-import Separator from "../utils/Separator";
-import MultipleButton, { MultipleButtonData } from "../ui/MultipleButton";
+import { Build } from "../interfaces/ApiResponses";
+import ImageCollection from "./ImageCollection";
+import Separator from "./utils/Separator";
+import MultipleButton, { MultipleButtonData } from "./ui/MultipleButton";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Auth from "../../utils/auth";
-import ModalContainer from "../../containers/ModalContainer";
-import Heart from "../icons/Heart";
-import Button from "../ui/Button";
+import Auth from "../utils/auth";
+import ModalContainer from "../containers/ModalContainer";
+import Heart from "./icons/Heart";
+import Button from "./ui/Button";
 import Link from "next/link";
-import Loading from "../statuses/Loading";
-import NetworkError from "../statuses/NetworkError";
-import { useApi } from "../../utils/api";
-import TitleSubtitlePicture from "../TitleSubtitlePicture";
-import theme from "../../constants/theme";
-import minecraftDataVersions from "../../constants/minecraftDataVersions";
-import Markdown from "../Markdown";
+import Loading from "./statuses/Loading";
+import NetworkError from "./statuses/NetworkError";
+import { useApi } from "../utils/api";
+import TitleSubtitlePicture from "./TitleSubtitlePicture";
+import theme from "../constants/theme";
+import minecraftDataVersions from "../constants/minecraftDataVersions";
+import Markdown from "./Markdown";
+import ExternalLink from "./icons/ExternalLink";
+import CloseIcon from "./icons/CloseIcon";
+import BuildTitle from "./buildPage/BuildTitle";
 
 interface Props {
   buildId: number | string;
-  setBuildPage: (number) => void;
-  modal: boolean;
 }
 
-const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
+interface FloatingProps extends Props {
+  setBuildPage: (number) => void;
+}
+
+const Static = ({ ...rest }: Props) => (
+  <div className="page-container">
+    <BuildPage {...rest} />
+  </div>
+);
+
+const Floating = ({ buildId, setBuildPage, ...rest }: FloatingProps) => (
+  <div
+    className="fixed top-0 left-0 z-50 bg-[#00000022] w-screen h-screen md:p-4 lg:p-8 xl:p-12"
+    style={{ display: buildId === undefined ? "none" : "block" }}
+    onClick={(e) => e.target === e.currentTarget && setBuildPage(undefined)}
+  >
+    <div className="bg-white w-full h-full flex flex-col md:rounded-xl">
+      <div className="flex flex-row items-center justify-end text-stone-500 gap-3 p-2 px-4">
+        <a href={"/build/" + buildId} className="flex items-center">
+          <ExternalLink className="w-6 h-6" />
+        </a>
+        <CloseIcon
+          className="cursor-pointer w-6 h-6"
+          onClick={() => setBuildPage(undefined)}
+        />
+      </div>
+      <div className="flex-auto overflow-y-scroll p-8 pt-0">
+        <BuildPage buildId={buildId} {...rest} />
+      </div>
+    </div>
+  </div>
+);
+
+const BuildPage = ({ buildId }: Props) => {
   if (buildId === undefined) return null;
 
   const [build, loading, error] = useApi<Build>("/build/" + buildId, {}, [
@@ -47,63 +81,22 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
 
   const userObject = Auth.getUser();
 
-  const close = () => setBuildPage(undefined);
-
-  const Container = ({ children }) => {
-    if (modal) {
-      return (
-        <ModalContainer externalUrl={"/build/" + buildId} close={close}>
-          {children}
-        </ModalContainer>
-      );
-    } else {
-      return <div className="medium-page-container">{children}</div>;
-    }
-  };
-
   if (loading) {
-    return (
-      <Container>
-        <Loading />
-      </Container>
-    );
+    return <Loading />;
   }
 
   if (error) {
-    return (
-      <Container>
-        <NetworkError />
-      </Container>
-    );
+    return <NetworkError />;
   }
   const mdv = build?.buildFile?.minecraftDataVersion;
   const minecraftDataVersionString =
     mdv in minecraftDataVersions ? "(" + minecraftDataVersions[mdv] + ")" : "";
 
   return (
-    <Container>
-      <div className="build-title">
-        <TitleSubtitlePicture
-          title={build.title}
-          subtitle={
-            <span>
-              Litematic by{" "}
-              <a href={"/user/" + build.creator?.uuid} className="username">
-                {build.creator?.username}
-              </a>
-            </span>
-          }
-          picture={
-            <img
-              src={
-                build.creator &&
-                "https://crafatar.com/avatars/" + build.creator.uuid
-              }
-              alt={build.creator?.username}
-              className="profile-picture"
-            />
-          }
-        />
+    <div>
+      <div className="flex flex-row justify-between">
+        <BuildTitle build={build} />
+
         <div className="build-actions">
           {userObject?.uuid === build.creator.uuid ? (
             <Link href={"/build/" + build.id + "/edit"}>
@@ -133,9 +126,8 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
           <div>Total saves: {build.totalSaves}</div>
           <div>Block count: {build?.buildFile?.blockCount}</div>
           <div>
-            Build dimensions: {build?.buildFile?.enclosingSize?.x}x
-            {build?.buildFile?.enclosingSize?.y}x
-            {build?.buildFile?.enclosingSize?.z}
+            Build dimensions: {build?.buildFile?.x}x{build?.buildFile?.y}x
+            {build?.buildFile?.z}
           </div>
           <div>Litematic version: {build?.buildFile?.version}</div>
           <div>
@@ -245,7 +237,7 @@ const BuildPage = ({ buildId, setBuildPage, modal = true }: Props) => {
           }
         `}
       </style>
-    </Container>
+    </div>
   );
 };
 
@@ -301,4 +293,4 @@ const SaveButton = ({ buildId, sbData, setSBData }) => {
   return <MultipleButton data={saveButtonData} />;
 };
 
-export default BuildPage;
+export { Static, Floating };
