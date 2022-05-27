@@ -1,5 +1,6 @@
 const { DataTypes, NOW } = require("sequelize");
 const { sequelize } = require("../database");
+const config = require("../config");
 
 const Image = sequelize.define(
   "image",
@@ -27,6 +28,10 @@ Image.prototype.toJSON = async function () {
     updatedAt: this.updatedAt,
     creator: this.creator ? await this.creator.toJSON() : null,
   };
+};
+
+Image.prototype.getPath = function () {
+  return `${config.UPLOAD_DIRECTORY}/${this.filename}`;
 };
 
 module.exports = { Image };

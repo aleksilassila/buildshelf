@@ -82,14 +82,20 @@ const Upload = () => {
     data.append("title", formData.title);
     data.append("description", formData.description);
     data.append("buildFile", formData.buildFile);
+
     for (const image of formData.images) {
       data.append("imageIds[]", image.id.toString());
     }
+
     data.append("category", formData.category);
+
     if (formData.collectionId) {
       data.append("collectionId", formData.collectionId);
     }
-    data.append("tags", formData.tags.join(","));
+
+    for (const tag of formData.tags) {
+      data.append("tags[]", tag);
+    }
 
     axios({
       method: "POST",

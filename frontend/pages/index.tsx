@@ -31,15 +31,18 @@ const Home = () => {
 
   /*
    * TODO:
+   *  - Toast colors
+   *  - Adjust image order
+   *  - Working sort by popular
+   *  - Typescript backend / nextjs
    *  - Implement private (paid) builds
    *  - Redesign front page
    *    - "Add litematica extension portion"
-   *  - Edit and manage own builds
+   *  - Manage and remove own builds
    *    - Markdown
    *  - Favorite collections
    *  - Browse creators
-   *  - Finish builds page filters, search
-   *  - Improve buttons and create multiplebutton variation
+   *  - Fix multiplebutton
    *  - Administration tools
    *  - Api documentation
    *  - Update card row behavior?

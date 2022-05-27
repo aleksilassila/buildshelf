@@ -63,7 +63,13 @@ buildRoutes.post(
       description: { type: "string" },
       category: { type: "string" },
       collectionId: { type: "number" },
-      tags: { type: "string" },
+      tags: {
+        type: "array",
+        items: { type: "string" },
+        minItems: 0,
+        maxItems: 3,
+        uniqueItems: true,
+      },
       imageIds: {
         type: "array",
         items: { type: "string" },

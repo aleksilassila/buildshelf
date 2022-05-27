@@ -74,10 +74,7 @@ exports.create = async function (req, res) {
   }
 
   const tags =
-    req.body.tags
-      ?.split(",")
-      .slice(0, 3)
-      .map((i) => i.toLowerCase().substring(0, 255)) || [];
+    req.body.tags?.map((i) => i.toLowerCase().substring(0, 255)) || [];
 
   if (category) {
     if (!(await Category.findByPk(category))) {
@@ -117,7 +114,9 @@ exports.create = async function (req, res) {
     buildFileId: buildFile.id,
   });
 
-  await build.setImagesById(imageIds);
+  if (imageIds) {
+    await build.setImagesById(imageIds);
+  }
 
   // Add file id to the build file
   const { parsed: litematicWithId } = await parseLitematic(
@@ -159,6 +158,12 @@ exports.create = async function (req, res) {
   }
 
   res.send(`${build.id}`);
+
+  try {
+    await req.user.purgeImages();
+  } catch (ignored) {
+    console.log(ignored);
+  }
 };
 
 // FIXME clean this
@@ -327,7 +332,7 @@ exports.bookmark = async function (req, res) {
 
 exports.update = async function (req, res) {
   const user = req.user;
-  const { description, title, collectionId, imageIds } = req.body;
+  const { description, title, collectionId, imageIds, private } = req.body;
   const { buildId } = req.params;
 
   const build = await Build.findByPk(buildId, {
@@ -348,6 +353,7 @@ exports.update = async function (req, res) {
       description: description || build.description,
       title: title || build.title,
       collectionId: collectionId || build.collectionId,
+      private: private !== undefined ? private : build.private,
     })
     .then(async () => {
       if (imageIds) {
