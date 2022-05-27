@@ -17,12 +17,12 @@ const CardsRowView = ({ builds, children }: Props) => {
 
   const onClickPrevious = (e) => {
     e.preventDefault();
-    setScrollIndex(scrollIndex <= 1 ? builds.length - 1 : scrollIndex - 1);
+    setScrollIndex(scrollIndex <= 0 ? builds.length - 1 : scrollIndex - 1);
   };
 
   const onClickNext = (e) => {
     e.preventDefault();
-    setScrollIndex(scrollIndex + 1);
+    setScrollIndex(scrollIndex >= builds.length - 1 ? 0 : scrollIndex + 1);
   };
 
   const getBuildList = function (builds: any[]) {
@@ -40,11 +40,7 @@ const CardsRowView = ({ builds, children }: Props) => {
 
   return (
     <div className="cards-row-view">
-      <BuildPage.Floating
-        buildId={buildId}
-        setBuildPage={setBuildId}
-        modal={true}
-      />
+      <BuildPage.Floating buildId={buildId} setBuildPage={setBuildId} />
       <div className="border-gray-200 border-solid border-0 box-border flex flex-row items-center justify-between">
         <div>{children}</div>
         <div className="heading-controls">
@@ -56,14 +52,20 @@ const CardsRowView = ({ builds, children }: Props) => {
           </div>
         </div>
       </div>
-      <div className="cards-container">
-        {getBuildList(builds).map((build: Build, index) => {
-          return (
-            <div className="flex-auto m-2" key={index}>
-              <BuildCard build={build} openBuild={setBuildId} />
-            </div>
-          );
-        })}
+      <div className="h-64 overflow-x-hidden">
+        <div
+          className="grid grid-flow-col grid-rows-1 h-full gap-3 transition-all"
+          style={{
+            gridTemplateColumns: `repeat(${builds?.length}, calc(50% - 0.375rem))`,
+            transform: `translateX(calc(${scrollIndex * -50}% - ${
+              scrollIndex * 0.375
+            }rem))`,
+          }}
+        >
+          {builds.map((build: Build, key) => {
+            return <BuildCard key={key} build={build} openBuild={setBuildId} />;
+          })}
+        </div>
       </div>
       <style jsx>
         {`

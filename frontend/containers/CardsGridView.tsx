@@ -25,41 +25,18 @@ const CardsGridView = ({ builds, loading, error, children = null }: Props) => {
   }
 
   return (
-    <div className="builds-list">
-      <BuildPage.Floating
-        buildId={buildId}
-        setBuildPage={setBuildId}
-        modal={true}
-      />
+    <div>
+      <BuildPage.Floating buildId={buildId} setBuildPage={setBuildId} />
       {children}
-      <div className="cards-container">
-        {builds.map((build: Build, index) => {
+      <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 gap-2 2xl:grid-cols-3">
+        {builds.map((build: Build, key) => {
           return (
-            <div className="card" key={index}>
-              <BuildCard build={build} openBuild={setBuildId} />
+            <div className="h-64">
+              <BuildCard key={key} build={build} openBuild={setBuildId} />
             </div>
           );
         })}
       </div>
-      <style jsx>
-        {`
-          .builds-list {
-          }
-
-          .cards-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            margin: -0.5em;
-            ${!!children ? "margin-top: 0;" : ""}
-          }
-
-          .card {
-            flex: 1 1 auto;
-            margin: 0.5em;
-          }
-        `}
-      </style>
     </div>
   );
 };

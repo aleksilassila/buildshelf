@@ -5,31 +5,40 @@ import Heart from "./icons/Heart";
 interface Props {
   build: Build;
   openBuild: (number) => void;
+  className?: string;
+  rest?: any;
 }
 
-const ProfilePicture = ({ uuid }) => (
-  <div>
-    <style jsx>{`
-      div {
-        background: url("https://crafatar.com/avatars/${uuid}");
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-        width: 1.5em;
-        height: 1.5em;
-        display: inline-block;
-        margin-right: 0.5em;
-      }
-    `}</style>
-  </div>
-);
-
-const BuildCard = ({ build, openBuild }: Props) => {
+const BuildCard: ({
+  build,
+  openBuild,
+  className,
+  ...rest
+}: {
+  build: Build;
+  openBuild: (number) => void;
+  className?: string;
+  [p: string]: any;
+}) => JSX.Element = ({ build, openBuild, className, ...rest }) => {
   return (
-    <div className="container">
-      <div className="card" onClick={() => openBuild(build.id)}>
+    <div
+      style={{
+        backgroundImage: `url('${
+          build?.images?.length
+            ? process.env.BACKEND_ENDPOINT +
+              "/files/" +
+              build?.images[0].filename
+            : "/blueprint.jpeg"
+        }')`,
+      }}
+      className={"bg-center bg-cover rounded-xl h-full " + className}
+    >
+      <div
+        className="card p-4 rounded-xl w-auto grid grid-cols-2 grid-rows-2 cursor-pointer relative h-full"
+        onClick={() => openBuild(build.id)}
+      >
         <div>
-          <h3 className="title">{build.title}</h3>
+          <h3 className="text-white font-semibold">{build.title}</h3>
         </div>
         <div>
           <h3 className="details">
@@ -40,10 +49,18 @@ const BuildCard = ({ build, openBuild }: Props) => {
         </div>
         <a
           href={"/user/" + build.creator?.uuid}
-          className="creator-container"
+          className="flex gap-2 self-end"
           onClick={(e) => e.stopPropagation()}
         >
-          <ProfilePicture uuid={build.creator?.uuid} />
+          <div
+            style={{
+              backgroundImage:
+                "url('https://crafatar.com/avatars/" +
+                build.creator?.uuid +
+                "')",
+            }}
+            className="bg-contain bg-center w-6 h-6"
+          />
           <span className="creator">{build.creator?.username}</span>
         </a>
         <span className="favorites">
@@ -72,18 +89,6 @@ const BuildCard = ({ build, openBuild }: Props) => {
           }
 
           .card {
-            padding: 1em;
-            border-radius: 4px;
-            min-width: 350px;
-            min-height: 250px;
-            width: auto;
-            position: relative;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            transition: background;
-            cursor: pointer;
-            box-shadow: ${theme.shadow};
             background: linear-gradient(
               0deg,
               rgba(0, 0, 0, 0) 0%,
