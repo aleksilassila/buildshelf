@@ -1,8 +1,49 @@
-const { DataTypes, NOW, Op } = require("sequelize");
-const { sequelize } = require("../database");
+import {
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  ModelStatic,
+  NOW,
+  Op,
+} from "sequelize";
+
+import sequelize from "../database";
+import { UserJSON, UserModel } from "./User";
+import { ImageJSON } from "./Image";
+import { CollectionJSON } from "./Collection";
+import { TagModel } from "./Tag";
+import { BuildFileModel } from "./BuildFile";
+import { CategoryModel } from "./Category";
+
 const { Image } = require("./Image");
 
-const Build = sequelize.define(
+export interface BuildModel extends BuildAttributes {
+  toJSON: (user?: UserModel) => any;
+}
+
+export interface BuildAttributes
+  extends Model<
+    InferAttributes<BuildAttributes>,
+    InferCreationAttributes<BuildAttributes>
+  > {
+  id?: CreationOptional<number>;
+  title: string;
+  description: string;
+  totalDownloads: CreationOptional<number>;
+  totalSaves: CreationOptional<number>;
+  createdAt: CreationOptional<string>;
+  updatedAt: CreationOptional<string>;
+  private: CreationOptional<boolean>;
+  approved: CreationOptional<boolean>;
+}
+
+interface BuildStatic extends ModelStatic<BuildAttributes> {
+  toJSONArray: (builds: BuildModel[], user: any) => void;
+}
+
+const Build = <BuildStatic>sequelize.define<BuildAttributes>(
   "build",
   {
     title: { type: DataTypes.STRING, allowNull: false },
@@ -41,7 +82,7 @@ const Build = sequelize.define(
   { timestamps: false }
 );
 
-Build.prototype.setImagesById = async function (imageIds) {
+Build.prototype.setImagesById = async function (imageIds: string[]) {
   return this.setImages(
     await Image.findAll({ where: { id: { [Op.in]: imageIds } } })
   );
@@ -60,7 +101,7 @@ Build.prototype.updateTotalSaves = async function () {
   await this.save();
 };
 
-Build.prototype.hasAccess = function (user = null) {
+Build.prototype.hasAccess = function (user: UserModel = null) {
   if (user?.moderator === true) return true;
   if (this.private || !this.approved) {
     if (!user || user?.uuid !== this.creator?.uuid) {
@@ -71,7 +112,34 @@ Build.prototype.hasAccess = function (user = null) {
   return true;
 };
 
-Build.prototype.toJSON = async function (user = null) {
+Build.toJSONArray = function (builds: BuildModel[], user: any = null) {
+  return Promise.all(builds.map((b) => b.toJSON(user))).then((res) =>
+    res.filter((i) => i !== undefined)
+  );
+};
+
+export interface BuildJSON {
+  images: ImageJSON[] | undefined;
+  creator: UserJSON | undefined;
+  private: boolean;
+  totalDownloads: number;
+  description: string;
+  collection: CollectionJSON | undefined;
+  title: string;
+  tags: TagModel[];
+  totalSaves: number;
+  createdAt: string;
+  buildFile: BuildFileModel;
+  approved: boolean;
+  isSaved: boolean;
+  id: number;
+  category: CategoryModel;
+  updatedAt: string;
+}
+
+Build.prototype.toJSON = async function (
+  user: UserModel = null
+): Promise<BuildJSON> {
   if (!this.hasAccess(user)) {
     return undefined;
   }
@@ -107,10 +175,4 @@ Build.prototype.toJSON = async function (user = null) {
   };
 };
 
-Build.toJSONArray = function (builds, user = null) {
-  return Promise.all(builds.map((b) => b.toJSON(user))).then((res) =>
-    res.filter((i) => i !== undefined)
-  );
-};
-
-module.exports = { Build };
+export { Build };

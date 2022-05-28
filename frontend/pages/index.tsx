@@ -11,12 +11,12 @@ import Styled from "../components/Styled";
 
 const Home = () => {
   const [topData, topLoading, topError] = useApi<Build[]>(
-    "/builds/get?sort=top&",
+    "/builds/get?sort=top",
     {},
     []
   );
   const [newData, newLoading, newError] = useApi<Build[]>(
-    "/builds/get?sort=new&",
+    "/builds/get?sort=new",
     {},
     []
   );
@@ -31,6 +31,7 @@ const Home = () => {
 
   /*
    * TODO:
+   *  - Update collections images
    *  - Toast colors
    *  - Adjust image order
    *  - Working sort by popular

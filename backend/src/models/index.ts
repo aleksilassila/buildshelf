@@ -1,12 +1,12 @@
-const { sequelize } = require("../database");
-const { Collection } = require("./Collection");
-const { Tag } = require("./Tag");
-const { Category } = require("./Category");
-const { User } = require("./User");
-const { Build } = require("./Build");
-const { Image } = require("./Image");
-const { BuildFile } = require("./BuildFile");
-const { DataTypes } = require("sequelize");
+import sequelize from "../database";
+import { Collection } from "./Collection";
+import { Tag } from "./Tag";
+import { Category } from "./Category";
+import { User } from "./User";
+import { Build } from "./Build";
+import { Image } from "./Image";
+import { BuildFile } from "./BuildFile";
+import { DataTypes } from "sequelize";
 
 // Define empty junction tables
 const UserBookmarks = sequelize.define(
@@ -119,10 +119,4 @@ BuildFile.hasOne(Build, {
 User.hasMany(BuildFile, { as: "buildFile", foreignKey: "creatorUuid" });
 BuildFile.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });
 
-module.exports = {
-  Build,
-  User,
-  Tag,
-  Collection,
-  Category,
-};
+export { Build, User, Tag, Collection, Category };

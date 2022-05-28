@@ -1,23 +1,22 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
 require("dotenv").config();
 
-const tagsController = require("./src/controllers/tagsController");
-const categoriesController = require("./src/controllers/categoriesController");
-const {
+import tagsController from "./src/controllers/tagsController";
+import categoriesController from "./src/controllers/categoriesController";
+import {
   optionalAuth,
   loginMojang,
   loginClient,
   loginMicrosoft,
-} = require("./src/controllers/auth");
+} from "./src/controllers/auth";
 
-const { sequelize } = require("./src/database");
-const { errors } = require("./src/client-error");
-const builds = require("./src/routes/buildRoutes");
-const users = require("./src/routes/userRoutes");
-const collections = require("./src/routes/collectionRoutes");
-const client = require("./src/routes/clientRoutes");
-const errorMiddleware = require("./src/client-error").middleware;
+import sequelize from "./src/database";
+import { errors, middleware as errorMiddleware } from "./src/client-error";
+import builds from "./src/routes/buildRoutes";
+import users from "./src/routes/userRoutes";
+import collections from "./src/routes/collectionRoutes";
+import client from "./src/routes/clientRoutes";
 
 const app = express();
 const api = express.Router();

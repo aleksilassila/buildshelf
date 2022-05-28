@@ -1,3 +1,5 @@
+import { Response } from "express";
+
 const ClientError = function (
   code = "INTERNAL_ERROR",
   status = 500,
@@ -8,7 +10,7 @@ const ClientError = function (
   this.info = info;
 };
 
-ClientError.prototype.send = function (res, message = "") {
+ClientError.prototype.send = function (res: Response, message = "") {
   this.info = this.info || message;
   res.status(this.status).send(this.toString());
 };
@@ -43,8 +45,4 @@ const errors = {
   UNAUTHORIZED: new ClientError("UNAUTHORIZED", 401),
 };
 
-module.exports = {
-  ClientError,
-  errors,
-  middleware,
-};
+export { ClientError, errors, middleware };

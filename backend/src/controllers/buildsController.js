@@ -1,6 +1,13 @@
-const { Category, User } = require("../models");
 const { Op } = require("sequelize");
-const { Build, Collection, Tag } = require("../models/index");
+const {
+  Build,
+  Collection,
+  Tag,
+  User,
+  Category,
+  Image,
+  BuildFile,
+} = require("../models/index");
 const {
   searchQueryBuilder,
   parseSimplifiedLitematic,
@@ -11,8 +18,6 @@ const { errors } = require("../client-error");
 const fs = require("fs");
 const validateJSON = require("jsonschema").validate;
 const crypto = require("crypto");
-const { Image } = require("../models/Image");
-const { BuildFile } = require("../models/BuildFile");
 
 const hasAccess = (res, build, user, message = "Build not found.") => {
   if (!build || !build.hasAccess(user)) {
