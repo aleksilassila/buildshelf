@@ -1,4 +1,6 @@
 import {
+  BelongsToManyAddAssociationMixin,
+  BelongsToManySetAssociationsMixin,
   CreationOptional,
   DataTypes,
   InferAttributes,
@@ -11,7 +13,7 @@ import {
 
 import sequelize from "../database";
 import { UserJSON, UserModel } from "./User";
-import { ImageJSON } from "./Image";
+import { ImageJSON, ImageModel } from "./Image";
 import { CollectionJSON } from "./Collection";
 import { TagModel } from "./Tag";
 import { BuildFileModel } from "./BuildFile";
@@ -21,6 +23,9 @@ const { Image } = require("./Image");
 
 export interface BuildModel extends BuildAttributes {
   toJSON: (user?: UserModel) => any;
+  setImagesById: (imageIds: string[]) => Promise<void>;
+  addTag: BelongsToManyAddAssociationMixin<BuildModel, TagModel>;
+  updateTotalSaves: () => Promise<BuildModel>;
 }
 
 export interface BuildAttributes
@@ -37,9 +42,14 @@ export interface BuildAttributes
   updatedAt: CreationOptional<string>;
   private: CreationOptional<boolean>;
   approved: CreationOptional<boolean>;
+  creatorUuid?: string;
+  collectionId?: number;
+  categoryName?: string;
+  buildFileId?: number;
+  creator?: CreationOptional<UserModel>;
 }
 
-interface BuildStatic extends ModelStatic<BuildAttributes> {
+interface BuildStatic extends ModelStatic<BuildModel> {
   toJSONArray: (builds: BuildModel[], user: any) => void;
 }
 
@@ -84,7 +94,9 @@ const Build = <BuildStatic>sequelize.define<BuildAttributes>(
 
 Build.prototype.setImagesById = async function (imageIds: string[]) {
   return this.setImages(
-    await Image.findAll({ where: { id: { [Op.in]: imageIds } } })
+    await Image.findAll({
+      where: { id: { [Op.in]: imageIds?.map((i) => parseInt(i)) } },
+    })
   );
 };
 
@@ -98,7 +110,7 @@ Build.prototype.countTotalSaves = function () {
 
 Build.prototype.updateTotalSaves = async function () {
   this.totalSaves = await this.countTotalSaves();
-  await this.save();
+  return this.save();
 };
 
 Build.prototype.hasAccess = function (user: UserModel = null) {

@@ -26,7 +26,7 @@ const Button = ({
           whitespace-nowrap cursor-pointer font-medium text-stone-700
           active:bg-stone-200 ${
             primary && !disabled
-              ? "text-white bg-green-400 border-stone-200 active:bg-green-500"
+              ? "text-white bg-green-400 border-green-200 active:bg-green-500"
               : "bg-white"
           } ${
         disabled && "cursor-default opacity-70 active:bg-white"

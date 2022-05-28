@@ -19,6 +19,7 @@ export interface BuildFileAttributes
     InferAttributes<BuildFileAttributes>,
     InferCreationAttributes<BuildFileAttributes>
   > {
+  id?: CreationOptional<number>;
   filename: string;
   createdAt: CreationOptional<string>;
   updatedAt: CreationOptional<string>;

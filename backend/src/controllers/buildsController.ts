@@ -1,5 +1,5 @@
-const { Op } = require("sequelize");
-const {
+import { Op } from "sequelize";
+import {
   Build,
   Collection,
   Tag,
@@ -7,17 +7,17 @@ const {
   Category,
   Image,
   BuildFile,
-} = require("../models/index");
-const {
+} from "../models";
+import {
   searchQueryBuilder,
   parseSimplifiedLitematic,
   parseLitematic,
   writeLitematic,
-} = require("../utils");
-const { errors } = require("../client-error");
-const fs = require("fs");
-const validateJSON = require("jsonschema").validate;
-const crypto = require("crypto");
+} from "../utils";
+import { errors } from "../client-error";
+import fs from "fs";
+import { validate as validateJSON } from "jsonschema";
+import crypto from "crypto";
 
 const hasAccess = (res, build, user, message = "Build not found.") => {
   if (!build || !build.hasAccess(user)) {
@@ -62,7 +62,19 @@ const litematicSchema = {
 };
 
 exports.create = async function (req, res) {
-  const { description, title, category, collectionId, imageIds } = req.body;
+  const {
+    description,
+    title,
+    categoryName,
+    collectionId,
+    imageIds,
+  }: {
+    description?: string;
+    title?: string;
+    categoryName?: string;
+    collectionId?: number;
+    imageIds?: string[];
+  } = req.body;
   const file = req.file;
 
   if (file === undefined) {
@@ -81,8 +93,8 @@ exports.create = async function (req, res) {
   const tags =
     req.body.tags?.map((i) => i.toLowerCase().substring(0, 255)) || [];
 
-  if (category) {
-    if (!(await Category.findByPk(category))) {
+  if (categoryName) {
+    if (!(await Category.findByPk(categoryName))) {
       errors.NOT_FOUND.send(res, "Category not found.");
       return;
     }
@@ -91,7 +103,7 @@ exports.create = async function (req, res) {
   if (collectionId) {
     if (
       !(await Collection.findOne({
-        where: { id: collectionId, userUuid: req.user.uuid },
+        where: { id: collectionId, creatorUuid: req.user.uuid },
       }))
     ) {
       errors.NOT_FOUND.send(res, "Collection not found.");
@@ -115,7 +127,7 @@ exports.create = async function (req, res) {
     description,
     creatorUuid: req.user.uuid,
     collectionId,
-    category,
+    categoryName,
     buildFileId: buildFile.id,
   });
 
@@ -142,11 +154,8 @@ exports.create = async function (req, res) {
       hashSum.update(fs.readFileSync("uploads/" + buildFile.filename));
 
       // Update md5 hash
-      await build.update({
-        buildFile: {
-          ...build.buildFile,
-          md5: hashSum.digest("hex"),
-        },
+      await buildFile.update({
+        md5: hashSum.digest("hex"),
       });
     }
   );
@@ -227,7 +236,7 @@ exports.search = async function (req, res) {
     .then(async (builds) => {
       res.send(await Build.toJSONArray(builds, req.user));
     })
-    .catch((err) => errors.SERVER_ERROR.send(res));
+    .catch((err) => errors.SERVER_ERROR.send(res, err));
 };
 
 exports.getFollowed = async function (req, res) {
@@ -280,7 +289,8 @@ exports.get = async function (req, res) {
     include: ["collection", "creator", "images"],
   }).catch((err) => {});
 
-  if (!hasAccess(res, build, req.user)) {
+  if (!hasAccess(res, build, req.user) || !build) {
+    errors.NOT_FOUND.send(res, "Build not found.");
     return;
   }
 
@@ -294,7 +304,8 @@ exports.save = async function (req, res) {
 
   const build = await Build.findByPk(buildId).catch((err) => {});
 
-  if (!hasAccess(res, build, req.user)) {
+  if (!hasAccess(res, build, req.user) || !build) {
+    errors.NOT_FOUND.send(res, "Build not found.");
     return;
   }
 
@@ -337,14 +348,27 @@ exports.bookmark = async function (req, res) {
 
 exports.update = async function (req, res) {
   const user = req.user;
-  const { description, title, collectionId, imageIds, private } = req.body;
+  const {
+    description,
+    title,
+    collectionId,
+    imageIds,
+    private: isPrivate,
+  }: {
+    description?: string;
+    title?: string;
+    collectionId?: number;
+    imageIds?: string[];
+    private?: boolean;
+  } = req.body;
   const { buildId } = req.params;
 
   const build = await Build.findByPk(buildId, {
     include: ["collection", "creator"],
   }).catch(() => {});
 
-  if (!hasAccess(res, build, user)) {
+  if (!hasAccess(res, build, user) || !build) {
+    errors.NOT_FOUND.send(res, "Build not found.");
     return;
   }
 
@@ -358,7 +382,7 @@ exports.update = async function (req, res) {
       description: description || build.description,
       title: title || build.title,
       collectionId: collectionId || build.collectionId,
-      private: private !== undefined ? private : build.private,
+      private: isPrivate !== undefined ? isPrivate : build.private,
     })
     .then(async () => {
       if (imageIds) {
@@ -372,7 +396,7 @@ exports.approve = async function (req, res) {
   const { buildId } = req.params;
   const approve = req.body.approve;
 
-  const build = Build.findByPk(buildId).catch(() => {});
+  const build = await Build.findByPk(buildId).catch(() => {});
 
   if (!build) {
     errors.NOT_FOUND.send(res);

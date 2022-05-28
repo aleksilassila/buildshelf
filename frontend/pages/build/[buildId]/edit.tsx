@@ -54,7 +54,7 @@ const Edit = () => {
       url: "/build/" + buildId,
       data: {
         description: formData.description,
-        imageIds: formData.images.map((image) => image.id),
+        imageIds: formData.images.map((image) => image.id.toString()),
       },
     }).then((res) => {
       if (res.status === 200) {

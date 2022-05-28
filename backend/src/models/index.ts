@@ -119,4 +119,4 @@ BuildFile.hasOne(Build, {
 User.hasMany(BuildFile, { as: "buildFile", foreignKey: "creatorUuid" });
 BuildFile.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });
 
-export { Build, User, Tag, Collection, Category };
+export { Build, User, Tag, Collection, Category, Image, BuildFile };

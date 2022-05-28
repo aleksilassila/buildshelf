@@ -24,7 +24,7 @@ export interface CollectionAttributes
   description: string;
   image: string[];
   totalFavorites: CreationOptional<number>;
-  ownerId?: CreationOptional<string>;
+  creatorUuid?: CreationOptional<string>;
 }
 
 interface CollectionStatic extends ModelStatic<CollectionAttributes> {
@@ -67,23 +67,23 @@ Collection.prototype.updateTotalFavorites =
 
 Collection.exists = async function (
   name: string,
-  ownerId: string
+  creatorUuid: string
 ): Promise<boolean> {
-  return (await Collection.findOne({ where: { name, ownerId } })) !== null;
+  return (await Collection.findOne({ where: { name, creatorUuid } })) !== null;
 };
 
 Collection.getOrCreateCollection = function (
   name: string,
   description: string,
-  ownerId: string
+  creatorUuid: string
 ): Promise<[CollectionModel, boolean]> {
   return Collection.findOrCreate({
     where: {
-      ownerId,
+      creatorUuid,
       name,
     },
     defaults: {
-      ownerId,
+      creatorUuid,
       description: description || "",
       name,
     },

@@ -30,23 +30,22 @@ const Home = () => {
   const userObject = Auth.getUser();
 
   /*
-   * TODO:
+   * TODO before launch:
    *  - Update collections images
    *  - Toast colors
    *  - Adjust image order
    *  - Working sort by popular
-   *  - Typescript backend / nextjs
-   *  - Implement private (paid) builds
    *  - Redesign front page
    *    - "Add litematica extension portion"
    *  - Manage and remove own builds
    *    - Markdown
    *  - Favorite collections
-   *  - Browse creators
    *  - Fix multiplebutton
+   * TODO:
    *  - Administration tools
+   *  - Implement private (paid) builds
+   *  - Browse creators
    *  - Api documentation
-   *  - Update card row behavior?
    *  - New dedicated search page?
    * */
 

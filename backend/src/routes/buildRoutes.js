@@ -151,10 +151,11 @@ buildRoutes.put(
       collectionId: { type: "number" },
       imageIds: {
         type: "array",
-        items: { type: "number" },
+        items: { type: "string" },
         minItems: 0,
         maxItems: 5,
       },
+      private: { type: "boolean" },
       // tags: { type: "string" },
     },
     required: [],
