@@ -54,6 +54,12 @@ const UserFollows = sequelize.define(
   }
 );
 
+const CollectionImages = sequelize.define(
+  "collectionImages",
+  {},
+  { timestamps: false }
+);
+
 User.belongsToMany(Build, {
   through: UserSavedBuilds,
   as: "savedBuilds",
@@ -66,6 +72,16 @@ User.belongsToMany(Build, { through: UserBookmarks, as: "bookmarks" });
 
 Collection.hasMany(Build);
 Build.belongsTo(Collection);
+
+Image.belongsToMany(Collection, {
+  through: CollectionImages,
+  as: "collections",
+});
+
+Collection.belongsToMany(Image, {
+  through: CollectionImages,
+  as: "images",
+});
 
 User.hasMany(Collection, { as: "collections", foreignKey: "creatorUuid" });
 Collection.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });

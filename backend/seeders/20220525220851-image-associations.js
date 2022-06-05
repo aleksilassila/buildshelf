@@ -36,6 +36,25 @@ module.exports = {
       ],
       {}
     );
+
+    await queryInterface.bulkInsert(
+      "collectionImages",
+      [
+        {
+          collectionId: 99998,
+          imageId: 99999,
+        },
+        {
+          collectionId: 99999,
+          imageId: 99998,
+        },
+        {
+          collectionId: 99999,
+          imageId: 99997,
+        },
+      ],
+      {}
+    );
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -45,5 +64,6 @@ module.exports = {
      * Example:
      */
     await queryInterface.bulkDelete("buildImages", null, {});
+    await queryInterface.bulkDelete("collectionImages", null, {});
   },
 };

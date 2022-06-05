@@ -1,13 +1,26 @@
-const Banner = ({ children, url }) => (
-  <div className="page-container-lg">
+import { ReactNode } from "react";
+
+const Banner: ({
+  children,
+  url,
+  className,
+}: {
+  children?: ReactNode;
+  url?: string;
+  uri?: string;
+  className?: string;
+}) => JSX.Element = ({ children, url, uri, className }) => (
+  <div
+    className={"page-container-lg " + className}
+    style={{
+      background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+          url("${
+            url || process.env.BACKEND_ENDPOINT + "/files/" + uri
+          }") no-repeat center center`,
+      backgroundSize: "cover",
+    }}
+  >
     {children}
-    <style jsx>{`
-      .page-container-lg {
-        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-          url("${url}") no-repeat center center;
-        background-size: cover;
-      }
-    `}</style>
   </div>
 );
 

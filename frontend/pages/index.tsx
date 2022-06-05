@@ -32,6 +32,7 @@ const Home = () => {
   /*
    * TODO before launch:
    *  - Update collections images
+   *  - Radix icons / more icons
    *  - Toast colors
    *  - Adjust image order
    *  - Working sort by popular

@@ -1,7 +1,7 @@
-const { Collection } = require("../models/index");
-const { Op } = require("sequelize");
-const { searchQueryBuilder } = require("../utils");
-const {errors} = require("../client-error");
+import { Collection } from "../models";
+import { Op } from "sequelize";
+import { searchQueryBuilder } from "../utils";
+import { errors } from "../client-error";
 
 exports.getCollections = async function (req, res) {
   const { category, name, sort, uuid } = req.query;
@@ -34,10 +34,10 @@ exports.getCollections = async function (req, res) {
 
   const collections = await Collection.findAll({
     ...searchQuery,
-    include: ["builds", "creator"],
-  }).catch(err => []);
+    include: ["builds", "creator", "images"],
+  }).catch((ignored) => []);
 
-  res.send(await Promise.all(collections.map(c => c.toJSON())));
+  res.send(await Promise.all(collections.map((c) => c.toJSON())));
 };
 
 exports.getCollection = async function (req, res) {
@@ -47,15 +47,15 @@ exports.getCollection = async function (req, res) {
     where: {
       id: collectionId,
     },
-    include: ["builds", "creator"],
-  }).catch((err) => {});
+    include: ["builds", "creator", "images"],
+  }).catch((ignored) => {});
 
   if (!collection) {
     errors.NOT_FOUND.send(res, "Collection not found");
     return;
   }
   res.send(await collection.toJSON(req.user));
-}
+};
 
 exports.createCollection = async function (req, res) {
   const { name, description } = req.body;
@@ -63,7 +63,7 @@ exports.createCollection = async function (req, res) {
   const collection = await Collection.create({
     name,
     description,
-    ownerId: req.user.uuid,
+    creatorUuid: req.user.uuid,
   });
 
   res.send(`${collection.id}`);
@@ -73,8 +73,8 @@ exports.deleteCollection = async function (req, res) {
   const { collectionId } = req.params;
 
   const collection = await Collection.findOne({
-    where: { id: collectionId, ownerId: req.user.uuid },
-  }).catch(err => {});
+    where: { id: collectionId, creatorUuid: req.user.uuid },
+  }).catch((ignored) => {});
 
   if (collection) {
     await collection.destroy();
@@ -95,7 +95,7 @@ exports.favorite = async function (req, res) {
     where: {
       id: collectionId,
     },
-  }).catch((err) => {});
+  }).catch((ignored) => {});
 
   if (!collection) {
     res.status(404).send("Collection not found");

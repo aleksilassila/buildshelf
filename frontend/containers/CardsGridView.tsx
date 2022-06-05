@@ -16,6 +16,8 @@ interface Props {
 const CardsGridView = ({ builds, loading, error, children = null }: Props) => {
   const [buildId, setBuildId] = useState(undefined);
 
+  console.log(builds);
+
   if (loading && !builds?.length) {
     return <Loading />;
   } else if (error) {

@@ -9,9 +9,12 @@ import {
 import sequelize from "../database";
 import { BuildJSON } from "./Build";
 import { UserJSON, UserModel } from "./User";
+import { ImageJSON } from "./Image";
+import { Build } from "./index";
 
 export interface CollectionModel extends CollectionAttributes {
-  toJSON: () => Promise<CollectionJSON>;
+  toJSON: (user?: UserModel) => Promise<CollectionJSON>;
+  updateTotalFavorites: () => Promise<CollectionModel>;
 }
 
 export interface CollectionAttributes
@@ -22,12 +25,11 @@ export interface CollectionAttributes
   id?: CreationOptional<number>;
   name: string;
   description: string;
-  image: string[];
   totalFavorites: CreationOptional<number>;
   creatorUuid?: CreationOptional<string>;
 }
 
-interface CollectionStatic extends ModelStatic<CollectionAttributes> {
+interface CollectionStatic extends ModelStatic<CollectionModel> {
   exists: (name: string, ownerId: string) => Promise<boolean>;
   getOrCreateCollection: (
     name: string,
@@ -43,7 +45,6 @@ const Collection = <CollectionStatic>sequelize.define<CollectionAttributes>(
       type: DataTypes.STRING,
     },
     description: DataTypes.TEXT,
-    image: DataTypes.ARRAY(DataTypes.STRING),
     totalFavorites: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -94,7 +95,7 @@ export interface CollectionJSON {
   id: number;
   name: string;
   description: string;
-  image: string[];
+  images: ImageJSON[] | undefined;
   totalFavorites: number;
   builds: BuildJSON[] | undefined;
   creator: UserJSON | undefined;
@@ -107,10 +108,12 @@ Collection.prototype.toJSON = async function (
     id: this.id,
     name: this.name,
     description: this.description,
-    image: this.image,
+    images: this.images
+      ? await Promise.all(this.images.map((image) => image.toJSON()))
+      : undefined,
     totalFavorites: this.totalFavorites,
     builds: this.builds
-      ? await Promise.all(this.builds.map((build) => build.toJSON(user)))
+      ? await Build.toJSONArray(this.builds, user)
       : undefined,
     creator: this.creator ? await this.creator.toJSON() : undefined,
   };

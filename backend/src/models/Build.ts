@@ -1,5 +1,6 @@
 import {
   BelongsToManyAddAssociationMixin,
+  BelongsToManyGetAssociationsMixin,
   BelongsToManySetAssociationsMixin,
   CreationOptional,
   DataTypes,
@@ -26,6 +27,7 @@ export interface BuildModel extends BuildAttributes {
   setImagesById: (imageIds: string[]) => Promise<void>;
   addTag: BelongsToManyAddAssociationMixin<BuildModel, TagModel>;
   updateTotalSaves: () => Promise<BuildModel>;
+  getImages: BelongsToManyGetAssociationsMixin<ImageModel>;
 }
 
 export interface BuildAttributes
@@ -50,7 +52,7 @@ export interface BuildAttributes
 }
 
 interface BuildStatic extends ModelStatic<BuildModel> {
-  toJSONArray: (builds: BuildModel[], user: any) => void;
+  toJSONArray: (builds: BuildModel[], user: any) => Promise<BuildJSON[]>;
 }
 
 const Build = <BuildStatic>sequelize.define<BuildAttributes>(
@@ -124,12 +126,6 @@ Build.prototype.hasAccess = function (user: UserModel = null) {
   return true;
 };
 
-Build.toJSONArray = function (builds: BuildModel[], user: any = null) {
-  return Promise.all(builds.map((b) => b.toJSON(user))).then((res) =>
-    res.filter((i) => i !== undefined)
-  );
-};
-
 export interface BuildJSON {
   images: ImageJSON[] | undefined;
   creator: UserJSON | undefined;
@@ -170,9 +166,7 @@ Build.prototype.toJSON = async function (
     title: this.title,
     description: this.description,
     buildFile: await this.getBuildFile(),
-    images: this.images
-      ? await Promise.all(this.images.map((i) => i.toJSON()))
-      : undefined,
+    images: await Promise.all((await this.getImages()).map((i) => i.toJSON())),
     totalDownloads: this.totalDownloads,
     totalSaves: this.totalSaves,
     creator: this.creator ? await this.creator.toJSON() : undefined,
@@ -185,6 +179,15 @@ Build.prototype.toJSON = async function (
     ...(!!user?.moderator && { approved: this.approved }),
     isSaved,
   };
+};
+
+Build.toJSONArray = function (
+  builds: BuildModel[],
+  user: any = null
+): Promise<BuildJSON[]> {
+  return Promise.all(builds.map((b) => b.toJSON(user))).then((res) =>
+    res.filter((i) => i !== undefined)
+  );
 };
 
 export { Build };

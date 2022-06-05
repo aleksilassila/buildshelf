@@ -1,5 +1,3 @@
-import { Use } from "trough";
-
 export interface Tag {
   name: string;
 }
@@ -12,10 +10,10 @@ export interface Collection {
   id: number;
   name: string;
   description: string;
-  images: string[];
+  images: Image[] | undefined;
   totalFavorites: number;
-  creator?: User;
-  builds?: Build[];
+  builds: Build[] | undefined;
+  creator: User | undefined;
 }
 
 export interface Build {

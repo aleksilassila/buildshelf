@@ -1,16 +1,17 @@
 import TitleBar from "../../components/bars/TitleBar";
 import Separator from "../../components/utils/Separator";
-import TitleSubtitlePicture from "../../components/TitleSubtitlePicture";
-import {useApi} from "../../utils/api";
-import {Collection} from "../../interfaces/ApiResponses";
-import {useRouter} from "next/router";
+import { useApi } from "../../utils/api";
+import { Collection } from "../../interfaces/ApiResponses";
+import { useRouter } from "next/router";
 import Loading from "../../components/statuses/Loading";
 import NetworkError from "../../components/statuses/NetworkError";
-import ImageCollection from "../../components/ImageCollection";
 import CardsGridView from "../../containers/CardsGridView";
+import CollectionTitle from "../../components/collectionPage/CollectionTitle";
+import * as Slides from "../../components/containers/Slides";
+import { Banner } from "../../components/Banner";
 
 const CollectionPage = () => {
-  const {collectionId} = useRouter().query;
+  const { collectionId } = useRouter().query;
   const [collection, loading, error] = useApi<Collection>(
     "/collection/" + collectionId,
     {},
@@ -19,64 +20,46 @@ const CollectionPage = () => {
 
   if (loading) {
     return (
-      <div style={{display: "flex"}} className="fullscreen">
-        <Loading/>
+      <div className="page-container">
+        <Loading />
       </div>
     );
   } else if (error) {
     return (
-      <div style={{display: "flex"}} className="fullscreen">
-        <NetworkError/>
+      <div className="page-container">
+        <NetworkError />
       </div>
     );
   }
 
   return (
-    <div className="collection">
-      <TitleBar />
-      <div className="medium-page-container">
-        <div className="collection-title">
-          <TitleSubtitlePicture
-            title={collection.name}
-            subtitle={
-              <span>
-                Collection by{" "}
-                <a
-                  href={"/user/" + collection.creator?.uuid}
-                  className="username"
-                >
-                  {collection.creator?.username}
-                </a>
-              </span>
-            }
-            picture={
-              <img
-                src={
-                  collection.creator &&
-                  "https://crafatar.com/avatars/" + collection.creator.uuid
-                }
-                alt={collection.creator?.username}
-                className="profile-picture"
-              />
-            }
-          />
+    <div className="">
+      <Banner
+        className=""
+        uri={(collection.images || collection.builds[0]?.images)[0].filename}
+      >
+        <div className="flex flex-col gap-4 text-white w-1/2">
+          <CollectionTitle collection={collection} className="self-start" />
+          <div className="border-l pl-2 border-stone-100">
+            {collection.description}
+          </div>
         </div>
-        {collection.images ? <><ImageCollection images={collection.images} />{Separator}</> : null}
-        {Separator}
-        <CardsGridView builds={collection?.builds || []} loading={loading} error={error} />
-      </div>
-      <style jsx>{`
-        .collection {
-        }
+      </Banner>
 
-        .username {
-          font-weight: 600;
-          cursor: pointer;
-          text-decoration: none;
-        }
-      `}</style>
+      <div className="page-container">
+        <CardsGridView
+          builds={collection?.builds?.length ? collection?.builds : []}
+          loading={loading}
+          error={error}
+        />
+      </div>
     </div>
   );
 };
 
-export default CollectionPage;
+export default () => (
+  <div className="flex flex-col min-h-screen">
+    <TitleBar />
+    <CollectionPage />
+  </div>
+);
