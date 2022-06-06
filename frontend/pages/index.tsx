@@ -7,7 +7,27 @@ import Auth from "../utils/auth";
 import theme from "../constants/theme";
 import { useApi } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
-import Styled from "../components/Styled";
+import { ReactNode } from "react";
+import styled from "../components/Styled";
+
+const Banner = ({ children, uri }) => (
+  <div
+    className="bg-cover h-[75vh] flex flex-col justify-center"
+    style={{
+      background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+              url(${
+                process.env.BACKEND_ENDPOINT + "/files/" + uri
+              }) fixed no-repeat center center`,
+      marginTop: "0",
+    }}
+  >
+    <div className="m-auto w-3/4 max-w-5xl text-center bg-stone-800 text-stone-300 p-8 px-16">
+      {children}
+    </div>
+  </div>
+);
+
+const Padded = styled("px-8 xl:px-16 2xl:px-24");
 
 const Home = () => {
   const [topData, topLoading, topError] = useApi<Build[]>(
@@ -31,17 +51,15 @@ const Home = () => {
 
   /*
    * TODO before launch:
-   *  - Update collections images
    *  - Radix icons / more icons
    *  - Toast colors
    *  - Adjust image order
    *  - Working sort by popular
-   *  - Redesign front page
-   *    - "Add litematica extension portion"
    *  - Manage and remove own builds
    *    - Markdown
    *  - Favorite collections
    *  - Fix multiplebutton
+   *  - Make frontpage banner change picture
    * TODO:
    *  - Administration tools
    *  - Implement private (paid) builds
@@ -49,10 +67,6 @@ const Home = () => {
    *  - Api documentation
    *  - New dedicated search page?
    * */
-
-  const PageContainer = ({ children }) => (
-    <div className="mb-16">{children}</div>
-  );
 
   const CategoryLink = ({ href, text }) => (
     <Link href={href}>
@@ -65,54 +79,74 @@ const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <TitleBar active="home" />
-      <div className="flex flex-col flex-1 mx-8">
-        <div className="my-24 mx-auto max-w-5xl">
-          <h2 className={theme.text.bold}>
-            The most ambitious Minecraft build library at your hands
-          </h2>
-          <p className="tracking-wide">
-            Buildshelf is a place to find, store and share all kinds of
-            Minecraft builds and projects. This project mainly utilises a
-            minecraft blueprinting mod called Litematica. You can download
-            Litematica{" "}
-            <a href="https://www.curseforge.com/minecraft/mc-mods/litematica">
-              here
-            </a>
-            .
-          </p>
-        </div>
-        <div className="">
-          <PageContainer>
-            <CardsRowView builds={topData || []}>
-              <CategoryLink
-                href="/builds"
-                text={!!topData ? "Popular builds right now" : messages.loading}
-              />
-            </CardsRowView>
-          </PageContainer>
-          <PageContainer>
-            <CardsRowView builds={newData || []}>
-              <CategoryLink
-                href="/builds"
-                text={!!newData ? "New builds" : messages.loading}
-              />
-            </CardsRowView>
-          </PageContainer>
-          {followedData?.length !== 0 ? (
-            <PageContainer>
-              <CardsGridView
-                builds={followedData || []}
-                error={followedError}
-                loading={followedLoading}
-              >
-                <h2 className="font-bold text-xl">
-                  {followedData ? "Followed creators" : messages.loading}
-                </h2>
-              </CardsGridView>
-            </PageContainer>
-          ) : null}
-        </div>
-      </div>
+      <Banner uri={topData?.[0]?.images?.[0]?.filename}>
+        <h2 className={theme.text.bold + " text-stone-100"}>
+          The most ambitious Minecraft build library at your hands
+        </h2>
+        <p className="tracking-wide text-lg">
+          Buildshelf is a place to find, store and share all kinds of Minecraft
+          builds and projects. This project mainly utilises a minecraft
+          blueprinting mod called Litematica. You can download Litematica{" "}
+          <a
+            href="https://www.curseforge.com/minecraft/mc-mods/litematica"
+            className={theme.text.linkDark}
+          >
+            here
+          </a>
+          .
+        </p>
+      </Banner>
+      <Padded className="flex flex-col flex-1 py-32 text-lg">
+        <h2 className={theme.text.bold + " text-stone-800"}>
+          How does it work?
+        </h2>
+        <ul className={"tracking-wide"}>
+          <li>
+            <span className={"text-green-600 font-bold"}>1.</span> Log in with
+            your Minecraft account
+          </li>
+          <li>
+            <span className={"text-green-600 font-bold"}>2.</span> Download{" "}
+            <a href={""} className={theme.text.link}>
+              Buildshelf extension
+            </a>{" "}
+            for Litematica to automatically sync your builds
+          </li>
+          <li>
+            <span className={"text-green-600 font-bold"}>3.</span> Browse and
+            save builds in Buildshelf to automatically have them synced to your
+            minecraft client
+          </li>
+        </ul>
+      </Padded>
+      <Padded className={"flex flex-col gap-16"}>
+        <CardsRowView builds={topData || []}>
+          <CategoryLink
+            href="/builds"
+            text={!!topData ? "Popular builds right now" : messages.loading}
+          />
+        </CardsRowView>
+        <CardsRowView builds={newData || []}>
+          <CategoryLink
+            href="/builds"
+            text={!!newData ? "New builds" : messages.loading}
+          />
+        </CardsRowView>
+        {followedData?.length !== 0 ? (
+          <CardsGridView
+            builds={followedData || []}
+            error={followedError}
+            loading={followedLoading}
+          >
+            <h2 className="font-bold text-xl">
+              {followedData ? "Followed creators" : messages.loading}
+            </h2>
+          </CardsGridView>
+        ) : null}
+      </Padded>
+      <Padded className={"text-stone-500 text-sm py-8 text-center"}>
+        Copyright © 2022 Aleksi Lassila. All rights reserved.
+      </Padded>
     </div>
   );
 };

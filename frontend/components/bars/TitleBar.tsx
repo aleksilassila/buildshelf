@@ -61,7 +61,7 @@ const TitleBar = ({
     <div className="font-medium">
       <div className="flex flex-row justify-between h-14 items-center px-6">
         <Link href="/">
-          <h1 className="font-extrabold text-stone-700 uppercase text-lg cursor-pointer tracking-wide">
+          <h1 className="font-black text-lime-800 uppercase text-lg cursor-pointer tracking-wide">
             Buildshelf
           </h1>
         </Link>

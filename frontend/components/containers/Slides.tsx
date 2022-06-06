@@ -36,7 +36,7 @@ const Container = ({ children, className, cols = 2, ...rest }: Props) => {
 
   return (
     <div
-      className={`relative overflow-x-hidden w-full h-48 max-h-full overflow-hidden ${className}`}
+      className={`relative overflow-x-hidden w-full max-h-full overflow-hidden ${className}`}
       {...rest}
     >
       <div className="group absolute top-0 right-0 left-0 bottom-0 z-10 flex justify-between items-center">

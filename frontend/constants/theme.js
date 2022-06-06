@@ -21,6 +21,10 @@ const theme = {
 
   text: {
     bold: "text-2xl font-bold mb-2",
+    display: "",
+    body: "",
+    linkDark: "hover:underline text-green-500",
+    link: "hover:underline text-green-600",
   },
 
   ui: {
