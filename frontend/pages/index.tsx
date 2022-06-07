@@ -3,11 +3,9 @@ import TitleBar from "../components/bars/TitleBar";
 import CardsRowView from "../containers/CardsRowView";
 import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
-import Auth from "../utils/auth";
 import theme from "../constants/theme";
 import { useApi } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
-import { ReactNode } from "react";
 import styled from "../components/Styled";
 
 const Banner = ({ children, uri }) => (
@@ -30,8 +28,8 @@ const Banner = ({ children, uri }) => (
 const Padded = styled("px-8 xl:px-16 2xl:px-24");
 
 const Home = () => {
-  const [topData, topLoading, topError] = useApi<Build[]>(
-    "/builds/get?sort=top",
+  const [popularData, popularLoading, popularError] = useApi<Build[]>(
+    "/builds/get?sort=popular",
     {},
     []
   );
@@ -47,8 +45,6 @@ const Home = () => {
     true
   );
 
-  const userObject = Auth.getUser();
-
   /*
    * TODO before launch:
    *  - Radix icons / more icons
@@ -60,6 +56,7 @@ const Home = () => {
    *  - Favorite collections
    *  - Fix multiplebutton
    *  - Make frontpage banner change picture
+   *  - Working tags and categories
    * TODO:
    *  - Administration tools
    *  - Implement private (paid) builds
@@ -79,7 +76,7 @@ const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <TitleBar active="home" />
-      <Banner uri={topData?.[0]?.images?.[0]?.filename}>
+      <Banner uri={popularData?.[0]?.images?.[0]?.filename}>
         <h2 className={theme.text.bold + " text-stone-100"}>
           The most ambitious Minecraft build library at your hands
         </h2>
@@ -120,10 +117,10 @@ const Home = () => {
         </ul>
       </Padded>
       <Padded className={"flex flex-col gap-16"}>
-        <CardsRowView builds={topData || []}>
+        <CardsRowView builds={popularData || []}>
           <CategoryLink
             href="/builds"
-            text={!!topData ? "Popular builds right now" : messages.loading}
+            text={!!popularData ? "Popular builds right now" : messages.loading}
           />
         </CardsRowView>
         <CardsRowView builds={newData || []}>

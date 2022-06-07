@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 require("dotenv").config();
+import cron from "node-cron";
 
 import tagsController from "./src/controllers/tagsController";
 import categoriesController from "./src/controllers/categoriesController";
@@ -17,6 +18,37 @@ import builds from "./src/routes/buildRoutes";
 import users from "./src/routes/userRoutes";
 import collections from "./src/routes/collectionRoutes";
 import client from "./src/routes/clientRoutes";
+import { Build, cache as buildsCache } from "./src/models/Build";
+import { Op } from "sequelize";
+
+cron.schedule("*/15 * * * *", async () => {
+  // Update views, downloads and saves
+  const buildIds = [
+    ...Object.keys(buildsCache.views),
+    ...Object.keys(buildsCache.downloads),
+  ];
+  await Promise.all(
+    buildIds.map((buildId) => buildsCache.write(parseInt(buildId)))
+  );
+
+  // Update popularity score
+  Build.findAll({
+    where: {
+      createdAt: {
+        [Op.gt]: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+      },
+      private: false,
+      approved: true,
+    },
+  }).then((builds) => {
+    console.log("Builds: ", builds.length);
+    builds.forEach((build) => {
+      build
+        .updateScore()
+        .then((model) => console.log("Score for build", model.id, model.score));
+    });
+  });
+});
 
 const app = express();
 const api = express.Router();

@@ -6,7 +6,7 @@ import { User } from "./User";
 import { Build } from "./Build";
 import { Image } from "./Image";
 import { BuildFile } from "./BuildFile";
-import { DataTypes } from "sequelize";
+import { DataTypes, NOW } from "sequelize";
 
 // Define empty junction tables
 const UserBookmarks = sequelize.define(
@@ -35,7 +35,13 @@ const UserCollectionBookmarks = sequelize.define(
 
 const UserSavedBuilds = sequelize.define(
   "userSavedBuilds",
-  {},
+  {
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: NOW,
+    },
+  },
   {
     timestamps: false,
   }
@@ -60,10 +66,40 @@ const CollectionImages = sequelize.define(
   { timestamps: false }
 );
 
+// Other empty models
+const BuildView = sequelize.define(
+  "buildView",
+  {
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: NOW,
+    },
+  },
+  { timestamps: false }
+);
+const BuildDownload = sequelize.define(
+  "buildDownload",
+  {
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: NOW,
+    },
+  },
+  { timestamps: false }
+);
+
 User.belongsToMany(Build, {
   through: UserSavedBuilds,
   as: "savedBuilds",
 });
+
+Build.hasMany(BuildView);
+BuildView.belongsTo(Build);
+
+Build.hasMany(BuildDownload);
+BuildDownload.belongsTo(Build);
 
 User.hasMany(Build, { as: "builds", foreignKey: "creatorUuid" });
 Build.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });
@@ -135,4 +171,15 @@ BuildFile.hasOne(Build, {
 User.hasMany(BuildFile, { as: "buildFile", foreignKey: "creatorUuid" });
 BuildFile.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });
 
-export { Build, User, Tag, Collection, Category, Image, BuildFile };
+export {
+  Build,
+  User,
+  Tag,
+  Collection,
+  Category,
+  Image,
+  BuildFile,
+  BuildView,
+  BuildDownload,
+  UserSavedBuilds,
+};

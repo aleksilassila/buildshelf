@@ -215,6 +215,7 @@ exports.search = async function (req, res) {
     ),
     ...(sort === "new" && { order: [["createdAt", "DESC"]] }),
     ...(sort === "top" && { order: [["totalSaves", "DESC"]] }),
+    ...(sort === "popular" && { order: [["score", "DESC"]] }),
     include: [
       {
         model: Tag,
@@ -295,6 +296,8 @@ exports.get = async function (req, res) {
   }
 
   res.send(await build.toJSON(req.user));
+
+  build.addView();
 };
 
 exports.save = async function (req, res) {
@@ -317,9 +320,7 @@ exports.save = async function (req, res) {
     await user.removeSavedBuild(build);
   }
 
-  // await build.save();
-
-  await build.updateTotalSaves();
+  await build.updateTotals();
 
   res.status(200).send(shouldSave ? "Build saved" : "Build unsaved");
 };
@@ -423,8 +424,4 @@ exports.uploadImages = async function (req, res) {
   ).then(async (images) =>
     res.send(await Promise.all(images.map((i) => i.toJSON())))
   );
-
-  // const images = req.files?.images?.length
-  //   ? req.files.images.map((i) => i.filename)
-  //   : [];
 };

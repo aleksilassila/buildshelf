@@ -19,7 +19,7 @@ import { Banner, BannerSubtitle, BannerTitle } from "../components/Banner";
 
 const Builds = () => {
   const [params, setParams] = useState({
-    sort: "top",
+    sort: "popular",
     title: "",
     category: "",
   });
@@ -68,9 +68,7 @@ const Builds = () => {
         <SortingBar>
           <SortingBarLeft>
             <Dropdown.Root
-              onValueChange={(sort) =>
-                doSearch({ sort: sort === "popular" ? "top" : sort })
-              }
+              onValueChange={(sort) => doSearch({ sort })}
               defaultValue={params.sort}
             >
               <Dropdown.Group>

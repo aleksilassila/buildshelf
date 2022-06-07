@@ -98,7 +98,7 @@ buildRoutes.get(
       collection: { type: "number" },
       category: { type: "string" },
       title: { type: "string" },
-      sort: { enum: ["top", "new"] },
+      sort: { enum: ["top", "new", "popular"] },
       uuid: { type: "string" },
       approved: { type: "boolean" },
       includePrivate: { type: "boolean" },

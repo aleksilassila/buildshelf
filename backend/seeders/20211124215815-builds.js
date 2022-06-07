@@ -151,6 +151,7 @@ module.exports = {
           categoryName: "houses",
           approved: true,
           private: false,
+          score: 0,
         }),
         {}
       )
@@ -171,6 +172,7 @@ module.exports = {
           collectionId: 99998,
           categoryName: "houses",
           approved: false,
+          score: 0,
           private: false,
         },
         {
@@ -185,6 +187,7 @@ module.exports = {
           collectionId: 99998,
           categoryName: "houses",
           private: true,
+          score: 0,
           approved: true,
         },
       ],
