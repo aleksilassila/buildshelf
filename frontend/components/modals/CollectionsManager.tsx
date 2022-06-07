@@ -139,7 +139,7 @@ const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
         </div>
         <div className="section">
           <div className="create">
-            <Button onClick={createCollection} primary>
+            <Button onClick={createCollection} mode="primary">
               Create
             </Button>
           </div>

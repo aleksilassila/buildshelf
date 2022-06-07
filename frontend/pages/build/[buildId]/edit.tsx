@@ -9,7 +9,7 @@ import UseFormData from "../../../hooks/useFormData";
 import Button from "../../../components/ui/Button";
 import FormMarkdownEditor from "../../../components/form/FormMarkdownEditor";
 import { useEffect } from "react";
-import { Toast, useToast } from "../../../components/ui/toast";
+import { Toast, useToast } from "../../../components/ui/Toast";
 import ImageUpload from "../../../components/form/ImageUpload";
 
 interface FormData {
@@ -105,7 +105,7 @@ const Edit = () => {
           />
         </Form.Section>
         <Form.Section>
-          <Button onClick={submitData} className="float-left" primary>
+          <Button onClick={submitData} className="float-left" mode="primary">
             Update Build
           </Button>
         </Form.Section>

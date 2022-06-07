@@ -171,7 +171,7 @@ exports.create = async function (req, res) {
     await build.addTag(instance);
   }
 
-  res.send(`${build.id}`);
+  res.send(await build.toJSON(req.user));
 
   try {
     await req.user.purgeImages();

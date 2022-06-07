@@ -93,7 +93,7 @@ const Login = () => {
                   `https://login.live.com/oauth20_authorize.srf?client_id=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f&scope=XboxLive.signin%20offline_access&redirect_uri=http://localhost:3000/login&response_type=code`
                 );
               }}
-              primary
+              mode="primary"
             >
               Log in via Microsoft
             </Button>

@@ -98,7 +98,7 @@ const BuildPage = ({ buildId }: Props) => {
         <div className="build-actions">
           {userObject?.uuid === build.creator.uuid ? (
             <Link href={"/build/" + build.id + "/edit"}>
-              <Button primary onClick={() => {}}>
+              <Button onClick={() => {}} mode="primary">
                 Edit Build
               </Button>
             </Link>
@@ -111,8 +111,8 @@ const BuildPage = ({ buildId }: Props) => {
           ) : null}
         </div>
       </div>
-      {Separator}
-      <ImageCollection images={build.images} />
+      {build.images?.length ? Separator : null}
+      {build.images?.length ? <ImageCollection images={build.images} /> : null}
       {Separator}
       <div className="build-info">
         <div className="build-description markdown">

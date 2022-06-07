@@ -48,9 +48,7 @@ const Home = () => {
   /*
    * TODO before launch:
    *  - Radix icons / more icons
-   *  - Toast colors
    *  - Adjust image order
-   *  - Working sort by popular
    *  - Manage and remove own builds
    *    - Markdown
    *  - Favorite collections

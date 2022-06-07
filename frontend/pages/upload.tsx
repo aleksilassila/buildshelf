@@ -1,7 +1,7 @@
 import Auth from "../utils/auth";
 import TitleBar from "../components/bars/TitleBar";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import CollectionsManager from "../components/modals/CollectionsManager";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
@@ -12,16 +12,15 @@ import MultipleButton, {
 import theme from "../constants/theme";
 import CategoryBrowser from "../components/modals/CategoryBrowser";
 import Localstorage from "../utils/localstorage";
-import Message from "../components/ui/Message";
-import Markdown from "../components/Markdown";
 import Tag from "../components/ui/Tag";
 import * as Form from "../components/form/Form";
 import useFormData from "../hooks/useFormData";
 import FormMarkdownEditor from "../components/form/FormMarkdownEditor";
-import { apiRequest } from "../utils/api";
 import ImageUpload from "../components/form/ImageUpload";
-import { Toast, useToast } from "../components/ui/toast";
-import { Image } from "../interfaces/ApiResponses";
+import { Toast, useToast } from "../components/ui/Toast";
+import { Build, Image } from "../interfaces/ApiResponses";
+import * as AlertDialog from "../components/ui/AlertDialog";
+import { useRouter } from "next/router";
 
 interface FormData {
   title: string;
@@ -51,6 +50,27 @@ const initialFormData: FormData = {
   collectionDescription: "",
 };
 
+const Clear = ({ setFormData }) => (
+  <AlertDialog.Root>
+    <AlertDialog.Trigger>
+      <Button mode="danger">Clear</Button>
+    </AlertDialog.Trigger>
+    <AlertDialog.Content>
+      <AlertDialog.ConfirmDangerous />
+      <div className="flex gap-4">
+        <AlertDialog.Action onClick={() => setFormData(initialFormData)}>
+          <Button mode="primary" onClick={() => setFormData(initialFormData)}>
+            Clear
+          </Button>
+        </AlertDialog.Action>
+        <AlertDialog.Cancel>
+          <Button>Cancel</Button>
+        </AlertDialog.Cancel>
+      </div>
+    </AlertDialog.Content>
+  </AlertDialog.Root>
+);
+
 const Upload = () => {
   const [formData, setFormData, changeField] = useFormData<FormData>(
     initialFormData,
@@ -62,6 +82,8 @@ const Upload = () => {
 
   const [showCollectionsManager, setShowCollectionsManager] = useState(false);
   const [showCategoryBrowser, setShowCategoryBrowser] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -105,11 +127,14 @@ const Upload = () => {
       data,
       headers: { "Content-Type": "multipart/form-data" },
     })
-      .then((res) => {
-        toast("Build Created", "Build created successfully.");
+      .then((res: AxiosResponse<Build>) => {
+        toast("Build Created", "Build created successfully.", "primary");
         setFormData(initialFormData);
+        if (res.data?.id) {
+          router.push("/build/" + res.data?.id).then();
+        }
       })
-      .catch((err) => toast("Error Occurred", err?.message));
+      .catch((err) => toast("Error Occurred", err?.message, "danger"));
   };
 
   const addTag = (e) => {
@@ -206,7 +231,7 @@ const Upload = () => {
             Supports{" "}
             <a
               href="https://www.markdownguide.org/cheat-sheet/"
-              className="hover:underline text-green-500"
+              className={theme.text.link}
             >
               markdown
             </a>{" "}
@@ -288,12 +313,10 @@ const Upload = () => {
           />
         </Form.Section>
         <Form.Section className="flex flex-row justify-between">
-          <Button onClick={submitData} primary>
+          <Button onClick={submitData} mode="primary">
             Upload
           </Button>
-          <Button onClick={() => setFormData(initialFormData)} danger>
-            Clear
-          </Button>
+          <Clear setFormData={setFormData} />
         </Form.Section>
       </Form.Root>
       <Toast toastProps={toastProps} />

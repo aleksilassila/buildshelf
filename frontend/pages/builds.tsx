@@ -86,7 +86,6 @@ const Builds = () => {
           <SortingBarRight>
             <CategoriesDropdown
               doSearch={(category) => doSearch({ category })}
-              category={params.category}
             />
           </SortingBarRight>
         </SortingBar>

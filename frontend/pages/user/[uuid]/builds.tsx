@@ -22,7 +22,7 @@ const Builds = () => {
   const CreateBuild = () => (
     <div>
       <Link href="/upload">
-        <Button onClick={() => {}} primary>
+        <Button onClick={() => {}} mode="primary">
           Upload Build
         </Button>
       </Link>

@@ -101,7 +101,7 @@ const ProfilePage = ({
           </div>
           {userObject.isLoggedIn() && userObject.uuid !== uuid ? (
             <div className="row-start-2 col-start-2 flex items-end justify-end">
-              <Button onClick={follow} primary={!followed}>
+              <Button onClick={follow} mode={!followed ? "primary" : "default"}>
                 <Heart style={{ height: "0.8em" }} />
                 {NBSP}
                 {followed ? "Unfollow" : "Follow"}

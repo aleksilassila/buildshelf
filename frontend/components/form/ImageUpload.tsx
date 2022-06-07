@@ -4,7 +4,7 @@ import { apiRequest } from "../../utils/api";
 import ImageCollection from "../ImageCollection";
 import { Image } from "../../interfaces/ApiResponses";
 import { AxiosResponse } from "axios";
-import { Toast, useToast } from "../ui/toast";
+import { Toast, useToast } from "../ui/Toast";
 
 const ImageUpload: ({
   uploadCallback,
@@ -83,7 +83,10 @@ const ImageUpload: ({
             ref={inputRef}
           />
         </Button>
-        <Button primary disabled={!localFiles.length} onClick={upload}>
+        <Button
+          mode={localFiles.length ? "primary" : "disabled"}
+          onClick={upload}
+        >
           Add
         </Button>
       </div>
