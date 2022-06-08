@@ -8,6 +8,7 @@ interface ToastState {
   title: string;
   isOpen: boolean;
   mode: ToastMode;
+  onClose: () => void;
 }
 
 interface ToastProps extends ToastState {
@@ -65,30 +66,30 @@ const Toast: ({
   );
 };
 
-const useToast: (
-  timeout?: number
-) => [
-  (title: string, description: string, mode?: ToastMode) => void,
-  ToastProps
-] = (timeout = 3000) => {
+type Open = (
+  title: string,
+  description: string,
+  mode?: ToastMode,
+  onClose?: () => void
+) => void;
+
+const useToast: (timeout?: number) => [Open, ToastProps] = (timeout = 3000) => {
   const [toastProps, setToastProps] = useState<ToastState>({
     isOpen: false,
     title: "",
     description: "",
     mode: "default",
+    onClose: () => {},
   });
 
-  const open = (
-    title: string,
-    description: string,
-    mode: ToastMode = "default"
-  ) => {
+  const open: Open = async (title, description, mode = "default", onClose) => {
     setToastProps({
       ...toastProps,
       title,
       description,
       mode,
       isOpen: true,
+      onClose,
     });
   };
 
@@ -97,6 +98,7 @@ const useToast: (
       ...toastProps,
       isOpen: false,
     });
+    toastProps.onClose();
   };
 
   return [open, { ...toastProps, close, timeout }];

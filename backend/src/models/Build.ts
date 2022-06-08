@@ -102,6 +102,8 @@ export interface BuildModel extends BuildAttributes {
   addDownload: () => void;
   addView: () => void;
   updateTotals: () => Promise<BuildModel>;
+  canView: (user?: UserModel) => boolean;
+  canEdit: (user?: UserModel) => boolean;
 }
 
 export interface BuildAttributes
@@ -188,7 +190,12 @@ Build.prototype.setImagesById = async function (imageIds: string[]) {
   );
 };
 
-Build.prototype.hasAccess = function (user: UserModel = null) {
+Build.prototype.canEdit = async function (user: UserModel = null) {
+  if (user?.moderator === true) return true;
+  return user?.uuid === this.creatorUuid;
+};
+
+Build.prototype.canView = function (user: UserModel = null) {
   if (user?.moderator === true) return true;
   if (this.private || !this.approved) {
     if (!user || user?.uuid !== this.creator?.uuid) {
@@ -300,7 +307,7 @@ export interface BuildJSON {
 Build.prototype.toJSON = async function (
   user: UserModel = null
 ): Promise<BuildJSON> {
-  if (!this.hasAccess(user)) {
+  if (!this.canView(user)) {
     return undefined;
   }
 

@@ -48,19 +48,21 @@ const Home = () => {
   /*
    * TODO before launch:
    *  - Radix icons / more icons
-   *  - Adjust image order
-   *  - Manage and remove own builds
-   *    - Markdown
    *  - Favorite collections
    *  - Fix multiplebutton
-   *  - Make frontpage banner change picture
+   *  - Make frontpage banner change picture, get proper mock images
    *  - Working tags and categories
+   *  - Ban uuids
    * TODO:
+   *  - More middleware to make code dry
+   *  - Make api endpoints consistent
+   *  - Adjust image order
    *  - Administration tools
    *  - Implement private (paid) builds
    *  - Browse creators
    *  - Api documentation
    *  - New dedicated search page?
+   *  - Search and sort by date and time
    * */
 
   const CategoryLink = ({ href, text }) => (

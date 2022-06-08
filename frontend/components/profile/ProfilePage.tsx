@@ -78,10 +78,10 @@ const ProfilePage = ({
     <div className="flex flex-col">
       <TitleBar active={isOwnProfile ? tabName : null} />
       <div
-        className="bg-cover"
         style={{
           background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
               url("${bannerUrl || "/blueprint.jpeg"}") no-repeat center center`,
+          backgroundSize: "cover",
         }}
       >
         <div className="h-40 md:h-56 p-4 backdrop-blur-sm grid grid-cols-2 grid-rows-2 md:p-6">

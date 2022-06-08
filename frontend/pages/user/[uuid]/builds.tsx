@@ -32,7 +32,9 @@ const Builds = () => {
   return (
     <ProfilePage count={builds?.length}>
       {builds?.length === 0 && userObject.isLoggedIn() ? (
-        <CreateBuild />
+        <div className="flex">
+          <CreateBuild />
+        </div>
       ) : (
         <CardsGridView builds={builds || []} error={error} loading={loading} />
       )}

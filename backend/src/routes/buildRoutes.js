@@ -163,6 +163,8 @@ buildRoutes.put(
   buildsController.update
 );
 
+buildRoutes.delete("/build/:buildId", auth, buildsController.delete);
+
 buildRoutes.post(
   "/build/:buildId/approve",
   moderatorAuth,

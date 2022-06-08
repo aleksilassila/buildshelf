@@ -19,9 +19,22 @@ import fs from "fs";
 import { validate as validateJSON } from "jsonschema";
 import crypto from "crypto";
 
-const hasAccess = (res, build, user, message = "Build not found.") => {
-  if (!build || !build.hasAccess(user)) {
+const canView = (res, build, user, message = "Build not found.") => {
+  if (!build || !build.canView(user)) {
     errors.NOT_FOUND.send(res, message);
+    return false;
+  }
+
+  return true;
+};
+
+const canEdit = (res, build, user, message = "Unauthorized.") => {
+  if (!canView(res, build, user)) {
+    return false;
+  }
+
+  if (!build || !build.canEdit(user)) {
+    errors.UNAUTHORIZED.send(res, message);
     return false;
   }
 
@@ -290,8 +303,7 @@ exports.get = async function (req, res) {
     include: ["collection", "creator", "images"],
   }).catch((err) => {});
 
-  if (!hasAccess(res, build, req.user) || !build) {
-    errors.NOT_FOUND.send(res, "Build not found.");
+  if (!canView(res, build, req.user) || !build) {
     return;
   }
 
@@ -307,8 +319,7 @@ exports.save = async function (req, res) {
 
   const build = await Build.findByPk(buildId).catch((err) => {});
 
-  if (!hasAccess(res, build, req.user) || !build) {
-    errors.NOT_FOUND.send(res, "Build not found.");
+  if (!canView(res, build, req.user) || !build) {
     return;
   }
 
@@ -332,7 +343,7 @@ exports.bookmark = async function (req, res) {
 
   const build = await Build.findByPk(buildId).catch((err) => {});
 
-  if (!hasAccess(res, build, req.user)) {
+  if (!canView(res, build, req.user)) {
     return;
   }
 
@@ -368,13 +379,7 @@ exports.update = async function (req, res) {
     include: ["collection", "creator"],
   }).catch(() => {});
 
-  if (!hasAccess(res, build, user) || !build) {
-    errors.NOT_FOUND.send(res, "Build not found.");
-    return;
-  }
-
-  if (user.uuid !== build.creator.uuid) {
-    errors.UNAUTHORIZED.send(res);
+  if (!canEdit(res, build, user) || !build) {
     return;
   }
 
@@ -391,6 +396,20 @@ exports.update = async function (req, res) {
       }
     })
     .then(() => res.send("OK"));
+};
+
+exports.delete = async function (req, res) {
+  const { buildId } = req.params;
+  const build = await Build.findByPk(buildId).catch(() => undefined);
+
+  if (!canEdit(res, build, req.user) || !build) {
+    return;
+  }
+
+  build
+    .destroy()
+    .then(() => res.send("OK"))
+    .catch((err) => errors.SERVER_ERROR.send(res));
 };
 
 exports.approve = async function (req, res) {

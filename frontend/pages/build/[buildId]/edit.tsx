@@ -11,6 +11,8 @@ import FormMarkdownEditor from "../../../components/form/FormMarkdownEditor";
 import { useEffect } from "react";
 import { Toast, useToast } from "../../../components/ui/Toast";
 import ImageUpload from "../../../components/form/ImageUpload";
+import * as AlertDialog from "../../../components/ui/AlertDialog";
+import Auth from "../../../utils/auth";
 
 interface FormData {
   description: string;
@@ -20,8 +22,9 @@ interface FormData {
 const Edit = () => {
   const router = useRouter();
   const { buildId } = router.query;
+  const user = Auth.getUser();
 
-  const [open, toastProps] = useToast();
+  const [toast, toastProps] = useToast();
   const [formData, setFormData, changeField] = UseFormData<FormData>({
     description: "",
     images: [],
@@ -58,9 +61,11 @@ const Edit = () => {
       },
     }).then((res) => {
       if (res.status === 200) {
-        open("Build updated", "Build updated successfully.");
+        toast("Build updated", "Build updated successfully.", "primary", () => {
+          router.push("/build/" + buildId).then();
+        });
       } else {
-        open("Error", "Could not update build.");
+        toast("Error", "Could not update build.", "danger");
       }
     });
   };
@@ -104,10 +109,40 @@ const Edit = () => {
             }}
           />
         </Form.Section>
-        <Form.Section>
+        <Form.Section className="flex justify-between">
           <Button onClick={submitData} className="float-left" mode="primary">
             Update Build
           </Button>
+          <AlertDialog.Root>
+            <AlertDialog.Trigger>
+              <Button mode="danger">Delete</Button>
+            </AlertDialog.Trigger>
+            <AlertDialog.Content>
+              <AlertDialog.ConfirmDangerous
+                onConfirm={() => {
+                  apiRequest({
+                    method: "delete",
+                    url: "/build/" + buildId,
+                  }).then((res) => {
+                    if (res.status === 200) {
+                      toast(
+                        "Build deleted",
+                        "Build deleted successfully.",
+                        "primary",
+                        () => {
+                          router
+                            .push(user?.uuid ? "/user/" + user?.uuid : "/")
+                            .then();
+                        }
+                      );
+                    } else {
+                      toast("Error", "Could not delete build.", "danger");
+                    }
+                  });
+                }}
+              />
+            </AlertDialog.Content>
+          </AlertDialog.Root>
         </Form.Section>
       </Form.Root>
       <Toast toastProps={toastProps} />

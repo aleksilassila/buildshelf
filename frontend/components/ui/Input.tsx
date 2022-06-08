@@ -55,6 +55,7 @@ const Input = ({
       {textArea ? (
         <textarea
           id={id}
+          value={value}
           defaultValue={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}

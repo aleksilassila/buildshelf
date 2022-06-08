@@ -56,17 +56,9 @@ const Clear = ({ setFormData }) => (
       <Button mode="danger">Clear</Button>
     </AlertDialog.Trigger>
     <AlertDialog.Content>
-      <AlertDialog.ConfirmDangerous />
-      <div className="flex gap-4">
-        <AlertDialog.Action onClick={() => setFormData(initialFormData)}>
-          <Button mode="primary" onClick={() => setFormData(initialFormData)}>
-            Clear
-          </Button>
-        </AlertDialog.Action>
-        <AlertDialog.Cancel>
-          <Button>Cancel</Button>
-        </AlertDialog.Cancel>
-      </div>
+      <AlertDialog.ConfirmDangerous
+        onConfirm={() => setFormData(initialFormData)}
+      />
     </AlertDialog.Content>
   </AlertDialog.Root>
 );
