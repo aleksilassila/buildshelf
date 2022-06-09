@@ -61,6 +61,7 @@ const Input = ({
           placeholder={placeholder}
           onBlur={onBlur}
           ref={focusRef}
+          className="min-h-[2.5rem]"
         />
       ) : (
         <input

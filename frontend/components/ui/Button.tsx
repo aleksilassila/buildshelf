@@ -1,18 +1,16 @@
 import theme from "../../constants/theme";
-import React, { useState } from "react";
+import React from "react";
 
 interface Props {
   children?: React.ReactNode;
   className?: string;
-  mode?: "primary" | "danger" | "disabled" | "default";
+  mode?: "primary" | "danger" | "disabled" | "label" | "default";
   disabled?: boolean;
   [key: string]: any;
 }
 
 const Button = ({ children, className, mode = "default", ...rest }: Props) => {
-  const [isFocused, setIsFocused] = useState(false);
-
-  if (mode === "disabled") {
+  if (mode === "disabled" || mode === "label") {
     rest.onClick = () => {};
   }
 
@@ -26,11 +24,11 @@ const Button = ({ children, className, mode = "default", ...rest }: Props) => {
               danger:
                 "text-white bg-red-500 border-red-600 active:bg-red-600 cursor-pointer",
               disabled: "cursor-default opacity-60 bg-white",
+              label: "cursor-default bg-white text-stone-700",
               default:
                 "cursor-pointer bg-white active:bg-stone-200 text-stone-700",
             }[mode]
           } ${className}`}
-      onBlur={() => setIsFocused(false)}
       tabIndex={0}
       {...rest}
     >

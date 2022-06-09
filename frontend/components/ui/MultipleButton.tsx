@@ -1,80 +1,25 @@
 import theme from "../../constants/theme";
+import Button from "./Button";
 
-export interface MultipleButtonData {
-  content: JSX.Element | string;
-  onClick?: () => void;
-  unclickable?: boolean;
-  active?: boolean;
-}
-
-const MultipleButton = ({ data }: { data: (MultipleButtonData | null)[] }) => {
+const Root = ({ children }) => {
   return (
-    <div className="multiple-button">
-      {data
-        .filter((i) => i !== null)
-        .map((item, i) => (
-          <div
-            className={`${item.unclickable && "unclickable"} ${
-              item.active && "active"
-            }`}
-            key={i}
-            onClick={item.onClick}
-          >
-            {item.content}
-          </div>
-        ))}
-      <style jsx>
-        {`
-          .multiple-button {
-            border: 1px solid ${theme.lightLowContrast};
-            box-shadow: ${theme.bottomShadow};
-            background-color: ${theme.lightHighContrast};
-            border-radius: 4px;
-            height: 2.2rem;
-            font-size: 0.9em;
-
-            display: inline-flex;
-            flex-direction: row;
-            overflow: hidden;
-          }
-
-          .multiple-button > * {
-            padding: 0.4em 1em;
-            border-right: 1px solid ${theme.lightLowContrast};
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            color: ${theme.darkMediumContrast};
-          }
-
-          .multiple-button > *:not(.unclickable):hover {
-            background-color: ${theme.lightMediumContrast};
-          }
-
-          .multiple-button > *:last-child {
-            border: none;
-          }
-
-          .unclickable,
-          .active {
-            cursor: unset !important;
-          }
-
-          .unclickable:active {
-            background-color: unset !important;
-          }
-
-          .active {
-            background-color: ${theme.lightLowContrast} !important;
-          }
-
-          .active:active {
-            background-color: ${theme.lightLowContrast} !important;
-          }
-        `}
-      </style>
+    <div
+      className={`${theme.ui.borders} ${theme.ui.outline} overflow-hidden w-max flex items-stretch h-10 bg-white font-medium divide-x divide-stone-300`}
+    >
+      {children}
     </div>
   );
 };
 
-export default MultipleButton;
+const Item = ({ children, className, ...rest }) => (
+  // <div className="px-4 py-0 max-h-full flex items-center w-max">{children}</div>
+  <Button
+    style={{ borderRadius: 0 }}
+    className={"border-0 " + className}
+    {...rest}
+  >
+    {children}
+  </Button>
+);
+
+export { Root, Item as Button };

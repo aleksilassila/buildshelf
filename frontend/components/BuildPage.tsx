@@ -1,7 +1,7 @@
 import { Build } from "../interfaces/ApiResponses";
 import ImageCollection from "./ImageCollection";
 import Separator from "./utils/Separator";
-import MultipleButton, { MultipleButtonData } from "./ui/MultipleButton";
+import * as MultipleButton from "./ui/MultipleButton";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Auth from "../utils/auth";
@@ -268,27 +268,21 @@ const SaveButton = ({ buildId, sbData, setSBData }) => {
       .catch((err) => setSBData({ active: false, ...sbData }));
   };
 
-  const saveButtonData: MultipleButtonData[] = [
-    {
-      content: (
-        <span style={{ fontWeight: 600 }}>
+  return (
+    <MultipleButton.Root>
+      <MultipleButton.Button
+        mode={sbData.isBuildSaved ? "primary" : "label"}
+        className={"cursor-default"}
+      >
+        <span className="font-semibold">
           <Heart /> {sbData.saveCount}
         </span>
-      ),
-      unclickable: true,
-      active: sbData.isBuildSaved,
-    },
-    {
-      content: (
-        <span onClick={saveBuild}>
-          {sbData.isBuildSaved ? "Unsave build" : "Save build"}
-        </span>
-      ),
-      active: sbData.active,
-    },
-  ];
-
-  return <MultipleButton data={saveButtonData} />;
+      </MultipleButton.Button>
+      <MultipleButton.Button onClick={saveBuild}>
+        {sbData.isBuildSaved ? "Unsave build" : "Save build"}
+      </MultipleButton.Button>
+    </MultipleButton.Root>
+  );
 };
 
 export { Static, Floating };

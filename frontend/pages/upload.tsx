@@ -6,9 +6,7 @@ import CollectionsManager from "../components/modals/CollectionsManager";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
 import Button from "../components/ui/Button";
-import MultipleButton, {
-  MultipleButtonData,
-} from "../components/ui/MultipleButton";
+import * as MultipleButton from "../components/ui/MultipleButton";
 import theme from "../constants/theme";
 import CategoryBrowser from "../components/modals/CategoryBrowser";
 import Localstorage from "../utils/localstorage";
@@ -185,17 +183,6 @@ const Upload = () => {
     );
   }
 
-  const collectionsButtonData: MultipleButtonData[] = [
-    {
-      content: formData.collectionName || "No collection selected",
-      active: true,
-    },
-    {
-      content: "Select a collection",
-      onClick: () => setShowCollectionsManager(true),
-    },
-  ];
-
   return (
     <div className="flex flex-col min-h-screen">
       <TitleBar active="upload" />
@@ -236,6 +223,7 @@ const Upload = () => {
             files={formData.buildFile}
             setFiles={(files) => changeField("buildFile")(files[0])}
             accept=".litematic, application/gzip"
+            className="max-w-min"
           />
           <Form.Tip>Supported extensions: .litematica</Form.Tip>
         </Form.Section>
@@ -296,7 +284,18 @@ const Upload = () => {
         <Form.Section>
           <Form.Label>Add to a Build Collection</Form.Label>
           <div>
-            <MultipleButton data={collectionsButtonData} />
+            <MultipleButton.Root>
+              <MultipleButton.Button
+                mode={!formData.collectionName ? "disabled" : "label"}
+              >
+                {formData.collectionName || "No collection selected"}
+              </MultipleButton.Button>
+              <MultipleButton.Button
+                onClick={() => setShowCollectionsManager(true)}
+              >
+                Select a collection
+              </MultipleButton.Button>
+            </MultipleButton.Root>
           </div>
           <CollectionsManager
             showMenu={showCollectionsManager}

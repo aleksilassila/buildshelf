@@ -1,16 +1,25 @@
-import MultipleButton, { MultipleButtonData } from "./MultipleButton";
+import Button from "./Button";
+import { useRef } from "react";
 
 interface Props {
   files: any;
   setFiles: (files: FileList) => void;
   accept?: string;
   multiple?: boolean;
+  className?: string;
 }
 
-const FileSelect = ({ files, setFiles, accept = undefined, multiple = false }: Props) => {
+const FileSelect = ({
+  files,
+  setFiles,
+  className,
+  accept = undefined,
+  multiple = false,
+}: Props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const fileDescription = (files): string => {
     if (!files || files?.length === 0) {
-      return "No files selected";
+      return "Select File" + (multiple ? "s" : "");
     } else if (files?.length) {
       return files.length > 1
         ? files.length + " files selected"
@@ -20,44 +29,18 @@ const FileSelect = ({ files, setFiles, accept = undefined, multiple = false }: P
     }
   };
 
-  const multipleButtonData: MultipleButtonData[] = [
-    {
-      content: <span>{fileDescription(files)}</span>,
-      active: true,
-    },
-    {
-      content: (
-        <label>
-          {multiple ? "Select files" : "Select a file"}
-          <input
-            type="file"
-            onChange={(e) => setFiles(e.target.files)}
-            multiple={multiple}
-            accept={accept}
-          />
-          <style jsx>
-            {`
-              input {
-                display: none;
-              }
-
-              label {
-              display: inline-block;
-                cursor: pointer;
-                margin: -0.4em -1em;
-                padding: 0.4em 1em;
-              }
-            `}
-          </style>
-        </label>
-      ),
-    },
-  ];
-
   return (
-    <div className="file-select">
-      <MultipleButton data={multipleButtonData} />
-    </div>
+    <Button onClick={() => inputRef.current.click()} className={className}>
+      {fileDescription(files)}
+      <input
+        ref={inputRef}
+        type="file"
+        className="hidden"
+        multiple={multiple}
+        accept={accept}
+        onChange={(e) => setFiles(e.target.files)}
+      />
+    </Button>
   );
 };
 
