@@ -17,11 +17,7 @@ export interface CategoryAttributes
   name: string;
 }
 
-interface CategoryStatic extends ModelStatic<CategoryAttributes> {
-  getOrCreateCategory(
-    categoryString: string
-  ): Promise<[CategoryAttributes, boolean]>;
-}
+interface CategoryStatic extends ModelStatic<CategoryAttributes> {}
 
 const Category = <CategoryStatic>sequelize.define<CategoryAttributes>(
   "category",
@@ -35,29 +31,5 @@ const Category = <CategoryStatic>sequelize.define<CategoryAttributes>(
     timestamps: false,
   }
 );
-
-Category.getOrCreateCategory = async function (
-  categoryString: string
-): Promise<[CategoryAttributes, boolean]> {
-  categoryString = categoryString?.toLowerCase();
-  const parts = categoryString.split("/");
-
-  for (let i = 1; i < parts.length; i++) {
-    const name = parts.slice(0, i).join("/");
-    await Category.findOrCreate({
-      where: { name },
-      defaults: { name },
-    });
-  }
-
-  return Category.findOrCreate({
-    where: {
-      name: categoryString,
-    },
-    defaults: {
-      name: categoryString,
-    },
-  });
-};
 
 export { Category };

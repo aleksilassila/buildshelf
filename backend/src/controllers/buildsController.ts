@@ -18,6 +18,7 @@ import { errors } from "../client-error";
 import fs from "fs";
 import { validate as validateJSON } from "jsonschema";
 import crypto from "crypto";
+import { Express } from "express";
 
 const canView = (res, build, user, message = "Build not found.") => {
   if (!build || !build.canView(user)) {
@@ -79,7 +80,6 @@ exports.create = async function (req, res) {
     description,
     title,
     categoryName,
-    collectionId,
     imageIds,
   }: {
     description?: string;
@@ -113,15 +113,25 @@ exports.create = async function (req, res) {
     }
   }
 
-  if (collectionId) {
+  let collectionId;
+
+  if (req.body?.collectionId) {
     if (
       !(await Collection.findOne({
-        where: { id: collectionId, creatorUuid: req.user.uuid },
+        where: { id: req.body?.collectionId, creatorUuid: req.user.uuid },
       }))
     ) {
       errors.NOT_FOUND.send(res, "Collection not found.");
       return;
+    } else {
+      collectionId = req.body?.collectionId;
     }
+  } else if (req.body?.collectionName && req.body?.collectionDescription) {
+    collectionId = await Collection.create({
+      name: req.body?.collectionName,
+      description: req.body?.collectionDescription,
+      creatorUuid: req.user.uuid,
+    }).then((model) => model.id);
   }
 
   const buildFile = await BuildFile.create({

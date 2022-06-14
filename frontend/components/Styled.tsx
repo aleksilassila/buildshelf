@@ -1,10 +1,10 @@
 import React from "react";
 
 const Styled =
-  (classes) =>
+  (className) =>
   ({
     children,
-    className,
+    className: _className,
     ...rest
   }: {
     children: any;
@@ -12,7 +12,7 @@ const Styled =
     rest?: any;
   }) =>
     (
-      <div className={classes + " " + className} {...rest}>
+      <div className={className + " " + _className} {...rest}>
         {children}
       </div>
     );

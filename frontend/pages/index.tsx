@@ -48,12 +48,15 @@ const Home = () => {
   /*
    * TODO before launch:
    *  - Radix icons / more icons
-   *  - Favorite collections
-   *  - Fix multiplebutton
    *  - Make frontpage banner change picture, get proper mock images
-   *  - Working tags and categories
-   *  - Ban uuids
+   *  - Favorite collections
+   *  - Manage collections
    * TODO:
+   *  - Improve ui components
+   *    - States inside components and callbacks
+   *  - Form validation
+   *  - Ban uuids
+   *  - Popular collection = best average score
    *  - More middleware to make code dry
    *  - Make api endpoints consistent
    *  - Adjust image order
@@ -63,6 +66,7 @@ const Home = () => {
    *  - Api documentation
    *  - New dedicated search page?
    *  - Search and sort by date and time
+   *  - Fix multiplebutton
    * */
 
   const CategoryLink = ({ href, text }) => (

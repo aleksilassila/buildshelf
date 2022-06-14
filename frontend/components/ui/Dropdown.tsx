@@ -14,7 +14,7 @@ const Root = React.forwardRef(
       <Select.Root {...rest}>
         <Select.Trigger
           ref={forwardedRef}
-          className={`${theme.ui.spacing} ${theme.ui.borders} ${theme.ui.outline} gap-2 font-medium text-sm`}
+          className={`${theme.ui.spacing} ${theme.ui.borders} ${theme.ui.outline} gap-2 font-medium text-sm bg-white`}
         >
           <Select.Value />
           <Select.Icon asChild>

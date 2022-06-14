@@ -2,13 +2,10 @@ import Auth from "../utils/auth";
 import TitleBar from "../components/bars/TitleBar";
 import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import CollectionsManager from "../components/modals/CollectionsManager";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
 import Button from "../components/ui/Button";
-import * as MultipleButton from "../components/ui/MultipleButton";
 import theme from "../constants/theme";
-import CategoryBrowser from "../components/modals/CategoryBrowser";
 import Localstorage from "../utils/localstorage";
 import Tag from "../components/ui/Tag";
 import * as Form from "../components/form/Form";
@@ -16,9 +13,13 @@ import useFormData from "../hooks/useFormData";
 import FormMarkdownEditor from "../components/form/FormMarkdownEditor";
 import ImageUpload from "../components/form/ImageUpload";
 import { Toast, useToast } from "../components/ui/Toast";
-import { Build, Image } from "../interfaces/ApiResponses";
+import { Build, Category, Collection, Image } from "../interfaces/ApiResponses";
 import * as AlertDialog from "../components/ui/AlertDialog";
 import { useRouter } from "next/router";
+import * as Dropdown from "../components/ui/Dropdown";
+import { useApi } from "../utils/api";
+import * as RadioAccordion from "../components/ui/RadioAccordion";
+import * as RadioGroup from "../components/ui/RadioGroup";
 
 interface FormData {
   title: string;
@@ -27,11 +28,12 @@ interface FormData {
   tags: string[];
   tagsInput: string;
   images: Image[];
-  category: string;
+  categoryName: string;
   collectionSearch: string;
   collectionName: string;
   collectionId: string;
   collectionDescription: string;
+  collectionAction: "none" | "existing" | "new";
 }
 
 const initialFormData: FormData = {
@@ -41,11 +43,12 @@ const initialFormData: FormData = {
   tags: [],
   tagsInput: "",
   images: [],
-  category: "",
+  categoryName: "",
   collectionSearch: "",
   collectionName: "",
   collectionId: "",
   collectionDescription: "",
+  collectionAction: "none",
 };
 
 const Clear = ({ setFormData }) => (
@@ -62,16 +65,32 @@ const Clear = ({ setFormData }) => (
 );
 
 const Upload = () => {
+  const userObject = Auth.getUser();
   const [formData, setFormData, changeField] = useFormData<FormData>(
     initialFormData,
     "uploadFormData"
   );
 
+  const [categories, categoriesLoading, categoriesError] = useApi<Category[]>(
+    "/categories",
+    {},
+    []
+  );
+
+  const [collections, collectionsLoading, collectionsError] = useApi<
+    Collection[]
+  >(
+    "/collections/get",
+    {
+      params: {
+        uuid: userObject?.uuid,
+      },
+    },
+    []
+  );
+
   // Toast props
   const [toast, toastProps] = useToast();
-
-  const [showCollectionsManager, setShowCollectionsManager] = useState(false);
-  const [showCategoryBrowser, setShowCategoryBrowser] = useState(false);
 
   const router = useRouter();
 
@@ -99,10 +118,15 @@ const Upload = () => {
       data.append("imageIds[]", image.id.toString());
     }
 
-    data.append("category", formData.category);
+    if (formData.categoryName.length > 0) {
+      data.append("categoryName", formData.categoryName);
+    }
 
-    if (formData.collectionId) {
+    if (formData.collectionAction === "existing") {
       data.append("collectionId", formData.collectionId);
+    } else if (formData.collectionAction === "new") {
+      data.append("collectionName", formData.collectionName);
+      data.append("collectionDescription", formData.collectionDescription);
     }
 
     for (const tag of formData.tags) {
@@ -164,14 +188,12 @@ const Upload = () => {
     });
   };
 
-  const setCategory = (category) => {
+  const setCategory = (categoryName) => {
     setFormData({
       ...formData,
-      category,
+      categoryName,
     });
   };
-
-  const userObject = Auth.getUser();
 
   if (userObject === undefined) return;
 
@@ -190,17 +212,19 @@ const Upload = () => {
         <Form.Section>
           <h2 className={theme.text.bold}>Upload a build</h2>
         </Form.Section>
-        <Form.Section htmlFor="title">
-          <Form.Label>Title</Form.Label>
-          <Input
-            id="title"
-            value={formData.title}
-            setValue={changeField("title")}
-            placeholder="Title"
-          />
+        <Form.Section>
+          <Form.Label htmlFor="title">
+            <Form.LabelText>Title</Form.LabelText>
+            <Input
+              id="title"
+              value={formData.title}
+              setValue={changeField("title")}
+              placeholder="Title"
+            />
+          </Form.Label>
         </Form.Section>
         <Form.Section>
-          <Form.Label>Description</Form.Label>
+          <Form.LabelText>Description</Form.LabelText>
           <FormMarkdownEditor
             placeholder="Description"
             setValue={changeField("description")}
@@ -218,7 +242,7 @@ const Upload = () => {
           </Form.Tip>
         </Form.Section>
         <Form.Section>
-          <Form.Label>Build File</Form.Label>
+          <Form.LabelText>Build File</Form.LabelText>
           <FileSelect
             files={formData.buildFile}
             setFiles={(files) => changeField("buildFile")(files[0])}
@@ -228,7 +252,7 @@ const Upload = () => {
           <Form.Tip>Supported extensions: .litematica</Form.Tip>
         </Form.Section>
         <Form.Section>
-          <Form.Label>Images</Form.Label>
+          <Form.LabelText>Images</Form.LabelText>
           <ImageUpload
             initialImages={formData.images}
             uploadCallback={(res) => {
@@ -241,7 +265,7 @@ const Upload = () => {
         </Form.Section>
         <Form.Section>
           <div className="mb-2 flex flex-row gap-3">
-            <Form.Label className="mb-0">Tags</Form.Label>
+            <Form.LabelText className="mb-0">Tags</Form.LabelText>
             <Tag.Root>
               {formData.tags.map((tag, index) => (
                 <Tag.Item onRemove={removeTag(tag)}>{tag}</Tag.Item>
@@ -253,9 +277,16 @@ const Upload = () => {
               value={formData.tagsInput}
               setValue={changeField("tagsInput")}
               placeholder="Tag Name"
-              onEnter={addTag}
+              onEnter={(tag) => {
+                if (formData.tags?.length < 3) addTag(tag);
+              }}
             />
-            <Button onClick={addTag}>Add</Button>
+            <Button
+              onClick={addTag}
+              mode={formData.tags?.length >= 3 ? "disabled" : "default"}
+            >
+              Add
+            </Button>
           </div>
           <Form.Tip>
             Add up to three tags. Tags should be adjectives that describe your
@@ -263,45 +294,97 @@ const Upload = () => {
           </Form.Tip>
         </Form.Section>
         <Form.Section>
-          <Form.Label>Category</Form.Label>
-          <div className="input-button-container">
-            <Input
-              value={formData.category}
-              setValue={changeField("category")}
-              placeholder="Category"
-            />
-            <Button onClick={() => setShowCategoryBrowser(true)}>
-              Browse Categories
-            </Button>
-          </div>
-          <CategoryBrowser
-            show={showCategoryBrowser}
-            setShow={setShowCategoryBrowser}
-            setCategory={setCategory}
-          />
-          <Form.Tip>A noun describing the type of the build.</Form.Tip>
+          <Form.LabelText>Category</Form.LabelText>
+          <Dropdown.Root onValueChange={setCategory} defaultValue="">
+            <Dropdown.Group>
+              <Dropdown.Label>Category</Dropdown.Label>
+              <Dropdown.Item value="">None</Dropdown.Item>
+              {categories?.map((item, index) => (
+                <Dropdown.Item key={index} value={item.name}>
+                  {item.name
+                    ?.split("-")
+                    ?.map((w) => w[0].toUpperCase() + w.slice(1))
+                    ?.join(" ")}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Group>
+          </Dropdown.Root>
+          <Form.Tip>A noun defining the type of the build.</Form.Tip>
         </Form.Section>
         <Form.Section>
-          <Form.Label>Add to a Build Collection</Form.Label>
-          <div>
-            <MultipleButton.Root>
-              <MultipleButton.Button
-                mode={!formData.collectionName ? "disabled" : "label"}
-              >
-                {formData.collectionName || "No collection selected"}
-              </MultipleButton.Button>
-              <MultipleButton.Button
-                onClick={() => setShowCollectionsManager(true)}
-              >
-                Select a collection
-              </MultipleButton.Button>
-            </MultipleButton.Root>
-          </div>
-          <CollectionsManager
-            showMenu={showCollectionsManager}
-            setShowMenu={setShowCollectionsManager}
-            setCollection={setCollection}
-          />
+          <Form.LabelText>Add to a Build Collection</Form.LabelText>
+          <RadioAccordion.Root
+            defaultValue={formData.collectionAction}
+            onValueChange={changeField("collectionAction")}
+          >
+            <RadioAccordion.Item value="none">
+              <RadioAccordion.Trigger value="none">None</RadioAccordion.Trigger>
+              <RadioAccordion.Content>
+                Don't add the build to a collection.
+              </RadioAccordion.Content>
+            </RadioAccordion.Item>
+            <RadioAccordion.Item value="existing">
+              <RadioAccordion.Trigger value="existing">
+                Existing Collection
+              </RadioAccordion.Trigger>
+              <RadioAccordion.Content>
+                {collections?.length ? (
+                  <div>
+                    <Form.LabelText>
+                      Add the build to an exising collection
+                    </Form.LabelText>
+                    <RadioGroup.Root
+                      onValueChange={changeField("collectionId")}
+                    >
+                      {collections?.map((collection, key) => (
+                        <RadioGroup.Item
+                          className="gap-2"
+                          key={key}
+                          value={`${collection.id}`}
+                        >
+                          <span className="font-medium flex-initial">
+                            {collection.name}
+                          </span>
+                          <span className="text-left flex-auto">
+                            {collection.description}
+                          </span>
+                          <span className="text-stone-600 text-sm flex-initial">
+                            {collection.builds?.length} builds
+                          </span>
+                        </RadioGroup.Item>
+                      ))}
+                    </RadioGroup.Root>
+                  </div>
+                ) : (
+                  <div>You don't seem to have any existing collections.</div>
+                )}
+              </RadioAccordion.Content>
+            </RadioAccordion.Item>
+            <RadioAccordion.Item value="new">
+              <RadioAccordion.Trigger value="new">
+                New Collection
+              </RadioAccordion.Trigger>
+              <RadioAccordion.Content>
+                <Form.LabelText>Create a new collection</Form.LabelText>
+                <RadioAccordion.Section>
+                  Name:
+                  <Input
+                    value={formData.collectionName}
+                    setValue={changeField("collectionName")}
+                    placeholder="Collection Name"
+                  />
+                </RadioAccordion.Section>
+                <RadioAccordion.Section>
+                  Description:
+                  <Input
+                    value={formData.collectionDescription}
+                    setValue={changeField("collectionDescription")}
+                    placeholder="Collection Description"
+                  />
+                </RadioAccordion.Section>
+              </RadioAccordion.Content>
+            </RadioAccordion.Item>
+          </RadioAccordion.Root>
         </Form.Section>
         <Form.Section className="flex flex-row justify-between">
           <Button onClick={submitData} mode="primary">

@@ -1,10 +1,15 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import theme from "../../constants/theme";
 import { ReactNode } from "react";
 import Button from "./Button";
 
-const Root = ({ children }) => {
-  return <AlertDialog.Root>{children}</AlertDialog.Root>;
+const Root = ({
+  children,
+  ...rest
+}: {
+  children?: ReactNode;
+  [p: string]: any;
+}) => {
+  return <AlertDialog.Root {...rest}>{children}</AlertDialog.Root>;
 };
 
 const Trigger = ({ children }) => {
@@ -20,7 +25,8 @@ const Content = ({ children }) => {
     <AlertDialog.Portal>
       <AlertDialog.Overlay className="fixed inset-0 bg-black opacity-30" />
       <AlertDialog.Content
-        className={`${theme.ui.borders} w-1/2 p-4 px-8 bg-stone-50 top-1/2 left-1/2 fixed translate-x-[-50%] translate-y-[-50%]`}
+        className={`py-4 px-6 rounded w-1/2 top-1/2 left-1/2 fixed
+        translate-x-[-50%] translate-y-[-50%] bg-stone-50`}
       >
         {children}
       </AlertDialog.Content>

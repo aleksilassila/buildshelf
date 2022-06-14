@@ -74,14 +74,14 @@ const Edit = () => {
     <div className="flex flex-col min-h-screen">
       <TitleBar />
       <Form.Root>
-        <Form.Section className="flex flex-row justify-between items-end">
+        <Form.Label className="flex flex-row justify-between items-end">
           <h2 className="font-bold text-2xl">Edit build {build.title}</h2>
           <a href={"/build/" + buildId}>
             <Button onClick={() => {}}>View Build Page</Button>
           </a>
-        </Form.Section>
-        <Form.Section>
-          <Form.Label>Update Description</Form.Label>
+        </Form.Label>
+        <Form.Label>
+          <Form.LabelText>Update Description</Form.LabelText>
           <FormMarkdownEditor
             placeholder="Description"
             setValue={changeField("description")}
@@ -97,8 +97,8 @@ const Edit = () => {
             </a>{" "}
             syntax
           </Form.Tip>
-        </Form.Section>
-        <Form.Section>
+        </Form.Label>
+        <Form.Label>
           <ImageUpload
             initialImages={build.images}
             uploadCallback={(res, images) => {
@@ -108,8 +108,8 @@ const Edit = () => {
               });
             }}
           />
-        </Form.Section>
-        <Form.Section className="flex justify-between">
+        </Form.Label>
+        <Form.Label className="flex justify-between">
           <Button onClick={submitData} className="float-left" mode="primary">
             Update Build
           </Button>
@@ -143,7 +143,7 @@ const Edit = () => {
               />
             </AlertDialog.Content>
           </AlertDialog.Root>
-        </Form.Section>
+        </Form.Label>
       </Form.Root>
       <Toast toastProps={toastProps} />
     </div>

@@ -19,7 +19,10 @@ const CategoriesDropdown = ({ doSearch }) => {
         <Dropdown.Item value="all">All Categories</Dropdown.Item>
         {categories?.map((item, index) => (
           <Dropdown.Item key={index} value={item.name}>
-            {item.name?.charAt(0)?.toUpperCase() + item.name?.slice(1)}
+            {item.name
+              ?.split("-")
+              ?.map((w) => w[0].toUpperCase() + w.slice(1))
+              ?.join(" ")}
           </Dropdown.Item>
         ))}
       </Dropdown.Group>

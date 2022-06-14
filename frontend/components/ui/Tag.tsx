@@ -19,14 +19,14 @@ const Root = ({ children, className, ...rest }: Props) => (
 const Item = ({ children, className, onRemove, ...rest }: ItemProps) => (
   <div
     className={`flex flex-row items-center rounded-full p-0.5 pr-4
-        font-bold whitespace-nowrap text-sm text-green-400
-        ${className} border border-green-200 bg-green-100`}
+        font-bold whitespace-nowrap text-sm text-stone-600
+        ${className} border border-stone-300 bg-white`}
     {...rest}
   >
     <div
       onClick={onRemove}
-      className="h-5 w-5 p-0.5 mr-2 bg-green-100 text-green-300 hover:bg-green-200
-          hover:text-green-400 rounded-full cursor-pointer flex justify-center
+      className="h-5 w-5 p-0.5 mr-2 text-stone-600 hover:bg-stone-300
+          hover:text-stone-700 rounded-full cursor-pointer flex justify-center
           items-center"
     >
       <CloseIcon />

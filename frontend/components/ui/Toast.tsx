@@ -89,7 +89,7 @@ const useToast: (timeout?: number) => [Open, ToastProps] = (timeout = 3000) => {
       description,
       mode,
       isOpen: true,
-      onClose,
+      onClose: onClose || (() => {}),
     });
   };
 

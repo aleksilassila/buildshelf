@@ -1,5 +1,6 @@
 import theme from "../../constants/theme";
 import Button from "./Button";
+import { ReactNode } from "react";
 
 const Root = ({ children }) => {
   return (
@@ -11,7 +12,15 @@ const Root = ({ children }) => {
   );
 };
 
-const Item = ({ children, className, ...rest }) => (
+const Item = ({
+  children,
+  className,
+  ...rest
+}: {
+  children: ReactNode;
+  className?: string;
+  [p: string]: any;
+}) => (
   // <div className="px-4 py-0 max-h-full flex items-center w-max">{children}</div>
   <Button
     style={{ borderRadius: 0 }}

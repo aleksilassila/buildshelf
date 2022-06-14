@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -10,15 +10,37 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
+     */
 
-    const categories = ["houses", "decorations", "castles", "bases", "traps", "xp-farms",
-      "temples", "statues", "redstone", "pixel-art", "boats", "megabuilds", "floating-islands",
-      "spawns", "tree", "world-prefab", "nether-portals", "bridges", "other"];
+    const categories = [
+      "houses",
+      "decorations",
+      "castles",
+      "bases",
+      "traps",
+      "xp-farms",
+      "temples",
+      "statues",
+      "redstone",
+      "pixel-art",
+      "boats",
+      "megabuilds",
+      "floating-islands",
+      "spawns",
+      "trees",
+      "world-prefabs",
+      "nether-portals",
+      "bridges",
+      "other",
+    ];
 
-    await queryInterface.bulkInsert('categories', categories.map(category => {
-      return { name: category };
-    }), {});
+    await queryInterface.bulkInsert(
+      "categories",
+      categories.map((category) => {
+        return { name: category };
+      }),
+      {}
+    );
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -29,6 +51,6 @@ module.exports = {
      * await queryInterface.bulkDelete('People', null, {});
      */
 
-    await queryInterface.bulkDelete('categories', null, {});
-  }
+    await queryInterface.bulkDelete("categories", null, {});
+  },
 };

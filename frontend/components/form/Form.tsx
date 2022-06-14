@@ -12,7 +12,9 @@ const Root = ({ children }) => (
   </div>
 );
 
-const Section = ({
+const Section = Styled("py-4 mx-6");
+
+const Label = ({
   children,
   htmlFor,
   className,
@@ -21,12 +23,12 @@ const Section = ({
   htmlFor?: string;
   className?: string;
 }) => (
-  <LabelPrimitive.Root htmlFor={htmlFor} className={`py-4 mx-6 ${className}`}>
+  <LabelPrimitive.Root htmlFor={htmlFor} className={`${className}`}>
     {children}
   </LabelPrimitive.Root>
 );
 
 const Tip = Styled("text-xs text-stone-700 mt-2");
-const Label = Styled("font-medium mb-2");
+const LabelText = Styled("font-medium mb-2");
 
-export { Root, Section, Tip, Label };
+export { Root, Label, Tip, LabelText, Section };

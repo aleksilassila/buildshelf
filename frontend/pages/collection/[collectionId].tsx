@@ -36,7 +36,9 @@ const CollectionPage = () => {
     <div className="">
       <Banner
         className=""
-        uri={(collection.images || collection.builds[0]?.images)[0].filename}
+        uri={
+          (collection.images || collection.builds?.[0]?.images)?.[0]?.filename
+        }
       >
         <div className="flex flex-col gap-4 text-white w-1/2">
           <CollectionTitle collection={collection} className="self-start" />

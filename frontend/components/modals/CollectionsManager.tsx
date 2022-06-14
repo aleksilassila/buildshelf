@@ -9,29 +9,18 @@ import Table from "../ui/Table";
 import Button from "../ui/Button";
 import Separator from "../utils/Separator";
 import Input from "../ui/Input";
+import { useApi } from "../../utils/api";
 
 const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
-  const [data, setData] = useState<Collection[] | null>(null);
+  const userObject = Auth.getUser();
+  const [data, isLoading, error, refresh] = useApi<Collection[]>(
+    `/user/${userObject?.uuid}/collections`,
+    {},
+    []
+  );
+
   const [newCollectionName, setNewCollectionName] = useState("");
   const [newCollectionDescription, setNewCollectionDescription] = useState("");
-  const userObject = Auth.getUser();
-
-  const fetchData = () => {
-    axios
-      .get(
-        process.env.BACKEND_ENDPOINT + `/user/${userObject?.uuid}/collections`
-      )
-      .then((res) => {
-        setData(res.data || []);
-      })
-      .catch((err) => {});
-  };
-
-  useEffect(() => {
-    if (userObject?.token) {
-      fetchData();
-    }
-  }, []);
 
   const createCollection = (e) => {
     e.preventDefault();
@@ -46,7 +35,7 @@ const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
       )
       .then((res) => {
         if (res.status === 200) {
-          fetchData();
+          refresh();
         }
       })
       .catch((err) => {});
@@ -61,7 +50,7 @@ const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
       )
       .then((res) => {
         if (res.status === 200) {
-          fetchData();
+          refresh();
         }
       })
       .catch((err) => {});
