@@ -1,9 +1,15 @@
-const jwt = require("jsonwebtoken");
-const axios = require("axios");
-const { User } = require("../models/index");
-const { errors } = require("../client-error");
+import jwt from "jsonwebtoken";
+import axios from "axios";
+import { User } from "../models";
+import { errors } from "../client-error";
+import { NextFunction, Response } from "express";
+import { OptionalAuthReq } from "../../types";
 
-exports.moderatorAuth = async function (req, res, next) {
+const moderatorAuth = async function (
+  req: OptionalAuthReq,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.user || !req.user.moderator) {
     // Make it seem like route does not exist
     // res.status(403).send("Unauthenticated");
@@ -12,7 +18,11 @@ exports.moderatorAuth = async function (req, res, next) {
   }
 };
 
-exports.auth = async function (req, res, next) {
+const auth = async function (
+  req: OptionalAuthReq,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.user) {
     res.status(403).send("Unauthenticated");
   } else {
@@ -20,7 +30,11 @@ exports.auth = async function (req, res, next) {
   }
 };
 
-exports.optionalAuth = async function (req, res, next) {
+const optionalAuth = async function (
+  req: OptionalAuthReq,
+  res: Response,
+  next: NextFunction
+) {
   const token = req.query.token;
 
   if (!token) {
@@ -48,7 +62,7 @@ exports.optionalAuth = async function (req, res, next) {
   }
 };
 
-exports.loginMojang = async function (req, res) {
+const loginMojang = async function (req, res) {
   const { username, password, clientToken } = req.body;
 
   if (!username || !password) {
@@ -60,7 +74,7 @@ exports.loginMojang = async function (req, res) {
     return;
   }
 
-  const payload = {
+  const payload: any = {
     agent: {
       name: "Minecraft",
       version: 1,
@@ -89,7 +103,7 @@ exports.loginMojang = async function (req, res) {
   }
 };
 
-exports.loginMicrosoft = async (req, res) => {
+const loginMicrosoft = async (req, res) => {
   const { code } = req.body;
 
   if (!code) {
@@ -227,7 +241,7 @@ exports.loginMicrosoft = async (req, res) => {
   }
 };
 
-exports.loginClient = async (req, res) => {
+const loginClient = async (req, res) => {
   const { accessToken } = req.body;
 
   // Validate if accessToken and uuid combination is valid
@@ -276,4 +290,13 @@ const verifyToken = function (token) {
   return jwt.verify(token, "secret", function (err, decoded) {
     return err ? false : decoded;
   });
+};
+
+export {
+  moderatorAuth,
+  auth,
+  optionalAuth,
+  loginMojang,
+  loginMicrosoft,
+  loginClient,
 };

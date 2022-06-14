@@ -1,13 +1,15 @@
-const buildsController = require("../controllers/buildsController");
-const { Router } = require("express");
-const { auth, moderatorAuth } = require("../controllers/auth");
-const multer = require("multer");
-const config = require("../config");
-const { validateQuery, validateBody } = require("../utils");
-const path = require("path");
-const fs = require("fs");
-const { parse, writeUncompressed } = require("prismarine-nbt");
-const { bookmark } = require("../controllers/buildsController");
+import { AuthReq, BuildReq, Res } from "../../types";
+
+import * as buildsController from "../controllers/buildsController";
+import { Router } from "express";
+import { auth, moderatorAuth } from "../controllers/auth";
+import multer from "multer";
+import config from "../config";
+import { validateBody, validateQuery } from "../utils";
+import path from "path";
+import { errors } from "../client-error";
+import { Build } from "../models";
+import { FindOptions } from "sequelize";
 
 const buildRoutes = Router();
 
@@ -50,6 +52,34 @@ const upload = multer({
   },
 });
 
+const attachBuild =
+  (options: FindOptions = {}) =>
+  async (req: BuildReq, res: Res, next) => {
+    const buildId = req.params.buildId;
+
+    const build = await Build.findByPk(buildId, options).catch(() => undefined);
+
+    if (!build || !build.canView(req.user)) {
+      errors.NOT_FOUND.send(res);
+      return;
+    } else {
+      req.build = build;
+      next();
+    }
+  };
+
+const attachOwnBuild =
+  (options?: FindOptions) => async (req: BuildReq, res: Res, next) => {
+    await attachBuild(options)(req, res, async () => {
+      if (!req.build.canEdit(req.user)) {
+        errors.UNAUTHORIZED.send(res);
+        return;
+      }
+
+      next();
+    });
+  };
+
 buildRoutes.get("/files/id/:buildId", buildsController.downloadBuild);
 
 buildRoutes.post(
@@ -86,7 +116,7 @@ buildRoutes.post(
 );
 
 buildRoutes.get(
-  "/builds/get",
+  "/builds/search",
   validateQuery({
     type: "object",
     properties: {
@@ -113,12 +143,18 @@ buildRoutes.get(
   buildsController.search
 );
 
-buildRoutes.get("/builds/get/followed", auth, buildsController.getFollowed);
+buildRoutes.get(
+  "/builds/:buildId",
+  attachBuild({ include: ["collection", "creator", "images"] }),
+  buildsController.get
+);
 
-buildRoutes.get("/build/:buildId", buildsController.get);
+buildRoutes.get("/builds/feed", auth, buildsController.getFeed);
+
 buildRoutes.post(
-  "/build/:buildId/save",
+  "/builds/:buildId/save",
   auth,
+  attachBuild(),
   validateBody({
     type: "object",
     properties: {
@@ -128,9 +164,11 @@ buildRoutes.post(
   }),
   buildsController.save
 );
+
 buildRoutes.post(
-  "/build/:buildId/bookmark",
+  "/builds/:buildId/bookmark",
   auth,
+  attachBuild(),
   validateBody({
     type: "object",
     properties: {
@@ -142,8 +180,9 @@ buildRoutes.post(
 );
 
 buildRoutes.put(
-  "/build/:buildId",
+  "/builds/:buildId",
   auth,
+  attachOwnBuild({ include: ["collection", "creator"] }),
   validateBody({
     type: "object",
     properties: {
@@ -165,11 +204,17 @@ buildRoutes.put(
   buildsController.update
 );
 
-buildRoutes.delete("/build/:buildId", auth, buildsController.delete);
+buildRoutes.delete(
+  "/builds/:buildId",
+  auth,
+  attachOwnBuild(),
+  buildsController.deleteBuild
+);
 
 buildRoutes.post(
-  "/build/:buildId/approve",
+  "/builds/:buildId/approve",
   moderatorAuth,
+  attachBuild(),
   validateBody({
     type: "object",
     properties: {
@@ -187,4 +232,4 @@ buildRoutes.post(
   buildsController.uploadImages
 );
 
-module.exports = buildRoutes;
+export default buildRoutes;

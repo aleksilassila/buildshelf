@@ -19,6 +19,7 @@ import fs from "fs";
 import { validate as validateJSON } from "jsonschema";
 import crypto from "crypto";
 import { Express } from "express";
+import { AuthReq, BuildReq, OptionalAuthReq, Res } from "../../types";
 
 const canView = (res, build, user, message = "Build not found.") => {
   if (!build || !build.canView(user)) {
@@ -75,7 +76,7 @@ const litematicSchema = {
   required: ["Metadata", "Version", "MinecraftDataVersion"],
 };
 
-exports.create = async function (req, res) {
+const create = async function (req: AuthReq, res: Res) {
   const {
     description,
     title,
@@ -204,7 +205,7 @@ exports.create = async function (req, res) {
 };
 
 // FIXME clean this
-exports.search = async function (req, res) {
+const search = async function (req: OptionalAuthReq, res: Res) {
   const {
     tags,
     collection,
@@ -263,7 +264,7 @@ exports.search = async function (req, res) {
     .catch((err) => errors.SERVER_ERROR.send(res, err));
 };
 
-exports.getFollowed = async function (req, res) {
+const getFeed = async function (req: AuthReq, res: Res) {
   const user = req.user;
   const follows = (await user.getFollows()).map((u) => u.uuid);
 
@@ -281,7 +282,7 @@ exports.getFollowed = async function (req, res) {
   res.send(await Build.toJSONArray(builds, user));
 };
 
-exports.downloadBuild = async function (req, res) {
+const downloadBuild = async function (req: OptionalAuthReq, res: Res) {
   const { buildId } = req.params;
   const build = await Build.findByPk(parseInt(buildId)).catch(() => undefined);
 
@@ -306,32 +307,14 @@ exports.downloadBuild = async function (req, res) {
   );
 };
 
-exports.get = async function (req, res) {
-  const { buildId } = req.params;
-
-  const build = await Build.findByPk(buildId, {
-    include: ["collection", "creator", "images"],
-  }).catch((err) => {});
-
-  if (!canView(res, build, req.user) || !build) {
-    return;
-  }
-
-  res.send(await build.toJSON(req.user));
-
-  build.addView();
+const get = async function (req: BuildReq, res: Res) {
+  res.send(await req.build.toJSON(req.user));
+  req.build.addView();
 };
 
-exports.save = async function (req, res) {
-  const user = req.user;
-  const { buildId } = req.params;
+const save = async function (req: BuildReq & AuthReq, res: Res) {
+  const { user, build } = req;
   const shouldSave = req.body.save;
-
-  const build = await Build.findByPk(buildId).catch((err) => {});
-
-  if (!canView(res, build, req.user) || !build) {
-    return;
-  }
 
   const isSaved = await user.hasSavedBuild(build);
 
@@ -343,19 +326,12 @@ exports.save = async function (req, res) {
 
   await build.updateTotals();
 
-  res.status(200).send(shouldSave ? "Build saved" : "Build unsaved");
+  res.send(shouldSave ? "Build saved" : "Build unsaved");
 };
 
-exports.bookmark = async function (req, res) {
-  const user = req.user;
-  const { buildId } = req.params;
+const bookmark = async function (req: BuildReq & AuthReq, res: Res) {
+  const { user, build } = req;
   const addBookmark = req.body.bookmark;
-
-  const build = await Build.findByPk(buildId).catch((err) => {});
-
-  if (!canView(res, build, req.user)) {
-    return;
-  }
 
   const isSaved = await user.hasBookmark(build);
 
@@ -368,8 +344,8 @@ exports.bookmark = async function (req, res) {
   res.send(addBookmark ? "Build bookmarked" : "Bookmark removed");
 };
 
-exports.update = async function (req, res) {
-  const user = req.user;
+const update = async function (req: BuildReq & AuthReq, res: Res) {
+  const { user, build } = req;
   const {
     description,
     title,
@@ -383,15 +359,6 @@ exports.update = async function (req, res) {
     imageIds?: string[];
     private?: boolean;
   } = req.body;
-  const { buildId } = req.params;
-
-  const build = await Build.findByPk(buildId, {
-    include: ["collection", "creator"],
-  }).catch(() => {});
-
-  if (!canEdit(res, build, user) || !build) {
-    return;
-  }
 
   await build
     .update({
@@ -408,36 +375,20 @@ exports.update = async function (req, res) {
     .then(() => res.send("OK"));
 };
 
-exports.delete = async function (req, res) {
-  const { buildId } = req.params;
-  const build = await Build.findByPk(buildId).catch(() => undefined);
-
-  if (!canEdit(res, build, req.user) || !build) {
-    return;
-  }
-
-  build
+const deleteBuild = async function (req: BuildReq & AuthReq, res: Res) {
+  req.build
     .destroy()
     .then(() => res.send("OK"))
     .catch((err) => errors.SERVER_ERROR.send(res));
 };
 
-exports.approve = async function (req, res) {
-  const { buildId } = req.params;
+const approve = async function (req: BuildReq, res: Res) {
   const approve = req.body.approve;
 
-  const build = await Build.findByPk(buildId).catch(() => {});
-
-  if (!build) {
-    errors.NOT_FOUND.send(res);
-    return;
-  }
-
-  build.approved = approve;
-  build.save().then(() => res.send("OK"));
+  req.build.update({ approved: approve }).then(() => res.send("OK"));
 };
 
-exports.uploadImages = async function (req, res) {
+const uploadImages = async function (req: AuthReq, res: Res) {
   const images = req.files;
 
   if (!images || !images.length) {
@@ -453,4 +404,17 @@ exports.uploadImages = async function (req, res) {
   ).then(async (images) =>
     res.send(await Promise.all(images.map((i) => i.toJSON())))
   );
+};
+export {
+  create,
+  search,
+  getFeed,
+  downloadBuild,
+  get,
+  save,
+  bookmark,
+  update,
+  deleteBuild,
+  approve,
+  uploadImages,
 };

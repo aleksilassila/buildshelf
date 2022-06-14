@@ -6,6 +6,7 @@ import {
   BelongsToManyHasAssociationMixin,
   BelongsToManyGetAssociationsMixin,
   CreationOptional,
+  ModelStatic,
 } from "sequelize";
 import sequelize from "../database";
 import fs from "fs";
@@ -31,7 +32,9 @@ interface UserAttributes
   remoteId: string;
 }
 
-const User = sequelize.define<UserAttributes>("user", {
+interface UserStatic extends ModelStatic<UserModel> {}
+
+const User = <UserStatic>sequelize.define<UserAttributes>("user", {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
