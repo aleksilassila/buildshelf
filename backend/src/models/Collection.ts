@@ -8,12 +8,12 @@ import {
 } from "sequelize";
 import sequelize from "../database";
 import { BuildJSON } from "./Build";
-import { UserJSON, UserModel } from "./User";
+import User, { UserJSON } from "./User";
 import { ImageJSON } from "./Image";
 import { Build } from "./index";
 
 export interface CollectionModel extends CollectionAttributes {
-  toJSON: (user?: UserModel) => Promise<CollectionJSON>;
+  toJSON: (user?: User) => Promise<CollectionJSON>;
   updateTotalFavorites: () => Promise<CollectionModel>;
 }
 
@@ -102,7 +102,7 @@ export interface CollectionJSON {
 }
 
 Collection.prototype.toJSON = async function (
-  user: UserModel = null
+  user: User = null
 ): Promise<CollectionJSON> {
   return {
     id: this.id,

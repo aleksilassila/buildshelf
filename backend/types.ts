@@ -1,17 +1,16 @@
-import { UserModel } from "./src/models/User";
 import { Request, Response } from "express";
-import { BuildModel } from "./src/models/Build";
+import { Build, User } from "./src/models";
 
-export interface OptionalAuthReq extends Request {
-  user?: UserModel;
-}
+export type OptionalAuthReq<R = Request> = R & {
+  user?: User;
+};
 
-export interface AuthReq extends OptionalAuthReq {
-  user: UserModel;
-}
+export type AuthReq<R = Request> = R & {
+  user: User;
+};
 
 export interface Res extends Response {}
 
-export interface BuildReq extends OptionalAuthReq {
-  build: BuildModel;
-}
+export type BuildReq<R = OptionalAuthReq> = R & {
+  build: Build;
+};

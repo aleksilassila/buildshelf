@@ -14,7 +14,7 @@ import { useApi } from "../../utils/api";
 const CollectionsManager = ({ showMenu, setShowMenu, setCollection }) => {
   const userObject = Auth.getUser();
   const [data, isLoading, error, refresh] = useApi<Collection[]>(
-    `/user/${userObject?.uuid}/collections`,
+    `/users/${userObject?.uuid}/collections`,
     {},
     []
   );

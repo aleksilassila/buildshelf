@@ -1,26 +1,44 @@
 import {
+  BelongsToGetAssociationMixin,
   BelongsToManyAddAssociationMixin,
   BelongsToManyGetAssociationsMixin,
+  BelongsToManySetAssociationsMixin,
   CreationOptional,
   DataTypes,
   InferAttributes,
   InferCreationAttributes,
   Model,
-  ModelStatic,
   NOW,
   Op,
 } from "sequelize";
 
 import sequelize from "../database";
-import { UserJSON, UserModel } from "./User";
-import { ImageJSON, ImageModel } from "./Image";
-import { CollectionJSON } from "./Collection";
+import User, { UserJSON } from "./User";
+import Image, { ImageJSON } from "./Image";
+import { CollectionJSON, CollectionModel } from "./Collection";
 import { TagModel } from "./Tag";
 import { BuildFileModel } from "./BuildFile";
 import { CategoryModel } from "./Category";
 import { BuildDownload, BuildView, UserSavedBuilds } from "./index";
 
-const { Image } = require("./Image");
+export interface BuildJSON {
+  images: ImageJSON[] | undefined;
+  creator: UserJSON | undefined;
+  private: boolean;
+  totalDownloads: number;
+  description: string;
+  collection: CollectionJSON | undefined;
+  title: string;
+  tags: TagModel[];
+  totalSaves: number;
+  createdAt: Date;
+  buildFile: BuildFileModel;
+  approved: boolean;
+  isSaved: boolean;
+  id: number;
+  category: CategoryModel;
+  updatedAt: Date;
+}
 
 interface Cache {
   writeThreshold: number;
@@ -28,7 +46,7 @@ interface Cache {
   addDownload: (buildId: number) => void;
   getViews: (buildId: number) => Date[];
   getDownloads: (buildId: number) => Date[];
-  write: (buildId: number) => Promise<BuildModel | void>;
+  write: (buildId: number) => Promise<Build | void>;
   views: { [buildId: number]: Date[] };
   downloads: { [buildId: number]: Date[] };
 }
@@ -91,50 +109,185 @@ export const cache: Cache = {
   downloads: {},
 };
 
-export interface BuildModel extends BuildAttributes {
-  toJSON: (user?: UserModel) => any;
-  setImagesById: (imageIds: string[]) => Promise<void>;
-  addTag: BelongsToManyAddAssociationMixin<BuildModel, TagModel>;
-  updateTotalSaves: () => Promise<BuildModel>;
-  getImages: BelongsToManyGetAssociationsMixin<ImageModel>;
-  updateScore: () => Promise<BuildModel>;
-  addSave: () => void;
-  addDownload: () => void;
-  addView: () => void;
-  updateTotals: () => Promise<BuildModel>;
-  canView: (user?: UserModel) => boolean;
-  canEdit: (user?: UserModel) => boolean;
+class Build extends Model<
+  InferAttributes<Build>,
+  InferCreationAttributes<Build>
+> {
+  declare id?: CreationOptional<number>;
+  declare title: string;
+  declare description: string;
+  declare totalDownloads: CreationOptional<number>;
+  declare totalSaves: CreationOptional<number>;
+  declare totalViews: CreationOptional<number>;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+  declare private: CreationOptional<boolean>;
+  declare approved: CreationOptional<boolean>;
+  declare score: CreationOptional<number>;
+
+  declare creatorUuid?: string;
+  declare collectionId?: number;
+  declare categoryName?: string;
+  declare buildFileId?: number;
+
+  declare creator?: CreationOptional<User>;
+  declare collection?: CreationOptional<CollectionModel>;
+  declare buildFile?: CreationOptional<BuildFileModel>;
+
+  declare addTag: BelongsToManyAddAssociationMixin<Build, TagModel>;
+  declare getImages: BelongsToManyGetAssociationsMixin<Image>;
+  declare setImages: BelongsToManySetAssociationsMixin<Build, Image>;
+  declare getBuildFile: BelongsToGetAssociationMixin<BuildFileModel>;
+  declare getCategory: BelongsToGetAssociationMixin<CategoryModel>;
+  declare getTags: BelongsToManyGetAssociationsMixin<TagModel>;
+
+  async toJSON(user: User = null): Promise<BuildJSON> {
+    if (!this.canView(user)) {
+      return undefined;
+    }
+
+    let isSaved = user
+      ? !!(
+          await user.getSavedBuilds({
+            attributes: ["id"],
+            where: { id: this.id },
+          })
+        )?.length
+      : undefined;
+
+    return {
+      id: this.id,
+      title: this.title,
+      description: this.description,
+      buildFile: await this.getBuildFile(),
+      images: await Promise.all(
+        (await this.getImages()).map((i) => i.toJSON())
+      ),
+      totalDownloads: this.totalDownloads,
+      totalSaves: this.totalSaves,
+      creator: this.creator ? await this.creator.toJSON() : undefined,
+      category: await this.getCategory(),
+      tags: await this.getTags(),
+      collection: this.collection ? await this.collection.toJSON() : undefined,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      private: this.private,
+      ...(!!user?.moderator && { approved: this.approved }),
+      isSaved,
+    };
+  }
+
+  async setImagesById(imageIds: string[]) {
+    return this.setImages(
+      await Image.findAll({
+        where: { id: { [Op.in]: imageIds?.map((i) => parseInt(i)) } },
+      })
+    );
+  }
+
+  async canEdit(user: User = null) {
+    if (user?.moderator === true) return true;
+    return user?.uuid === this.creatorUuid;
+  }
+
+  canView(user: User = null) {
+    if (user?.moderator === true) return true;
+    if (this.private || !this.approved) {
+      if (!user || user?.uuid !== this.creator?.uuid) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  addView() {
+    cache.addView(this.id);
+  }
+
+  addDownload() {
+    cache.addDownload(this.id);
+  }
+
+  async updateTotals(): Promise<Build> {
+    const totalSaves = await sequelize.model("userSavedBuilds").count({
+      where: {
+        buildId: this.id,
+      },
+    });
+    const totalViews = await BuildView.count({
+      where: {
+        buildId: this.id,
+      },
+    });
+    const totalDownloads = await BuildDownload.count({
+      where: {
+        buildId: this.id,
+      },
+    });
+
+    return this.update({
+      totalSaves,
+      totalViews,
+      totalDownloads,
+    });
+  }
+
+  async updateScore() {
+    const daysSinceCreation =
+      (Date.now() - new Date(this.createdAt).getTime()) / 1000 / 60 / 60 / 24;
+
+    const viewsThisWeek = await BuildView.count({
+      where: {
+        buildId: this.id,
+        createdAt: {
+          [Op.gt]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        },
+      },
+    });
+    const savesThisWeek = await UserSavedBuilds.count({
+      where: {
+        buildId: this.id,
+        createdAt: {
+          [Op.gt]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        },
+      },
+    });
+
+    const downloadsThisWeek = await BuildDownload.count({
+      where: {
+        buildId: this.id,
+        createdAt: {
+          [Op.gt]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        },
+      },
+    });
+
+    const freshness = Math.max(
+      0,
+      Math.min(
+        1,
+        -(((daysSinceCreation / 7) * (daysSinceCreation / 7)) / 1.7) + 1
+      )
+    );
+
+    const score =
+      freshness *
+      (0.2 * viewsThisWeek + 0.8 * (downloadsThisWeek + savesThisWeek));
+
+    return this.update({
+      score: Math.round(score),
+    });
+  }
+
+  static toJSONArray(builds: Build[], user: any = null): Promise<BuildJSON[]> {
+    return Promise.all(builds.map((b) => b.toJSON(user))).then((res) =>
+      res.filter((i) => i !== undefined)
+    );
+  }
 }
 
-export interface BuildAttributes
-  extends Model<
-    InferAttributes<BuildAttributes>,
-    InferCreationAttributes<BuildAttributes>
-  > {
-  id?: CreationOptional<number>;
-  title: string;
-  description: string;
-  totalDownloads: CreationOptional<number>;
-  totalSaves: CreationOptional<number>;
-  totalViews: CreationOptional<number>;
-  createdAt: CreationOptional<string>;
-  updatedAt: CreationOptional<string>;
-  private: CreationOptional<boolean>;
-  approved: CreationOptional<boolean>;
-  score: CreationOptional<number>;
-  creatorUuid?: string;
-  collectionId?: number;
-  categoryName?: string;
-  buildFileId?: number;
-  creator?: CreationOptional<UserModel>;
-}
-
-interface BuildStatic extends ModelStatic<BuildModel> {
-  toJSONArray: (builds: BuildModel[], user: any) => Promise<BuildJSON[]>;
-}
-
-const Build = <BuildStatic>sequelize.define<BuildAttributes>(
-  "build",
+Build.init(
   {
     title: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
@@ -179,174 +332,7 @@ const Build = <BuildStatic>sequelize.define<BuildAttributes>(
       defaultValue: 0,
     },
   },
-  { timestamps: false }
+  { timestamps: false, sequelize, modelName: "build" }
 );
 
-Build.prototype.setImagesById = async function (imageIds: string[]) {
-  return this.setImages(
-    await Image.findAll({
-      where: { id: { [Op.in]: imageIds?.map((i) => parseInt(i)) } },
-    })
-  );
-};
-
-Build.prototype.canEdit = async function (user: UserModel = null) {
-  if (user?.moderator === true) return true;
-  return user?.uuid === this.creatorUuid;
-};
-
-Build.prototype.canView = function (user: UserModel = null) {
-  if (user?.moderator === true) return true;
-  if (this.private || !this.approved) {
-    if (!user || user?.uuid !== this.creator?.uuid) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-Build.prototype.addView = function () {
-  cache.addView(this.id);
-};
-
-Build.prototype.addDownload = function () {
-  cache.addDownload(this.id);
-};
-
-Build.prototype.updateTotals = async function (): Promise<BuildModel> {
-  const totalSaves = await sequelize.model("userSavedBuilds").count({
-    where: {
-      buildId: this.id,
-    },
-  });
-  const totalViews = await BuildView.count({
-    where: {
-      buildId: this.id,
-    },
-  });
-  const totalDownloads = await BuildDownload.count({
-    where: {
-      buildId: this.id,
-    },
-  });
-
-  return this.update({
-    totalSaves,
-    totalViews,
-    totalDownloads,
-  });
-};
-
-Build.prototype.updateScore = async function () {
-  const daysSinceCreation =
-    (Date.now() - new Date(this.createdAt).getTime()) / 1000 / 60 / 60 / 24;
-
-  const viewsThisWeek = await BuildView.count({
-    where: {
-      buildId: this.id,
-      createdAt: {
-        [Op.gt]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      },
-    },
-  });
-  const savesThisWeek = await UserSavedBuilds.count({
-    where: {
-      buildId: this.id,
-      createdAt: {
-        [Op.gt]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      },
-    },
-  });
-
-  const downloadsThisWeek = await BuildDownload.count({
-    where: {
-      buildId: this.id,
-      createdAt: {
-        [Op.gt]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      },
-    },
-  });
-
-  const freshness = Math.max(
-    0,
-    Math.min(
-      1,
-      -(((daysSinceCreation / 7) * (daysSinceCreation / 7)) / 1.7) + 1
-    )
-  );
-
-  const score =
-    freshness *
-    (0.2 * viewsThisWeek + 0.8 * (downloadsThisWeek + savesThisWeek));
-
-  return this.update({
-    score: Math.round(score),
-  });
-};
-
-export interface BuildJSON {
-  images: ImageJSON[] | undefined;
-  creator: UserJSON | undefined;
-  private: boolean;
-  totalDownloads: number;
-  description: string;
-  collection: CollectionJSON | undefined;
-  title: string;
-  tags: TagModel[];
-  totalSaves: number;
-  createdAt: string;
-  buildFile: BuildFileModel;
-  approved: boolean;
-  isSaved: boolean;
-  id: number;
-  category: CategoryModel;
-  updatedAt: string;
-}
-
-Build.prototype.toJSON = async function (
-  user: UserModel = null
-): Promise<BuildJSON> {
-  if (!this.canView(user)) {
-    return undefined;
-  }
-
-  let isSaved = user
-    ? !!(
-        await user.getSavedBuilds({
-          attributes: ["id"],
-          where: { id: this.id },
-        })
-      )?.length
-    : undefined;
-
-  return {
-    id: this.id,
-    title: this.title,
-    description: this.description,
-    buildFile: await this.getBuildFile(),
-    images: await Promise.all((await this.getImages()).map((i) => i.toJSON())),
-    totalDownloads: this.totalDownloads,
-    totalSaves: this.totalSaves,
-    creator: this.creator ? await this.creator.toJSON() : undefined,
-    category: await this.getCategory(),
-    tags: await this.getTags(),
-    collection: this.collection ? await this.collection.toJSON() : undefined,
-    createdAt: this.createdAt,
-    updatedAt: this.updatedAt,
-    private: this.private,
-    ...(!!user?.moderator && { approved: this.approved }),
-    isSaved,
-  };
-};
-
-Build.toJSONArray = function (
-  builds: BuildModel[],
-  user: any = null
-): Promise<BuildJSON[]> {
-  return Promise.all(builds.map((b) => b.toJSON(user))).then((res) =>
-    res.filter((i) => i !== undefined)
-  );
-};
-
-export { Build };
+export default Build;

@@ -29,17 +29,17 @@ const Padded = styled("px-8 xl:px-16 2xl:px-24");
 
 const Home = () => {
   const [popularData, popularLoading, popularError] = useApi<Build[]>(
-    "/builds/get?sort=popular",
+    "/builds/search?sort=popular",
     {},
     []
   );
   const [newData, newLoading, newError] = useApi<Build[]>(
-    "/builds/get?sort=new",
+    "/builds/search?sort=new",
     {},
     []
   );
   const [followedData, followedLoading, followedError] = useApi<Build[]>(
-    "/builds/get/followed",
+    "/feed",
     {},
     [],
     true

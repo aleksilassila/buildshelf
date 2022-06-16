@@ -1,7 +1,9 @@
-const { User, Collection } = require("../models/index");
-const {errors} = require("../client-error");
+import { User, Collection, Build } from "../models/index";
+import { errors } from "../client-error";
+import { AuthReq, Res } from "../../types";
+import { Op } from "sequelize";
 
-exports.getUser = async function (req, res) {
+const getUser = async function (req, res) {
   const { uuid } = req.params;
 
   const user = await User.findOne({
@@ -9,7 +11,7 @@ exports.getUser = async function (req, res) {
       uuid,
     },
     include: ["follows", "savedBuilds"],
-  }).catch(err => {});
+  }).catch((err) => {});
 
   if (!user) {
     errors.NOT_FOUND.send(res, "User not found");
@@ -19,14 +21,14 @@ exports.getUser = async function (req, res) {
   res.send(await user.toJSON(req.user));
 };
 
-exports.getSaves = async function (req, res) {
+const getSaves = async function (req, res) {
   const { uuid } = req.params;
 
   const user = await User.findOne({
     where: {
       uuid,
     },
-  }).catch(err => {});
+  }).catch((err) => {});
 
   if (!user) {
     res.status(404).send("User not found.");
@@ -35,12 +37,14 @@ exports.getSaves = async function (req, res) {
 
   res.send(
     await Promise.all(
-      (await user.getSavedBuilds({ include:  ["creator", "collection"]})).map((build) => build.toJSON(req.user))
+      (
+        await user.getSavedBuilds({ include: ["creator", "collection"] })
+      ).map((build) => build.toJSON(req.user))
     )
   );
 };
 
-exports.getBookmarks = async function (req, res) {
+const getBookmarks = async function (req, res) {
   const { uuid } = req.params;
 
   if (uuid !== req.user.uuid) {
@@ -52,7 +56,7 @@ exports.getBookmarks = async function (req, res) {
     where: {
       uuid,
     },
-  }).catch(err => {});
+  }).catch((err) => {});
 
   if (!user) {
     errors.NOT_FOUND.send(res, "User not found.");
@@ -66,7 +70,7 @@ exports.getBookmarks = async function (req, res) {
   );
 };
 
-exports.follow = async function (req, res) {
+const follow = async function (req, res) {
   const user = req.user;
   const { uuid } = req.params;
   const follow = req.body.follow;
@@ -75,7 +79,7 @@ exports.follow = async function (req, res) {
     where: {
       uuid,
     },
-  }).catch(err => {});
+  }).catch((err) => {});
 
   if (!targetUser) {
     errors.NOT_FOUND.send(res, "User not found");
@@ -92,3 +96,23 @@ exports.follow = async function (req, res) {
 
   res.send("OK");
 };
+
+const getFeed = async function (req: AuthReq, res: Res) {
+  const user = req.user;
+  const follows = (await user.getFollows()).map((u) => u.uuid);
+
+  const builds = await Build.findAll({
+    order: [["createdAt", "DESC"]],
+    include: {
+      model: User,
+      as: "creator",
+      where: {
+        uuid: { [Op.in]: follows },
+      },
+    },
+  });
+
+  res.send(await Build.toJSONArray(builds, user));
+};
+
+export { getUser, getSaves, getBookmarks, follow, getFeed };

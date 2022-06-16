@@ -20,7 +20,7 @@ const CollectionTitle = ({
       <div>
         Collection by{" "}
         <a
-          href={"/user/" + collection.creator?.uuid}
+          href={"/users/" + collection.creator?.uuid}
           className="font-medium hover:underline"
         >
           {collection.creator?.username}

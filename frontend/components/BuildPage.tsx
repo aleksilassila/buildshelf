@@ -10,7 +10,7 @@ import Button from "./ui/Button";
 import Link from "next/link";
 import Loading from "./statuses/Loading";
 import NetworkError from "./statuses/NetworkError";
-import { useApi } from "../utils/api";
+import { apiRequest, useApi } from "../utils/api";
 import theme from "../constants/theme";
 import minecraftDataVersions from "../constants/minecraftDataVersions";
 import Markdown from "./Markdown";
@@ -40,7 +40,7 @@ const Floating = ({ buildId, setBuildPage, ...rest }: FloatingProps) => (
   >
     <div className="bg-white w-full h-full flex flex-col md:rounded-xl">
       <div className="flex flex-row items-center justify-end text-stone-500 gap-3 p-2 px-4">
-        <a href={"/build/" + buildId} className="flex items-center">
+        <a href={"/builds/" + buildId} className="flex items-center">
           <ExternalLink className="w-6 h-6" />
         </a>
         <CloseIcon
@@ -58,7 +58,7 @@ const Floating = ({ buildId, setBuildPage, ...rest }: FloatingProps) => (
 const BuildPage = ({ buildId }: Props) => {
   if (buildId === undefined) return null;
 
-  const [build, loading, error] = useApi<Build>("/build/" + buildId, {}, [
+  const [build, loading, error] = useApi<Build>("/builds/" + buildId, {}, [
     buildId,
   ]);
 
@@ -97,7 +97,7 @@ const BuildPage = ({ buildId }: Props) => {
 
         <div className="build-actions">
           {userObject?.uuid === build.creator.uuid ? (
-            <Link href={"/build/" + build.id + "/edit"}>
+            <Link href={"/builds/" + build.id + "/edit"}>
               <Button onClick={() => {}} mode="primary">
                 Edit Build
               </Button>
@@ -240,21 +240,18 @@ const BuildPage = ({ buildId }: Props) => {
 };
 
 const SaveButton = ({ buildId, sbData, setSBData }) => {
-  const userObject = Auth.getUser();
-
   const saveBuild = () => {
     if (sbData.active) return;
 
     setSBData({ active: true, ...sbData });
 
-    axios
-      .post(
-        process.env.BACKEND_ENDPOINT + `/build/${buildId}/save`,
-        {
-          save: !sbData.isBuildSaved,
-        },
-        { params: { token: userObject.token } }
-      )
+    apiRequest({
+      method: "POST",
+      url: "/builds/" + buildId + "/save",
+      data: {
+        save: !sbData.isBuildSaved,
+      },
+    })
       .then((res) => {
         const newSaveCount = sbData.saveCount + (!sbData.isBuildSaved ? 1 : -1);
 

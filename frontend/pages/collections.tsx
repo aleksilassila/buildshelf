@@ -26,7 +26,7 @@ const Collections = () => {
 
   const [collections, loading, error, fetchMore, refetch] =
     useApiFeed<Collection>(
-      "/collections/get",
+      "/collections/search",
       {
         params: {
           sort: params.sort.toLowerCase(),

@@ -1,11 +1,13 @@
-const { Router } = require("express");
+import { Router } from "express";
+import * as collectionsController from "../controllers/collectionsController";
+import { auth } from "../controllers/auth";
+import { validateQuery, validateBody } from "../utils";
+import routes from "./routes";
+
 const collectionRoutes = Router();
-const collectionsController = require("../controllers/collectionsController");
-const { auth, optionalAuth} = require("../controllers/auth");
-const { validateQuery, validateBody } = require("../utils");
 
 collectionRoutes.get(
-  "/collections/get",
+  routes.collections.get.search,
   validateQuery({
     type: "object",
     properties: {
@@ -19,39 +21,41 @@ collectionRoutes.get(
     },
     required: [],
   }),
-  collectionsController.getCollections
+  collectionsController.search
 );
 
-collectionRoutes.get("/collection/:collectionId", collectionsController.getCollection);
+collectionRoutes.get(
+  routes.collections.get.get,
+  collectionsController.getCollection
+);
 
 collectionRoutes.post(
-  "/collection/create",
+  routes.collections.post.create,
   auth,
   validateBody({
-      type: "object",
-      properties: {
-          title: { type: "string", maxLength: 255 },
-          description: { type: "string" },
-
-      }
+    type: "object",
+    properties: {
+      title: { type: "string", maxLength: 255 },
+      description: { type: "string" },
+    },
   }),
-  collectionsController.createCollection
+  collectionsController.create
 );
+
 collectionRoutes.delete(
-  "/collection/:collectionId",
+  routes.collections.delete.delete,
   auth,
   collectionsController.deleteCollection
 );
 
 collectionRoutes.put(
-  "/collection/:collectionId",
+  routes.collections.put.update,
   auth,
-  collectionsController.modify
+  collectionsController.update
 );
 
-
 collectionRoutes.post(
-  "/collection/:collectionId/favorite",
+  routes.collections.post.favorite,
   auth,
   validateBody({
     type: "object",
@@ -63,4 +67,4 @@ collectionRoutes.post(
   collectionsController.favorite
 );
 
-module.exports = collectionRoutes;
+export default collectionRoutes;

@@ -25,7 +25,7 @@ const Builds = () => {
   });
 
   const [builds, loading, error, fetchMore, refetch] = useApiFeed<Build>(
-    "/builds/get",
+    "/builds/search",
     {
       params: {
         sort: params.sort.toLowerCase(),

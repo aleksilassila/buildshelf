@@ -1,21 +1,21 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
 import CardsGridView from "../../../containers/CardsGridView";
-import {useApi} from "../../../utils/api";
-import {Build} from "../../../interfaces/ApiResponses";
-import {useRouter} from "next/router";
+import { Build } from "../../../interfaces/ApiResponses";
+import { useRouter } from "next/router";
+import { useApi } from "../../../utils/api";
 
 const Saves = () => {
   const router = useRouter();
   const { uuid } = router.query;
 
   const [builds, loading, error] = useApi<Build[]>(
-    "/user/" + uuid + "/bookmarks",
+    "/users/" + uuid + "/saves",
     { params: { uuid } },
-    [uuid], true
+    [uuid]
   );
 
   return (
-    <ProfilePage tabName="bookmarks" count={builds?.length}>
+    <ProfilePage tabName="saves" count={builds?.length}>
       <CardsGridView builds={builds || []} error={error} loading={loading} />
     </ProfilePage>
   );

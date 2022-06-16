@@ -1,17 +1,17 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
-import {Collection} from "../../../interfaces/ApiResponses";
-import {useRouter} from "next/router";
+import { Collection } from "../../../interfaces/ApiResponses";
+import { useRouter } from "next/router";
 import ListView from "../../../containers/ListView";
 import CollectionCard from "../../../components/CollectionCard";
-import {useApi} from "../../../utils/api";
+import { useApi } from "../../../utils/api";
 
 const Collections = () => {
   const router = useRouter();
-  const {uuid} = router.query;
+  const { uuid } = router.query;
 
   const [collections, loading, error] = useApi<Collection[]>(
-    "/collections/get",
-    {params: {uuid}},
+    "/collections/search",
+    { params: { uuid } },
     [uuid]
   );
 

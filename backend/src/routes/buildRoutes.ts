@@ -1,4 +1,4 @@
-import { AuthReq, BuildReq, Res } from "../../types";
+import { BuildReq, Res } from "../../types";
 
 import * as buildsController from "../controllers/buildsController";
 import { Router } from "express";
@@ -10,6 +10,7 @@ import path from "path";
 import { errors } from "../client-error";
 import { Build } from "../models";
 import { FindOptions } from "sequelize";
+import routes from "./routes";
 
 const buildRoutes = Router();
 
@@ -80,10 +81,14 @@ const attachOwnBuild =
     });
   };
 
-buildRoutes.get("/files/id/:buildId", buildsController.downloadBuild);
+buildRoutes.get(
+  routes.builds.get.download,
+  attachBuild({ include: ["buildFile"] }),
+  buildsController.downloadBuild
+);
 
 buildRoutes.post(
-  "/build/create",
+  routes.builds.post.create,
   auth,
   upload.single("buildFile"),
   validateBody({
@@ -116,7 +121,7 @@ buildRoutes.post(
 );
 
 buildRoutes.get(
-  "/builds/search",
+  routes.builds.get.search,
   validateQuery({
     type: "object",
     properties: {
@@ -144,15 +149,13 @@ buildRoutes.get(
 );
 
 buildRoutes.get(
-  "/builds/:buildId",
+  routes.builds.get.get,
   attachBuild({ include: ["collection", "creator", "images"] }),
   buildsController.get
 );
 
-buildRoutes.get("/builds/feed", auth, buildsController.getFeed);
-
 buildRoutes.post(
-  "/builds/:buildId/save",
+  routes.builds.post.save,
   auth,
   attachBuild(),
   validateBody({
@@ -166,7 +169,7 @@ buildRoutes.post(
 );
 
 buildRoutes.post(
-  "/builds/:buildId/bookmark",
+  routes.builds.post.bookmark,
   auth,
   attachBuild(),
   validateBody({
@@ -180,7 +183,7 @@ buildRoutes.post(
 );
 
 buildRoutes.put(
-  "/builds/:buildId",
+  routes.builds.put.update,
   auth,
   attachOwnBuild({ include: ["collection", "creator"] }),
   validateBody({
@@ -212,7 +215,7 @@ buildRoutes.delete(
 );
 
 buildRoutes.post(
-  "/builds/:buildId/approve",
+  routes.builds.post.approve,
   moderatorAuth,
   attachBuild(),
   validateBody({
@@ -226,7 +229,7 @@ buildRoutes.post(
 );
 
 buildRoutes.post(
-  "/images/upload",
+  routes.builds.post.approve,
   auth,
   upload.array("images", 5),
   buildsController.uploadImages

@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 import { searchQueryBuilder } from "../utils";
 import { errors } from "../client-error";
 
-exports.getCollections = async function (req, res) {
+const search = async function (req, res) {
   const { category, name, sort, uuid } = req.query;
   const searchQuery = searchQueryBuilder(req.query);
 
@@ -40,7 +40,7 @@ exports.getCollections = async function (req, res) {
   res.send(await Promise.all(collections.map((c) => c.toJSON())));
 };
 
-exports.getCollection = async function (req, res) {
+const getCollection = async function (req, res) {
   const { collectionId } = req.params;
 
   const collection = await Collection.findOne({
@@ -57,7 +57,7 @@ exports.getCollection = async function (req, res) {
   res.send(await collection.toJSON(req.user));
 };
 
-exports.createCollection = async function (req, res) {
+const create = async function (req, res) {
   const { name, description } = req.body;
 
   const collection = await Collection.create({
@@ -69,7 +69,7 @@ exports.createCollection = async function (req, res) {
   res.send(`${collection.id}`);
 };
 
-exports.deleteCollection = async function (req, res) {
+const deleteCollection = async function (req, res) {
   const { collectionId } = req.params;
 
   const collection = await Collection.findOne({
@@ -86,7 +86,7 @@ exports.deleteCollection = async function (req, res) {
   res.send("OK");
 };
 
-exports.favorite = async function (req, res) {
+const favorite = async function (req, res) {
   const user = req.user;
   const { collectionId } = req.params;
   const addFavorite = req.body.favorite;
@@ -121,4 +121,6 @@ exports.favorite = async function (req, res) {
     );
 };
 
-exports.modify = async function (req, res) {};
+const update = async function (req, res) {};
+
+export { search, getCollection, create, deleteCollection, favorite, update };

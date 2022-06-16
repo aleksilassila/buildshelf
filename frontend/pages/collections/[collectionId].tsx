@@ -13,7 +13,7 @@ import { Banner } from "../../components/Banner";
 const CollectionPage = () => {
   const { collectionId } = useRouter().query;
   const [collection, loading, error] = useApi<Collection>(
-    "/collection/" + collectionId,
+    "/collections/" + collectionId,
     {},
     [collectionId]
   );

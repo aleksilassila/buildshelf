@@ -35,7 +35,7 @@ const CollectionCard = ({ collection }: Props) => {
       </Slides.Container>
       <div className="flex flex-col p-4 flex-1 border border-stone-200 bg-white rounded-br-xl rounded-tr-xl">
         <div className="flex justify-between">
-          <Link href={"/collection/" + collection.id}>
+          <Link href={"/collections/" + collection.id}>
             <h3 className="font-semibold text-lg cursor-pointer hover:underline">
               {collection.name}
             </h3>
@@ -49,7 +49,7 @@ const CollectionCard = ({ collection }: Props) => {
           <div className="flex justify-between text-sm font-medium">
             <div>
               By{" "}
-              <Link href={"/user/" + collection.creator?.uuid}>
+              <Link href={"/users/" + collection.creator?.uuid}>
                 <span
                   className={"font-semibold cursor-pointer hover:underline"}
                 >

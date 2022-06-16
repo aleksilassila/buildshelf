@@ -7,50 +7,14 @@ import {
   BelongsToManyGetAssociationsMixin,
   CreationOptional,
   ModelStatic,
+  BelongsToManyAddAssociationMixin,
+  BelongsToManyRemoveAssociationMixin,
+  NonAttribute,
 } from "sequelize";
 import sequelize from "../database";
 import fs from "fs";
-import { BuildModel, BuildJSON } from "./Build";
-import { ImageModel } from "./Image";
-
-export interface UserModel extends UserAttributes {
-  toJSON(): UserJSON;
-  purgeImages: () => Promise<void>;
-  hasFollow: BelongsToManyHasAssociationMixin<UserAttributes, UserAttributes>;
-  getSavedBuilds: BelongsToManyGetAssociationsMixin<BuildModel>;
-  getImages: BelongsToManyGetAssociationsMixin<ImageModel>;
-}
-
-interface UserAttributes
-  extends Model<
-    InferAttributes<UserAttributes>,
-    InferCreationAttributes<UserAttributes>
-  > {
-  username: string;
-  uuid: string;
-  moderator: CreationOptional<boolean>;
-  remoteId: string;
-}
-
-interface UserStatic extends ModelStatic<UserModel> {}
-
-const User = <UserStatic>sequelize.define<UserAttributes>("user", {
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  uuid: {
-    type: DataTypes.UUID,
-    primaryKey: true,
-    allowNull: false,
-  },
-  remoteId: DataTypes.UUID,
-  moderator: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true, // FIXME prod
-    allowNull: false,
-  },
-});
+import Build, { BuildJSON } from "./Build";
+import Image from "./Image";
 
 export interface UserJSON {
   saves: BuildJSON[] | undefined;
@@ -61,34 +25,77 @@ export interface UserJSON {
   username: string;
 }
 
-User.prototype.toJSON = async function (
-  currentUser: UserModel = null
-): Promise<UserJSON> {
-  return {
-    username: this.username,
-    uuid: this.uuid,
-    saves: this.savedBuilds
-      ? await Promise.all(this.savedBuilds.map((b) => b.toJSON()))
-      : undefined,
-    follows: this.follows
-      ? await Promise.all(this.follows.map((u) => u.toJSON()))
-      : undefined,
-    following: currentUser ? await currentUser.hasFollow(this.uuid) : undefined,
-    ...(currentUser?.moderator && { moderator: this.moderator }),
-  };
-};
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  declare username: string;
+  declare uuid: string;
+  declare moderator: CreationOptional<boolean>;
+  declare remoteId: string;
 
-User.prototype.purgeImages = async function (): Promise<any> {
-  const images = await this.getImages();
+  declare savedBuilds?: NonAttribute<Build[]>;
+  follows?: NonAttribute<User[]>;
 
-  return Promise.all(
-    images.map(async (image) => {
-      if ((await image.getBuilds())?.length === 0) {
-        fs.unlink(image.getPath(), () => {});
-        return image.destroy();
-      }
-    })
-  );
-};
+  async toJSON(currentUser: User = null): Promise<UserJSON> {
+    return {
+      username: this.username,
+      uuid: this.uuid,
+      saves: this.savedBuilds
+        ? await Promise.all(this.savedBuilds.map((b) => b.toJSON()))
+        : undefined,
+      follows: this.follows
+        ? await Promise.all(this.follows.map((u) => u.toJSON()))
+        : undefined,
+      following: currentUser ? await currentUser.hasFollow(this) : undefined,
+      ...(currentUser?.moderator && { moderator: this.moderator }),
+    };
+  }
+  async purgeImages(): Promise<any> {
+    const images = await this.getImages();
 
-export { User };
+    return Promise.all(
+      images.map(async (image) => {
+        if ((await image.getBuilds())?.length === 0) {
+          fs.unlink(image.getPath(), () => {});
+          return image.destroy();
+        }
+      })
+    );
+  }
+
+  hasFollow: BelongsToManyHasAssociationMixin<User, User>;
+  getSavedBuilds: BelongsToManyGetAssociationsMixin<Build>;
+  getImages: BelongsToManyGetAssociationsMixin<Image>;
+  hasSavedBuild: BelongsToManyHasAssociationMixin<User, Build>;
+  addSavedBuild: BelongsToManyAddAssociationMixin<User, Build>;
+  removeSavedBuild: BelongsToManyRemoveAssociationMixin<User, Build>;
+  hasBookmark: BelongsToManyHasAssociationMixin<User, Build>;
+  addBookmark: BelongsToManyAddAssociationMixin<User, Build>;
+  getBookmarks: BelongsToManyGetAssociationsMixin<Build>;
+  removeBookmark: BelongsToManyRemoveAssociationMixin<User, Build>;
+  getFollows: BelongsToManyGetAssociationsMixin<User>;
+}
+
+User.init(
+  {
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    uuid: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      allowNull: false,
+    },
+    remoteId: DataTypes.UUID,
+    moderator: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true, // FIXME prod
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "user",
+  }
+);
+
+export default User;

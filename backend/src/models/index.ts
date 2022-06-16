@@ -2,9 +2,9 @@ import sequelize from "../database";
 import { Collection } from "./Collection";
 import { Tag } from "./Tag";
 import { Category } from "./Category";
-import { User } from "./User";
-import { Build } from "./Build";
-import { Image } from "./Image";
+import User from "./User";
+import Build from "./Build";
+import Image from "./Image";
 import { BuildFile } from "./BuildFile";
 import { DataTypes, NOW } from "sequelize";
 

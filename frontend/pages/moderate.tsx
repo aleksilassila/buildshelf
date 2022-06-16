@@ -7,7 +7,7 @@ import BuildsTableView from "../containers/BuildsTableView";
 
 const Moderate = () => {
   const [builds, loading, error, fetchMore, refetch] = useApiFeed<Build>(
-    "/builds/get",
+    "/builds/search",
     {
       params: {
         approved: false,

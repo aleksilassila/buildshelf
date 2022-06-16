@@ -13,7 +13,7 @@ const BuildTitle = ({ build }: { build: Build }) => (
       <div>
         Litematic by{" "}
         <a
-          href={"/user/" + build.creator?.uuid}
+          href={"/users/" + build.creator?.uuid}
           className="font-medium hover:underline"
         >
           {build.creator?.username}

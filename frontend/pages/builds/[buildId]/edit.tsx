@@ -30,7 +30,7 @@ const Edit = () => {
     images: [],
   });
 
-  const [build, loading, error] = useApi<Build>("/build/" + buildId, {}, [
+  const [build, loading, error] = useApi<Build>("/builds/" + buildId, {}, [
     buildId,
   ]);
 
@@ -54,7 +54,7 @@ const Edit = () => {
 
     apiRequest({
       method: "put",
-      url: "/build/" + buildId,
+      url: "/builds/" + buildId,
       data: {
         description: formData.description,
         imageIds: formData.images.map((image) => image.id.toString()),
@@ -62,7 +62,7 @@ const Edit = () => {
     }).then((res) => {
       if (res.status === 200) {
         toast("Build updated", "Build updated successfully.", "primary", () => {
-          router.push("/build/" + buildId).then();
+          router.push("/builds/" + buildId).then();
         });
       } else {
         toast("Error", "Could not update build.", "danger");
@@ -76,7 +76,7 @@ const Edit = () => {
       <Form.Root>
         <Form.Label className="flex flex-row justify-between items-end">
           <h2 className="font-bold text-2xl">Edit build {build.title}</h2>
-          <a href={"/build/" + buildId}>
+          <a href={"/builds/" + buildId}>
             <Button onClick={() => {}}>View Build Page</Button>
           </a>
         </Form.Label>
@@ -122,7 +122,7 @@ const Edit = () => {
                 onConfirm={() => {
                   apiRequest({
                     method: "delete",
-                    url: "/build/" + buildId,
+                    url: "/builds/" + buildId,
                   }).then((res) => {
                     if (res.status === 200) {
                       toast(
@@ -131,7 +131,7 @@ const Edit = () => {
                         "primary",
                         () => {
                           router
-                            .push(user?.uuid ? "/user/" + user?.uuid : "/")
+                            .push(user?.uuid ? "/users/" + user?.uuid : "/")
                             .then();
                         }
                       );

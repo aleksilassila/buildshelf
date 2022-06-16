@@ -20,6 +20,7 @@ import { validate as validateJSON } from "jsonschema";
 import crypto from "crypto";
 import { Express } from "express";
 import { AuthReq, BuildReq, OptionalAuthReq, Res } from "../../types";
+import { Request } from "express/ts4.0";
 
 const canView = (res, build, user, message = "Build not found.") => {
   if (!build || !build.canView(user)) {
@@ -205,7 +206,26 @@ const create = async function (req: AuthReq, res: Res) {
 };
 
 // FIXME clean this
-const search = async function (req: OptionalAuthReq, res: Res) {
+const search = async function (
+  req: OptionalAuthReq<
+    Request<
+      {},
+      {},
+      {},
+      {
+        tags: string[];
+        collection: number;
+        category: string;
+        title: string;
+        sort: "top" | "new" | "popular";
+        uuid: string;
+        approved: boolean;
+        includePrivate: boolean;
+      }
+    >
+  >,
+  res: Res
+) {
   const {
     tags,
     collection,
@@ -220,7 +240,8 @@ const search = async function (req: OptionalAuthReq, res: Res) {
 
   // Sorting order
   const where = {
-    collectionId: parseInt(collection) || undefined,
+    collectionId:
+      parseInt(typeof collection === "string" ? collection : "") || undefined,
     categoryName: category ? { [Op.startsWith]: category } : undefined,
     title: title
       ? {
@@ -246,7 +267,7 @@ const search = async function (req: OptionalAuthReq, res: Res) {
         ...(tags && {
           where: {
             name: {
-              [Op.in]: tags.split(",").map((i) => i.toLowerCase()),
+              [Op.in]: tags.map((i) => i.toLowerCase()),
             },
           },
         }),
@@ -264,46 +285,10 @@ const search = async function (req: OptionalAuthReq, res: Res) {
     .catch((err) => errors.SERVER_ERROR.send(res, err));
 };
 
-const getFeed = async function (req: AuthReq, res: Res) {
-  const user = req.user;
-  const follows = (await user.getFollows()).map((u) => u.uuid);
-
-  const builds = await Build.findAll({
-    order: [["createdAt", "DESC"]],
-    include: {
-      model: User,
-      as: "creator",
-      where: {
-        uuid: { [Op.in]: follows },
-      },
-    },
-  });
-
-  res.send(await Build.toJSONArray(builds, user));
-};
-
-const downloadBuild = async function (req: OptionalAuthReq, res: Res) {
-  const { buildId } = req.params;
-  const build = await Build.findByPk(parseInt(buildId)).catch(() => undefined);
-
-  if (!build) {
-    errors.NOT_FOUND.send(res, "Build not found.");
-    return;
-  }
-
-  if (!build.approved) {
-    errors.NOT_FOUND.send(res, "Build not found.");
-    return;
-  }
-
-  if (build.private && (await build.getCreator()).uuid !== req.user?.uuid) {
-    errors.NOT_FOUND.send(res, "Build not found.");
-    return;
-  }
-
+const downloadBuild = async function (req: BuildReq, res: Res) {
   res.download(
-    "./uploads/" + build.buildFile.filename,
-    build.buildFile.filename
+    "./uploads/" + req.build.buildFile.filename,
+    req.build.buildFile.filename
   );
 };
 
@@ -388,7 +373,10 @@ const approve = async function (req: BuildReq, res: Res) {
   req.build.update({ approved: approve }).then(() => res.send("OK"));
 };
 
-const uploadImages = async function (req: AuthReq, res: Res) {
+const uploadImages = async function (
+  req: AuthReq & { files: Express.Multer.File[] },
+  res: Res
+) {
   const images = req.files;
 
   if (!images || !images.length) {
@@ -397,7 +385,7 @@ const uploadImages = async function (req: AuthReq, res: Res) {
   }
 
   await Image.bulkCreate(
-    images.map((i) => ({
+    images?.map((i) => ({
       filename: i.filename,
       creatorUuid: req.user?.uuid,
     }))
@@ -405,10 +393,10 @@ const uploadImages = async function (req: AuthReq, res: Res) {
     res.send(await Promise.all(images.map((i) => i.toJSON())))
   );
 };
+
 export {
   create,
   search,
-  getFeed,
   downloadBuild,
   get,
   save,

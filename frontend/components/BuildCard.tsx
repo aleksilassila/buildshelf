@@ -36,7 +36,7 @@ const BuildCard: ({
             .join(", ")}
         </h3>
         <a
-          href={"/user/" + build.creator?.uuid}
+          href={"/users/" + build.creator?.uuid}
           className="flex gap-2 self-end opacity-0 group-hover:opacity-100"
           onClick={(e) => e.stopPropagation()}
         >

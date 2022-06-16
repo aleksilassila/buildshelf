@@ -17,7 +17,7 @@ import { Build, Category, Collection, Image } from "../interfaces/ApiResponses";
 import * as AlertDialog from "../components/ui/AlertDialog";
 import { useRouter } from "next/router";
 import * as Dropdown from "../components/ui/Dropdown";
-import { useApi } from "../utils/api";
+import { apiRequest, useApi } from "../utils/api";
 import * as RadioAccordion from "../components/ui/RadioAccordion";
 import * as RadioGroup from "../components/ui/RadioGroup";
 
@@ -80,7 +80,7 @@ const Upload = () => {
   const [collections, collectionsLoading, collectionsError] = useApi<
     Collection[]
   >(
-    "/collections/get",
+    "/collections/search",
     {
       params: {
         uuid: userObject?.uuid,
@@ -133,11 +133,9 @@ const Upload = () => {
       data.append("tags[]", tag);
     }
 
-    axios({
+    apiRequest({
       method: "POST",
-      url:
-        process.env.BACKEND_ENDPOINT +
-        `/build/create?token=${userObject?.token}`,
+      url: "/builds",
       data,
       headers: { "Content-Type": "multipart/form-data" },
     })
@@ -145,7 +143,7 @@ const Upload = () => {
         toast("Build Created", "Build created successfully.", "primary");
         setFormData(initialFormData);
         if (res.data?.id) {
-          router.push("/build/" + res.data?.id).then();
+          router.push("/builds/" + res.data?.id).then();
         }
       })
       .catch((err) => toast("Error Occurred", err?.message, "danger"));

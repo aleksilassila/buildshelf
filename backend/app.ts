@@ -14,11 +14,11 @@ import {
 
 import sequelize from "./src/database";
 import { errors, middleware as errorMiddleware } from "./src/client-error";
-import builds from "./src/routes/buildRoutes";
-import users from "./src/routes/userRoutes";
+import buildRoutes from "./src/routes/buildRoutes";
+import userRoutes from "./src/routes/userRoutes";
 import collections from "./src/routes/collectionRoutes";
 import client from "./src/routes/clientRoutes";
-import { Build, cache as buildsCache } from "./src/models/Build";
+import Build, { cache as buildsCache } from "./src/models/Build";
 import { Op } from "sequelize";
 
 cron.schedule("*/15 * * * *", async () => {
@@ -76,9 +76,9 @@ api.post("/login/mojang", loginMojang);
 api.post("/login/microsoft", loginMicrosoft);
 api.post("/login/token", loginClient);
 
-api.use(users);
+api.use(userRoutes);
 api.use(collections);
-api.use(builds);
+api.use(buildRoutes);
 api.use(client);
 
 app.use("/api", api);

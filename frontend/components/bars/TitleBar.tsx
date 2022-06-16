@@ -103,20 +103,20 @@ const TitleBar = ({
           showProfileBar ? "h-12" : "h-0"
         } bg-stone-100 px-6 border-t-2 border-t-stone-200 transition-all duration-100 ease-linear`}
       >
-        <NavLink href={"/user/" + userObject?.uuid} name="profile">
+        <NavLink href={"/users/" + userObject?.uuid} name="profile">
           Builds
         </NavLink>
         <NavLink
-          href={"/user/" + userObject?.uuid + "/collections"}
+          href={"/users/" + userObject?.uuid + "/collections"}
           name="collections"
         >
           Collections
         </NavLink>
-        <NavLink href={"/user/" + userObject?.uuid + "/saves"} name="saves">
+        <NavLink href={"/users/" + userObject?.uuid + "/saves"} name="saves">
           Saves
         </NavLink>
         <NavLink
-          href={"/user/" + userObject?.uuid + "/bookmarks"}
+          href={"/users/" + userObject?.uuid + "/bookmarks"}
           name="bookmarks"
         >
           Bookmarks

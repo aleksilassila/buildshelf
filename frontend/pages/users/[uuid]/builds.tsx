@@ -14,7 +14,7 @@ const Builds = () => {
   const userObject = Auth.getUser();
 
   const [builds, loading, error] = useApi<Build[]>(
-    "/builds/get",
+    "/builds/search",
     { params: { uuid } },
     [uuid]
   );

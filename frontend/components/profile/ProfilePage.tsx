@@ -9,7 +9,7 @@ import theme from "../../constants/theme";
 import Button from "../ui/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
-import { useApi } from "../../utils/api";
+import { apiRequest, useApi } from "../../utils/api";
 
 /*
 when joined?
@@ -39,7 +39,7 @@ const ProfilePage = ({
   const router = useRouter();
   const { uuid } = router.query;
 
-  const [user, loading, error] = useApi<User>("/user/" + uuid, {}, [uuid]);
+  const [user, loading, error] = useApi<User>("/users/" + uuid, {}, [uuid]);
 
   const [followed, setFollowed] = useState(false);
 
@@ -47,18 +47,13 @@ const ProfilePage = ({
   const isOwnProfile = userObject?.uuid === uuid;
 
   const follow = () => {
-    axios
-      .post(
-        process.env.BACKEND_ENDPOINT + `/user/${uuid}/follow`,
-        {
-          follow: !followed,
-        },
-        {
-          params: {
-            token: userObject?.token,
-          },
-        }
-      )
+    apiRequest({
+      method: "POST",
+      url: "/users/" + uuid + "/follow",
+      data: {
+        follow: !followed,
+      },
+    })
       .then((res) => {
         setFollowed(!followed);
       })
@@ -141,23 +136,23 @@ const ProfileNavBar = ({
 
   return (
     <div className="profile-bar">
-      <Link href={"/user/" + user.uuid}>
+      <Link href={"/users/" + user.uuid}>
         <div className={`${tabName === "profile" && "active"} item`}>
           Builds {getCount("profile")}
         </div>
       </Link>
-      <Link href={"/user/" + user.uuid + "/collections"}>
+      <Link href={"/users/" + user.uuid + "/collections"}>
         <div className={`${tabName === "collections" && "active"} item`}>
           Collections {getCount("collections")}
         </div>
       </Link>
-      <Link href={"/user/" + user.uuid + "/saves"}>
+      <Link href={"/users/" + user.uuid + "/saves"}>
         <div className={`${tabName === "saves" && "active"} item`}>
           Saves {getCount("saves")}
         </div>
       </Link>
       {isOwnProfile ? (
-        <Link href={"/user/" + user.uuid + "/bookmarks"}>
+        <Link href={"/users/" + user.uuid + "/bookmarks"}>
           <div className={`${tabName === "bookmarks" && "active"} item`}>
             Bookmarks {getCount("bookmarks")}
           </div>

@@ -15,17 +15,17 @@ const ProfileNavBar = ({ user, isOwnProfile }: Props) => {
         <h2 className="username">{user.username}</h2>
       </div>
       <div className="list">
-        <Link href={"/user/" + user.uuid}>
+        <Link href={"/users/" + user.uuid}>
           <a>Profile</a>
         </Link>
-        <Link href={"/user/" + user.uuid + "/builds"}>
+        <Link href={"/users/" + user.uuid + "/builds"}>
           <a>{isOwnProfile ? "Your Builds" : "Builds"}</a>
         </Link>
-        <Link href={"/user/" + user.uuid + "/saves"}>
+        <Link href={"/users/" + user.uuid + "/saves"}>
           <a>Saved Builds</a>
         </Link>
         {isOwnProfile && (
-          <Link href={"/user/" + user.uuid + "/bookmarks"}>
+          <Link href={"/users/" + user.uuid + "/bookmarks"}>
             <a>Bookmarks</a>
           </Link>
         )}

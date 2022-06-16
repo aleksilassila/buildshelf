@@ -6,30 +6,51 @@ import {
   InferCreationAttributes,
   ModelStatic,
   CreationOptional,
+  HasManyGetAssociationsMixin,
+  Association,
 } from "sequelize";
 import sequelize from "../database";
 import config from "../config";
-import { UserJSON } from "./User";
+import User, { UserJSON } from "./User";
+import Build from "./Build";
 
-export interface ImageModel extends ImageAttributes {
-  toJSON: () => Promise<ImageJSON>;
-}
-
-export interface ImageAttributes
-  extends Model<
-    InferAttributes<ImageAttributes>,
-    InferCreationAttributes<ImageAttributes>
-  > {
-  id?: CreationOptional<number>;
-  filename: string;
+export interface ImageJSON {
   createdAt: string;
+  creator: UserJSON | undefined;
+  filename: string;
+  id: number;
   updatedAt: string;
 }
 
-interface ImageStatic extends ModelStatic<ImageAttributes> {}
+class Image extends Model<
+  InferAttributes<Image>,
+  InferCreationAttributes<Image>
+> {
+  declare id?: CreationOptional<number>;
+  declare filename: string;
+  declare createdAt: string;
+  declare updatedAt: string;
 
-const Image = <ImageStatic>sequelize.define<ImageAttributes>(
-  "image",
+  declare creator?: CreationOptional<User>;
+
+  declare getBuilds: HasManyGetAssociationsMixin<Build>;
+
+  getPath(): string {
+    return `${config.UPLOAD_DIRECTORY}/${this.filename}`;
+  }
+
+  async toJSON(): Promise<ImageJSON> {
+    return {
+      id: this.id,
+      filename: this.filename,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      creator: this.creator ? await this.creator.toJSON() : undefined,
+    };
+  }
+}
+
+Image.init(
   {
     filename: { type: DataTypes.STRING, allowNull: false },
     createdAt: {
@@ -43,29 +64,7 @@ const Image = <ImageStatic>sequelize.define<ImageAttributes>(
       defaultValue: NOW,
     },
   },
-  { timestamps: false }
+  { sequelize, modelName: "image", timestamps: false }
 );
 
-export interface ImageJSON {
-  createdAt: string;
-  creator: UserJSON | undefined;
-  filename: string;
-  id: number;
-  updatedAt: string;
-}
-
-Image.prototype.toJSON = async function (): Promise<ImageJSON> {
-  return {
-    id: this.id,
-    filename: this.filename,
-    createdAt: this.createdAt,
-    updatedAt: this.updatedAt,
-    creator: this.creator ? await this.creator.toJSON() : undefined,
-  };
-};
-
-Image.prototype.getPath = function () {
-  return `${config.UPLOAD_DIRECTORY}/${this.filename}`;
-};
-
-export { Image };
+export default Image;
