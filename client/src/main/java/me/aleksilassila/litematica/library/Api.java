@@ -80,6 +80,7 @@ public class Api {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Response: " + res.body());
         }
 
         return builds;
@@ -101,7 +102,7 @@ public class Api {
         System.out.println("Downloading " + buildId + " to " + output);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ENDPOINT + "/files/id/" + buildId))
+                .uri(URI.create(ENDPOINT + "/builds/" + buildId + "/download"))
                 .build();
 
         try {

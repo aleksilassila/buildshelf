@@ -1,7 +1,11 @@
-exports.fetchRemote = async function (req, res) {
+import { AuthReq, Res } from "../../types";
+
+const fetchRemote = async function (req: AuthReq, res: Res) {
   const user = req.user;
 
-  const saves = await user.getSavedBuilds();
+  const saves = await user.getSavedBuilds({
+    include: ["buildFile"],
+  });
 
   res.send(
     await Promise.all(
@@ -15,3 +19,5 @@ exports.fetchRemote = async function (req, res) {
     )
   );
 };
+
+export { fetchRemote };
