@@ -1,14 +1,12 @@
 import TitleBar from "../../components/bars/TitleBar";
-import Separator from "../../components/utils/Separator";
-import { useApi } from "../../utils/api";
-import { Collection } from "../../interfaces/ApiResponses";
-import { useRouter } from "next/router";
+import {useApi} from "../../utils/api";
+import {Collection} from "../../interfaces/ApiResponses";
+import {useRouter} from "next/router";
 import Loading from "../../components/statuses/Loading";
 import NetworkError from "../../components/statuses/NetworkError";
 import CardsGridView from "../../containers/CardsGridView";
 import CollectionTitle from "../../components/collectionPage/CollectionTitle";
-import * as Slides from "../../components/containers/Slides";
-import { Banner } from "../../components/Banner";
+import {Banner} from "../../components/Banner";
 
 const CollectionPage = () => {
   const { collectionId } = useRouter().query;

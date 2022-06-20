@@ -1,5 +1,5 @@
 import Button from "./Button";
-import { useRef } from "react";
+import {useRef} from "react";
 
 interface Props {
   files: any;

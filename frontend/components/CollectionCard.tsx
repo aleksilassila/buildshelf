@@ -1,9 +1,6 @@
-import { Collection } from "../interfaces/ApiResponses";
-import theme from "../constants/theme";
+import {Collection} from "../interfaces/ApiResponses";
 import Heart from "./icons/Heart";
 import Link from "next/link";
-import { useState } from "react";
-import Button from "./ui/Button";
 import * as Slides from "./containers/Slides";
 
 interface Props {

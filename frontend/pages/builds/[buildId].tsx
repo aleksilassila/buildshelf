@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import TitleBar from "../../components/bars/TitleBar";
 import * as BuildPage from "../../components/BuildPage";
 

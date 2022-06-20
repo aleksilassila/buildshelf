@@ -1,8 +1,8 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
 import CardsGridView from "../../../containers/CardsGridView";
-import { Build } from "../../../interfaces/ApiResponses";
-import { useRouter } from "next/router";
-import { useApi } from "../../../utils/api";
+import {Build} from "../../../interfaces/ApiResponses";
+import {useRouter} from "next/router";
+import {useApi} from "../../../utils/api";
 
 const Saves = () => {
   const router = useRouter();

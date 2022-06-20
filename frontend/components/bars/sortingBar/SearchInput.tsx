@@ -1,5 +1,5 @@
 import Input from "../../ui/Input";
-import { useState } from "react";
+import {useState} from "react";
 import SearchIcon from "../../icons/SearchIcon";
 
 const SearchInput = ({ doSearch, placeholder }) => {

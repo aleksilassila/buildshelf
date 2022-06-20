@@ -1,4 +1,4 @@
-import ReactMarkdown, { Components } from "react-markdown";
+import ReactMarkdown, {Components} from "react-markdown";
 
 const components: Components = {
   h1: ({ children }) => <h1 className="text-xl font-extrabold">{children}</h1>,

@@ -1,21 +1,16 @@
 import TitleBar from "../components/bars/TitleBar";
-import theme from "../constants/theme";
 import CardsGridView from "../containers/CardsGridView";
-import { useState } from "react";
+import {useState} from "react";
 import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
-import { useApiFeed } from "../utils/api";
-import { Build } from "../interfaces/ApiResponses";
-import {
-  SortingBar,
-  SortingBarLeft,
-  SortingBarRight,
-} from "../components/bars/SortingBar";
+import {useApiFeed} from "../utils/api";
+import {Build} from "../interfaces/ApiResponses";
+import {SortingBar, SortingBarLeft, SortingBarRight,} from "../components/bars/SortingBar";
 // import SortDropdown from "../components/bars/sortingBar/SortDropdown";
 import * as Dropdown from "../components/ui/Dropdown";
 import SearchInput from "../components/bars/sortingBar/SearchInput";
 import CategoriesDropdown from "../components/bars/sortingBar/CategoriesDropdown";
-import { Banner, BannerSubtitle, BannerTitle } from "../components/Banner";
+import {Banner, BannerSubtitle, BannerTitle} from "../components/Banner";
 
 const Builds = () => {
   const [params, setParams] = useState({

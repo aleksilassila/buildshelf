@@ -1,4 +1,4 @@
-import { Build, Collection } from "../../interfaces/ApiResponses";
+import {Collection} from "../../interfaces/ApiResponses";
 
 const CollectionTitle = ({
   collection,

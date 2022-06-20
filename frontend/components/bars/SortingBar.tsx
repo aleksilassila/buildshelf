@@ -1,10 +1,3 @@
-import Dropdown from "../ui/Dropdown";
-import { useState } from "react";
-import Input from "../ui/Input";
-import { Category } from "../../interfaces/ApiResponses";
-import SearchIcon from "../icons/SearchIcon";
-import { useApi } from "../../utils/api";
-
 const SortingBar = ({ children }) => {
   return (
     <div className="sorting-bar">

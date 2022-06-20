@@ -1,11 +1,7 @@
 import React from "react";
 import ChevronDown from "../icons/ChevronDown";
 import * as Select from "@radix-ui/react-select";
-import {
-  SelectItemProps,
-  SelectLabelProps,
-  SelectProps,
-} from "@radix-ui/react-select";
+import {SelectItemProps, SelectLabelProps, SelectProps} from "@radix-ui/react-select";
 import theme from "../../constants/theme";
 
 const Root = React.forwardRef(

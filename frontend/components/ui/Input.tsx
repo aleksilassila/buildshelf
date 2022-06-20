@@ -1,5 +1,5 @@
 import theme from "../../constants/theme";
-import { useRef } from "react";
+import {useRef} from "react";
 
 interface Props {
   value: string;

@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
-import { useState } from "react";
+import {useRouter} from "next/router";
+import {useState} from "react";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import Input from "../components/ui/Input";

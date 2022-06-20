@@ -1,15 +1,14 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
-import TitleBar, { ActiveSub } from "../bars/TitleBar";
+import {useRouter} from "next/router";
+import TitleBar, {ActiveSub} from "../bars/TitleBar";
 import Auth from "../../utils/auth";
-import { useState } from "react";
-import axios from "axios";
-import { User } from "../../interfaces/ApiResponses";
+import {useState} from "react";
+import {User} from "../../interfaces/ApiResponses";
 import theme from "../../constants/theme";
 import Button from "../ui/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
-import { apiRequest, useApi } from "../../utils/api";
+import {apiRequest, useApi} from "../../utils/api";
 
 /*
 when joined?

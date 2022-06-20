@@ -1,10 +1,10 @@
 import Button from "../ui/Button";
-import { createRef, useState } from "react";
-import { apiRequest } from "../../utils/api";
+import {createRef, useState} from "react";
+import {apiRequest} from "../../utils/api";
 import ImageCollection from "../ImageCollection";
-import { Image } from "../../interfaces/ApiResponses";
-import { AxiosResponse } from "axios";
-import { Toast, useToast } from "../ui/Toast";
+import {Image} from "../../interfaces/ApiResponses";
+import {AxiosResponse} from "axios";
+import {Toast, useToast} from "../ui/Toast";
 
 const ImageUpload: ({
   uploadCallback,

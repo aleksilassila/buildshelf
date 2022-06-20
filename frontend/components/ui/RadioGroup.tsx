@@ -1,5 +1,5 @@
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { ReactNode } from "react";
+import {ReactNode} from "react";
 import theme from "../../constants/theme";
 
 const Root = ({ children, className, ...rest }: RadioGroup.RadioGroupProps) => (

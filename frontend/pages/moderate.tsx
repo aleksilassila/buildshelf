@@ -1,6 +1,6 @@
 import TitleBar from "../components/bars/TitleBar";
-import { useApiFeed } from "../utils/api";
-import { Build } from "../interfaces/ApiResponses";
+import {useApiFeed} from "../utils/api";
+import {Build} from "../interfaces/ApiResponses";
 import InfinityScroll from "../containers/InfinityScroll";
 import theme from "../constants/theme";
 import BuildsTableView from "../containers/BuildsTableView";

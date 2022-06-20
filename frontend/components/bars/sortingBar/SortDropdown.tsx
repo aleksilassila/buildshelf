@@ -1,5 +1,4 @@
 import * as Dropdown from "../../ui/Dropdown";
-import Button from "../../ui/Button";
 
 const SortDropdown = ({ sort, doSearch }) => {
   const data = {

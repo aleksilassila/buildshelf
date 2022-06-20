@@ -4,8 +4,8 @@ import CardsRowView from "../containers/CardsRowView";
 import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
 import theme from "../constants/theme";
-import { useApi } from "../utils/api";
-import { Build } from "../interfaces/ApiResponses";
+import {useApi} from "../utils/api";
+import {Build} from "../interfaces/ApiResponses";
 import styled from "../components/Styled";
 
 const Banner = ({ children, uri }) => (

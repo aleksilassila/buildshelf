@@ -1,21 +1,17 @@
 import TitleBar from "../components/bars/TitleBar";
 import ListView from "../containers/ListView";
-import { useState } from "react";
+import {useState} from "react";
 import CollectionCard from "../components/CollectionCard";
 import theme from "../constants/theme";
 import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
-import { useApiFeed } from "../utils/api";
-import { Collection } from "../interfaces/ApiResponses";
-import {
-  SortingBar,
-  SortingBarLeft,
-  SortingBarRight,
-} from "../components/bars/SortingBar";
+import {useApiFeed} from "../utils/api";
+import {Collection} from "../interfaces/ApiResponses";
+import {SortingBar, SortingBarLeft, SortingBarRight,} from "../components/bars/SortingBar";
 import * as Dropdown from "../components/ui/Dropdown";
 import SearchInput from "../components/bars/sortingBar/SearchInput";
 import CategoriesDropdown from "../components/bars/sortingBar/CategoriesDropdown";
-import { Banner, BannerSubtitle, BannerTitle } from "../components/Banner";
+import {Banner, BannerSubtitle, BannerTitle} from "../components/Banner";
 
 const Collections = () => {
   const [params, setParams] = useState({

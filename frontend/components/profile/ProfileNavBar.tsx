@@ -1,6 +1,6 @@
 import Link from "next/link";
 import theme from "../../constants/theme";
-import { User } from "../../interfaces/ApiResponses";
+import {User} from "../../interfaces/ApiResponses";
 
 interface Props {
   user: User;

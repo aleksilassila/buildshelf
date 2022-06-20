@@ -1,7 +1,7 @@
 import Auth from "../utils/auth";
 import TitleBar from "../components/bars/TitleBar";
-import { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import {useEffect} from "react";
+import {AxiosResponse} from "axios";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
 import Button from "../components/ui/Button";
@@ -12,12 +12,12 @@ import * as Form from "../components/form/Form";
 import useFormData from "../hooks/useFormData";
 import FormMarkdownEditor from "../components/form/FormMarkdownEditor";
 import ImageUpload from "../components/form/ImageUpload";
-import { Toast, useToast } from "../components/ui/Toast";
-import { Build, Category, Collection, Image } from "../interfaces/ApiResponses";
+import {Toast, useToast} from "../components/ui/Toast";
+import {Build, Category, Collection, Image} from "../interfaces/ApiResponses";
 import * as AlertDialog from "../components/ui/AlertDialog";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import * as Dropdown from "../components/ui/Dropdown";
-import { apiRequest, useApi } from "../utils/api";
+import {apiRequest, useApi} from "../utils/api";
 import * as RadioAccordion from "../components/ui/RadioAccordion";
 import * as RadioGroup from "../components/ui/RadioGroup";
 

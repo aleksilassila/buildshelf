@@ -1,8 +1,8 @@
 import * as Accordion from "../ui/Accordion";
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { ReactNode } from "react";
+import {ReactNode} from "react";
 import styled from "../Styled";
-import { Radio } from "./RadioGroup";
+import {Radio} from "./RadioGroup";
 
 const Root = ({
   children,

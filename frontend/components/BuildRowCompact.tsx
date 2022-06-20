@@ -1,4 +1,4 @@
-import { Build } from "../interfaces/ApiResponses";
+import {Build} from "../interfaces/ApiResponses";
 import Heart from "./icons/Heart";
 import theme from "../constants/theme";
 

@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:11
+    environment:
+      POSTGRES_USER: post
+      POSTGRES_DB: post
+      POSTGRES_PASSWORD: post
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  backend:
+    build: backend
+    ports:
+      - 9000:9000
+    environment:
+      DB_URL: ${DB_URL}
+      BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
+      FRONTEND_ENDPOINT: ${FRONTEND_ENDPOINT}
+
+      MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
+      MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
+      MICROSOFT_REDIRECT_URI: ${MICROSOFT_REDIRECT_URI}
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.prod
+    environment:
+      BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
+      MICROSOFT_REDIRECT_URI: ${MICROSOFT_REDIRECT_URI}
+    ports:
+      - 3000:3000
+
+volumes:
+  dbdata:

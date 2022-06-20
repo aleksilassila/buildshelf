@@ -1,5 +1,4 @@
-import Document, { Head, Html, Main, NextScript } from "next/document";
-import theme from "../constants/theme";
+import Document, {Head, Html, Main, NextScript} from "next/document";
 
 class MyDocument extends Document {
   // static async getInitialProps(ctx) {

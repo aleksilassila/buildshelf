@@ -1,4 +1,4 @@
-import { Build } from "../../interfaces/ApiResponses";
+import {Build} from "../../interfaces/ApiResponses";
 
 const BuildTitle = ({ build }: { build: Build }) => (
   <div className="flex flex-row gap-4">
