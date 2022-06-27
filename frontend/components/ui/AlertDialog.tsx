@@ -1,6 +1,7 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 import Button from "./Button";
+import theme from "../../constants/theme";
 
 const Root = ({
   children,
@@ -20,13 +21,18 @@ const Trigger = ({ children }) => {
   );
 };
 
-const Content = ({ children }) => {
+interface ContentProps {
+  children: any;
+  className?: string;
+}
+
+const Content = ({ children, className }: ContentProps) => {
   return (
     <AlertDialog.Portal>
       <AlertDialog.Overlay className="fixed inset-0 bg-black opacity-30" />
       <AlertDialog.Content
-        className={`py-4 px-6 rounded w-1/2 top-1/2 left-1/2 fixed
-        translate-x-[-50%] translate-y-[-50%] bg-stone-50`}
+        className={`py-6 px-8 rounded-xl w-96 top-1/2 left-1/2 fixed
+        translate-x-[-50%] translate-y-[-50%] bg-stone-50 ${className}`}
       >
         {children}
       </AlertDialog.Content>
@@ -65,9 +71,10 @@ const Cancel: ({
 const ConfirmDangerous = ({ onConfirm }) => (
   <div className="flex flex-col gap-6">
     <div>
-      <h2 className="text-lg font-medium">Are you sure?</h2>
-      <p className="">You cannot undo this action.</p>
+      <h2 className={theme.text.display}>Are you sure?</h2>
+      <p className={theme.text.body}>You cannot undo this action.</p>
     </div>
+    q
     <div className="flex gap-4">
       <AlertDialog.Action onClick={onConfirm}>
         <Button mode="primary">Confirm</Button>

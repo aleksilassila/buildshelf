@@ -4,8 +4,8 @@ import CardsRowView from "../containers/CardsRowView";
 import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
 import theme from "../constants/theme";
-import {useApi} from "../utils/api";
-import {Build} from "../interfaces/ApiResponses";
+import { useApi } from "../utils/api";
+import { Build } from "../interfaces/ApiResponses";
 import styled from "../components/Styled";
 
 const Banner = ({ children, uri }) => (
@@ -82,7 +82,7 @@ const Home = () => {
       <TitleBar active="home" />
       <Banner uri={popularData?.[0]?.images?.[0]?.filename}>
         <h2 className={theme.text.bold + " text-stone-100"}>
-          The most ambitious Minecraft build library at your hands
+          The open source community for Minecraft builds
         </h2>
         <p className="tracking-wide text-lg">
           Buildshelf is a place to find, store and share all kinds of Minecraft

@@ -20,7 +20,7 @@ const Button = ({ children, className, mode = "default", ...rest }: Props) => {
           whitespace-nowrap font-medium ${
             {
               primary:
-                "text-white bg-green-500 border-green-600 active:bg-green-600 cursor-pointer",
+                "text-white bg-green-500 border-0 active:bg-green-600 cursor-pointer",
               danger:
                 "text-white bg-red-500 border-red-600 active:bg-red-600 cursor-pointer",
               disabled: "cursor-default opacity-50 bg-white",

@@ -1,7 +1,7 @@
 import Auth from "../utils/auth";
 import TitleBar from "../components/bars/TitleBar";
-import {useEffect} from "react";
-import {AxiosResponse} from "axios";
+import { useEffect } from "react";
+import { AxiosResponse } from "axios";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
 import Button from "../components/ui/Button";
@@ -12,12 +12,12 @@ import * as Form from "../components/form/Form";
 import useFormData from "../hooks/useFormData";
 import FormMarkdownEditor from "../components/form/FormMarkdownEditor";
 import ImageUpload from "../components/form/ImageUpload";
-import {Toast, useToast} from "../components/ui/Toast";
-import {Build, Category, Collection, Image} from "../interfaces/ApiResponses";
+import { Toast, useToast } from "../components/ui/Toast";
+import { Build, Category, Collection, Image } from "../interfaces/ApiResponses";
 import * as AlertDialog from "../components/ui/AlertDialog";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import * as Dropdown from "../components/ui/Dropdown";
-import {apiRequest, useApi} from "../utils/api";
+import { apiRequest, useApi } from "../utils/api";
 import * as RadioAccordion from "../components/ui/RadioAccordion";
 import * as RadioGroup from "../components/ui/RadioGroup";
 
@@ -28,12 +28,13 @@ interface FormData {
   tags: string[];
   tagsInput: string;
   images: Image[];
-  categoryName: string;
-  collectionSearch: string;
-  collectionName: string;
-  collectionId: string;
-  collectionDescription: string;
-  collectionAction: "none" | "existing" | "new";
+  category: string;
+  collection: {
+    action: "none" | "existing" | "new";
+    description: string;
+    id: string;
+    name: string;
+  };
 }
 
 const initialFormData: FormData = {
@@ -43,12 +44,13 @@ const initialFormData: FormData = {
   tags: [],
   tagsInput: "",
   images: [],
-  categoryName: "",
-  collectionSearch: "",
-  collectionName: "",
-  collectionId: "",
-  collectionDescription: "",
-  collectionAction: "none",
+  category: "",
+  collection: {
+    name: "",
+    id: "",
+    description: "",
+    action: "none",
+  },
 };
 
 const Clear = ({ setFormData }) => (
@@ -118,15 +120,15 @@ const Upload = () => {
       data.append("imageIds[]", image.id.toString());
     }
 
-    if (formData.categoryName.length > 0) {
-      data.append("categoryName", formData.categoryName);
+    if (formData.category.length > 0) {
+      data.append("categoryName", formData.category);
     }
 
-    if (formData.collectionAction === "existing") {
-      data.append("collectionId", formData.collectionId);
-    } else if (formData.collectionAction === "new") {
-      data.append("collectionName", formData.collectionName);
-      data.append("collectionDescription", formData.collectionDescription);
+    if (formData.collection.action === "existing") {
+      data.append("collectionId", formData.collection.id);
+    } else if (formData.collection.action === "new") {
+      data.append("collectionName", formData.collection.name);
+      data.append("collectionDescription", formData.collection.description);
     }
 
     for (const tag of formData.tags) {
@@ -186,10 +188,10 @@ const Upload = () => {
     });
   };
 
-  const setCategory = (categoryName) => {
+  const setCategory = (category) => {
     setFormData({
       ...formData,
-      categoryName,
+      category,
     });
   };
 
@@ -312,8 +314,13 @@ const Upload = () => {
         <Form.Section>
           <Form.LabelText>Add to a Build Collection</Form.LabelText>
           <RadioAccordion.Root
-            defaultValue={formData.collectionAction}
-            onValueChange={changeField("collectionAction")}
+            defaultValue={formData.collection.action}
+            onValueChange={(action) =>
+              setFormData({
+                ...formData,
+                collection: { ...formData.collection, action },
+              })
+            }
           >
             <RadioAccordion.Item value="none">
               <RadioAccordion.Trigger value="none">None</RadioAccordion.Trigger>
@@ -332,7 +339,12 @@ const Upload = () => {
                       Add the build to an exising collection
                     </Form.LabelText>
                     <RadioGroup.Root
-                      onValueChange={changeField("collectionId")}
+                      onValueChange={(id) =>
+                        setFormData({
+                          ...formData,
+                          collection: { ...formData.collection, id },
+                        })
+                      }
                     >
                       {collections?.map((collection, key) => (
                         <RadioGroup.Item
@@ -367,18 +379,32 @@ const Upload = () => {
                 <RadioAccordion.Section>
                   Name:
                   <Input
-                    value={formData.collectionName}
-                    setValue={changeField("collectionName")}
+                    value={formData.collection.name}
+                    setValue={(name) =>
+                      setFormData({
+                        ...formData,
+                        collection: { ...formData.collection, name },
+                      })
+                    }
                     placeholder="Collection Name"
                   />
                 </RadioAccordion.Section>
                 <RadioAccordion.Section>
                   Description:
                   <Input
-                    value={formData.collectionDescription}
-                    setValue={changeField("collectionDescription")}
+                    value={formData.collection.description}
+                    setValue={(description) =>
+                      setFormData({
+                        ...formData,
+                        collection: { ...formData.collection, description },
+                      })
+                    }
                     placeholder="Collection Description"
                   />
+                </RadioAccordion.Section>
+                <RadioAccordion.Section>
+                  Images:
+                  <ImageUpload />
                 </RadioAccordion.Section>
               </RadioAccordion.Content>
             </RadioAccordion.Item>

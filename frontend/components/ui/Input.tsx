@@ -1,5 +1,5 @@
 import theme from "../../constants/theme";
-import {useRef} from "react";
+import { useRef } from "react";
 
 interface Props {
   value: string;
@@ -61,7 +61,8 @@ const Input = ({
           placeholder={placeholder}
           onBlur={onBlur}
           ref={focusRef}
-          className="min-h-[2.5rem]"
+          className="min-h-[2.5rem] outline-none border-none bg-transparent font-[inherit] resize-y flex-auto text-stone-700 py-2"
+          style={{ height }}
         />
       ) : (
         <input
@@ -72,31 +73,14 @@ const Input = ({
           type={type}
           onKeyDown={handleEnterKeyDown}
           onBlur={onBlur}
+          className={`outline-none border-none bg-transparent font-[inherit] resize-y flex-auto text-stone-700`}
           ref={focusRef}
         />
       )}
       <style jsx>
         {`
-          input,
-          textarea {
-            outline: none;
-            border: none;
-            background-color: #00000000;
-            font-family: inherit;
-            resize: vertical;
-            flex: 1 1 auto;
-            padding: 0.4em 1em 0.4em 0;
-          }
-
-          textarea {
-            height: ${height};
-          }
-
           .input,
           .input > :global(*) {
-            font-weight: 400;
-            font-size: 0.96rem;
-            color: ${theme.darkLowContrast};
           }
 
           .input > :global(*):not(:last-child) {

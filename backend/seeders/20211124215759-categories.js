@@ -29,9 +29,11 @@ module.exports = {
       "spawns",
       "trees",
       "world-prefabs",
-      "nether-portals",
+      "portals",
       "bridges",
       "other",
+      "ruins",
+      "walls",
     ];
 
     await queryInterface.bulkInsert(

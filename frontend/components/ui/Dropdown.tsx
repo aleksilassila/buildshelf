@@ -1,7 +1,11 @@
 import React from "react";
 import ChevronDown from "../icons/ChevronDown";
 import * as Select from "@radix-ui/react-select";
-import {SelectItemProps, SelectLabelProps, SelectProps} from "@radix-ui/react-select";
+import {
+  SelectItemProps,
+  SelectLabelProps,
+  SelectProps,
+} from "@radix-ui/react-select";
 import theme from "../../constants/theme";
 
 const Root = React.forwardRef(
@@ -10,7 +14,7 @@ const Root = React.forwardRef(
       <Select.Root {...rest}>
         <Select.Trigger
           ref={forwardedRef}
-          className={`${theme.ui.spacing} ${theme.ui.borders} ${theme.ui.outline} gap-2 font-medium text-sm bg-white`}
+          className={`${theme.ui.spacing} ${theme.ui.borders} ${theme.ui.outline} gap-2 font-medium bg-white`}
         >
           <Select.Value />
           <Select.Icon asChild>
@@ -37,7 +41,7 @@ const Item = React.forwardRef(
       value={value}
       {...rest}
       ref={forwardedRef}
-      className="cursor-default outline-0 text-sm font-medium px-4 py-1 rounded focus:bg-stone-100 hover:bg-stone-100"
+      className="cursor-default outline-0 font-medium px-4 py-1 rounded focus:bg-stone-100 hover:bg-stone-100"
     >
       <Select.ItemIndicator>
         {/*<ChevronRight className="h-2" />*/}

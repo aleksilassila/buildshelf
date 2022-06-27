@@ -3,8 +3,10 @@ import Link from "next/link";
 import Auth from "../../utils/auth";
 import NBSP from "../utils/NBSP";
 import ChevronDown from "../icons/ChevronDown";
-import React, {useState} from "react";
-import {useRouter} from "next/router";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
+import * as AlertDialog from "../ui/AlertDialog";
+import Button from "../ui/Button";
 
 export type ActiveName = ActiveMain | ActiveSub;
 
@@ -32,7 +34,8 @@ const TitleBar = ({
 
   const logOut = () => {
     Auth.setUser(undefined);
-    router.push("/");
+    setShowProfileBar(false);
+    router.push("/").then();
   };
 
   const NavLink = ({
@@ -92,9 +95,33 @@ const TitleBar = ({
               </div>
             </>
           ) : (
-            <NavLink name="login" href="/login">
-              Log In
-            </NavLink>
+            <AlertDialog.Root>
+              <AlertDialog.Trigger>
+                <div className="mx-2.5 cursor-pointer">Log In</div>
+              </AlertDialog.Trigger>
+              <AlertDialog.Content className="flex flex-col gap-6">
+                <div>
+                  <h2 className={theme.text.display}>Log in</h2>
+                  <p className={theme.text.body}>
+                    Log in with a Minecraft account
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <AlertDialog.Action>
+                    <a
+                      href={`https://login.live.com/oauth20_authorize.srf?client_id=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f&scope=XboxLive.signin%20offline_access&redirect_uri=${process.env.FRONTEND_ENDPOINT}/login&response_type=code`}
+                    >
+                      <Button mode="primary" className="w-min">
+                        Log in via Microsoft
+                      </Button>
+                    </a>
+                  </AlertDialog.Action>
+                  <AlertDialog.Cancel>
+                    <Button>Cancel</Button>
+                  </AlertDialog.Cancel>
+                </div>
+              </AlertDialog.Content>
+            </AlertDialog.Root>
           )}
         </ul>
       </div>
