@@ -94,7 +94,7 @@ buildRoutes.post(
   validateBody({
     type: "object",
     properties: {
-      title: { type: "string", maxLength: 255 },
+      name: { type: "string", maxLength: 255 },
       description: { type: "string" },
       category: { type: "string" },
       collectionId: { type: "number" },
@@ -115,7 +115,7 @@ buildRoutes.post(
         uniqueItems: true,
       },
     },
-    required: ["title", "description"],
+    required: ["name", "description"],
   }),
   buildsController.create
 );
@@ -134,7 +134,7 @@ buildRoutes.get(
       },
       collection: { type: "number" },
       category: { type: "string" },
-      title: { type: "string" },
+      name: { type: "string" },
       sort: { enum: ["top", "new", "popular"] },
       uuid: { type: "string" },
       approved: { type: "boolean" },
@@ -189,7 +189,7 @@ buildRoutes.put(
   validateBody({
     type: "object",
     properties: {
-      title: { type: "string", maxLength: 255 },
+      name: { type: "string", maxLength: 255 },
       description: { type: "string" },
       // category: { type: "string" },
       collectionId: { type: "number" },

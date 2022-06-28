@@ -1,4 +1,4 @@
-import {Build} from "../interfaces/ApiResponses";
+import { Build } from "../interfaces/ApiResponses";
 import Heart from "./icons/Heart";
 
 const BuildCard: ({
@@ -29,7 +29,7 @@ const BuildCard: ({
         className="card group p-4 rounded-xl w-auto grid grid-cols-2 grid-rows-2 cursor-pointer relative h-full"
         onClick={() => openBuild(build.id)}
       >
-        <h3 className="text-white font-semibold">{build.title}</h3>
+        <h3 className="text-white font-semibold">{build.name}</h3>
         <h3 className="font-semibold text-stone-200 justify-self-end">
           {[build.category?.name]
             .concat(build?.tags?.map((tag) => "#" + tag.name))

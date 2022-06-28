@@ -51,6 +51,7 @@ const Home = () => {
    *  - Make frontpage banner change picture, get proper mock images
    *  - Favorite collections
    *  - Manage collections
+   *  - Optimize photo sizes
    * TODO:
    *  - Improve ui components
    *    - States inside components and callbacks

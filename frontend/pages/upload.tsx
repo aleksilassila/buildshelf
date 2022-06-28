@@ -22,7 +22,7 @@ import * as RadioAccordion from "../components/ui/RadioAccordion";
 import * as RadioGroup from "../components/ui/RadioGroup";
 
 interface FormData {
-  title: string;
+  name: string;
   description: string;
   buildFile: File | null;
   tags: string[];
@@ -38,7 +38,7 @@ interface FormData {
 }
 
 const initialFormData: FormData = {
-  title: "",
+  name: "",
   description: "",
   buildFile: null,
   tags: [],
@@ -112,7 +112,7 @@ const Upload = () => {
 
     const data = new FormData();
 
-    data.append("title", formData.title);
+    data.append("name", formData.name);
     data.append("description", formData.description);
     data.append("buildFile", formData.buildFile);
 
@@ -213,13 +213,13 @@ const Upload = () => {
           <h2 className={theme.text.bold}>Upload a build</h2>
         </Form.Section>
         <Form.Section>
-          <Form.Label htmlFor="title">
+          <Form.Label htmlFor="name">
             <Form.LabelText>Title</Form.LabelText>
             <Input
-              id="title"
-              value={formData.title}
-              setValue={changeField("title")}
-              placeholder="Title"
+              id="name"
+              value={formData.name}
+              setValue={changeField("name")}
+              placeholder="Name"
             />
           </Form.Label>
         </Form.Section>

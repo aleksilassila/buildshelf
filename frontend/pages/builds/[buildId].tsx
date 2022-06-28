@@ -1,11 +1,10 @@
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import TitleBar from "../../components/bars/TitleBar";
 import * as BuildPage from "../../components/BuildPage";
+import { getSingleParams } from "../../utils/utils";
 
 const Build = ({}) => {
-  const router = useRouter();
-  //@ts-ignore
-  const { buildId }: { buildId: string } = router.query;
+  const { buildId } = getSingleParams();
 
   return (
     <div>

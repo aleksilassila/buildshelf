@@ -1,20 +1,20 @@
 import {
+  BelongsToManyAddAssociationMixin,
+  BelongsToManyGetAssociationsMixin,
+  BelongsToManyHasAssociationMixin,
+  BelongsToManyRemoveAssociationMixin,
+  CreationOptional,
   DataTypes,
-  Model,
   InferAttributes,
   InferCreationAttributes,
-  BelongsToManyHasAssociationMixin,
-  BelongsToManyGetAssociationsMixin,
-  CreationOptional,
-  ModelStatic,
-  BelongsToManyAddAssociationMixin,
-  BelongsToManyRemoveAssociationMixin,
+  Model,
   NonAttribute,
 } from "sequelize";
 import sequelize from "../database";
 import fs from "fs";
 import Build, { BuildJSON } from "./Build";
 import Image from "./Image";
+import Collection from "./Collection";
 
 export interface UserJSON {
   saves: BuildJSON[] | undefined;
@@ -72,6 +72,13 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   getBookmarks: BelongsToManyGetAssociationsMixin<Build>;
   removeBookmark: BelongsToManyRemoveAssociationMixin<User, Build>;
   getFollows: BelongsToManyGetAssociationsMixin<User>;
+  addFavoriteCollection: BelongsToManyAddAssociationMixin<User, Collection>;
+  removeFavoriteCollection: BelongsToManyRemoveAssociationMixin<
+    User,
+    Collection
+  >;
+  hasFavoriteCollection: BelongsToManyHasAssociationMixin<User, Collection>;
+  getFavoriteCollections: BelongsToManyGetAssociationsMixin<Collection>;
 }
 
 User.init(

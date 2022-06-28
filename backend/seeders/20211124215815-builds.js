@@ -140,7 +140,7 @@ module.exports = {
       ids.map(
         (id) => ({
           id,
-          title: names[Math.floor(Math.random() * names.length)],
+          name: names[Math.floor(Math.random() * names.length)],
           description,
           buildFileId: 99991,
           totalDownloads: 100,
@@ -162,7 +162,7 @@ module.exports = {
       [
         {
           id: 99988,
-          title: "Not approved",
+          name: "Not approved",
           description,
           buildFileId: 99991,
           totalDownloads: 100,
@@ -177,7 +177,7 @@ module.exports = {
         },
         {
           id: 99989,
-          title: "Private",
+          name: "Private",
           description,
           buildFileId: 99991,
           totalDownloads: 100,

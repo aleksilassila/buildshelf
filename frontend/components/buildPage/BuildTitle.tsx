@@ -1,4 +1,4 @@
-import {Build} from "../../interfaces/ApiResponses";
+import { Build } from "../../interfaces/ApiResponses";
 
 const BuildTitle = ({ build }: { build: Build }) => (
   <div className="flex flex-row gap-4">
@@ -9,7 +9,7 @@ const BuildTitle = ({ build }: { build: Build }) => (
       }}
     />
     <div className="flex flex-col justify-end">
-      <div className="font-bold text-2xl">{build.title}</div>
+      <div className="font-bold text-2xl">{build.name}</div>
       <div>
         Litematic by{" "}
         <a

@@ -1,95 +1,16 @@
 import {
+  Association,
   CreationOptional,
   DataTypes,
   InferAttributes,
   InferCreationAttributes,
-  Model,
-  ModelStatic,
 } from "sequelize";
 import sequelize from "../database";
 import { BuildJSON } from "./Build";
 import User, { UserJSON } from "./User";
-import { ImageJSON } from "./Image";
-import { Build } from "./index";
-
-export interface CollectionModel extends CollectionAttributes {
-  toJSON: (user?: User) => Promise<CollectionJSON>;
-  updateTotalFavorites: () => Promise<CollectionModel>;
-}
-
-export interface CollectionAttributes
-  extends Model<
-    InferAttributes<CollectionAttributes>,
-    InferCreationAttributes<CollectionAttributes>
-  > {
-  id?: CreationOptional<number>;
-  name: string;
-  description: string;
-  totalFavorites: CreationOptional<number>;
-  creatorUuid?: CreationOptional<string>;
-}
-
-interface CollectionStatic extends ModelStatic<CollectionModel> {
-  exists: (name: string, ownerId: string) => Promise<boolean>;
-  getOrCreateCollection: (
-    name: string,
-    description: string,
-    ownerId: string
-  ) => Promise<[CollectionModel, boolean]>;
-}
-
-const Collection = <CollectionStatic>sequelize.define<CollectionAttributes>(
-  "collection",
-  {
-    name: {
-      type: DataTypes.STRING,
-    },
-    description: DataTypes.TEXT,
-    totalFavorites: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-  }
-);
-
-Collection.prototype.countTotalFavorites = function (): Promise<number> {
-  return sequelize.model("userFavoriteCollections").count({
-    where: {
-      collectionId: this.id,
-    },
-  });
-};
-
-Collection.prototype.updateTotalFavorites =
-  async function (): Promise<CollectionModel> {
-    this.totalFavorites = await this.countTotalFavorites();
-    return this.save();
-  };
-
-Collection.exists = async function (
-  name: string,
-  creatorUuid: string
-): Promise<boolean> {
-  return (await Collection.findOne({ where: { name, creatorUuid } })) !== null;
-};
-
-Collection.getOrCreateCollection = function (
-  name: string,
-  description: string,
-  creatorUuid: string
-): Promise<[CollectionModel, boolean]> {
-  return Collection.findOrCreate({
-    where: {
-      creatorUuid,
-      name,
-    },
-    defaults: {
-      creatorUuid,
-      description: description || "",
-      name,
-    },
-  });
-};
+import Image, { ImageJSON } from "./Image";
+import { Build, UserFavoriteCollections } from "./index";
+import PostBase from "./PostBase";
 
 export interface CollectionJSON {
   id: number;
@@ -99,24 +20,80 @@ export interface CollectionJSON {
   totalFavorites: number;
   builds: BuildJSON[] | undefined;
   creator: UserJSON | undefined;
+  isFavorite: boolean;
 }
 
-Collection.prototype.toJSON = async function (
-  user: User = null
-): Promise<CollectionJSON> {
-  return {
-    id: this.id,
-    name: this.name,
-    description: this.description,
-    images: this.images
-      ? await Promise.all(this.images.map((image) => image.toJSON()))
-      : undefined,
-    totalFavorites: this.totalFavorites,
-    builds: this.builds
-      ? await Build.toJSONArray(this.builds, user)
-      : undefined,
-    creator: this.creator ? await this.creator.toJSON() : undefined,
-  };
-};
+class Collection extends PostBase<
+  InferAttributes<Collection>,
+  InferCreationAttributes<Collection>
+> {
+  declare totalFavorites: CreationOptional<number>;
 
-export { Collection };
+  declare creatorUuid?: string;
+
+  declare images?: CreationOptional<Image[]>;
+  declare creator?: CreationOptional<User>;
+  declare builds?: CreationOptional<Build[]>;
+
+  declare static associations: {
+    images: Association<Collection, Image>;
+    creator: Association<Collection, User>;
+    builds: Association<Collection, Build>;
+  };
+
+  countTotalFavorites(): Promise<number> {
+    return UserFavoriteCollections.count({
+      where: {
+        collectionId: this.id,
+      },
+    });
+  }
+
+  async updateTotalFavorites(): Promise<Collection> {
+    this.totalFavorites = await this.countTotalFavorites();
+    return this.save();
+  }
+
+  async toJSON(user: User = null): Promise<CollectionJSON> {
+    let isFavorite = user
+      ? !!(
+          await user.getFavoriteCollections({
+            attributes: ["id"],
+            where: { id: this.id },
+          })
+        )?.length
+      : undefined;
+
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      images: this.images
+        ? await Promise.all(this.images.map((image) => image.toJSON()))
+        : undefined,
+      totalFavorites: this.totalFavorites,
+      builds: this.builds
+        ? await Build.toJSONArray(this.builds, user)
+        : undefined,
+      creator: this.creator ? await this.creator.toJSON() : undefined,
+      isFavorite,
+    };
+  }
+}
+
+Collection.init(
+  {
+    ...PostBase.getCommonAttributes(),
+    totalFavorites: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "collection",
+  }
+);
+
+export default Collection;

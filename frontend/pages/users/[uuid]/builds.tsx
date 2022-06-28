@@ -1,15 +1,15 @@
 import ProfilePage from "../../../components/profile/ProfilePage";
 import CardsGridView from "../../../containers/CardsGridView";
-import {Build} from "../../../interfaces/ApiResponses";
-import {useRouter} from "next/router";
-import {useApi} from "../../../utils/api";
+import { Build } from "../../../interfaces/ApiResponses";
+import { useRouter } from "next/router";
+import { useApi } from "../../../utils/api";
 import Button from "../../../components/ui/Button";
 import Link from "next/link";
 import Auth from "../../../utils/auth";
 
 const Builds = () => {
   const router = useRouter();
-  const { uuid } = router.query;
+  const uuid = Array.isArray(router.query) ? router.query[0] : router.query;
 
   const userObject = Auth.getUser();
 
@@ -31,7 +31,7 @@ const Builds = () => {
 
   return (
     <ProfilePage count={builds?.length}>
-      {builds?.length === 0 && userObject.isLoggedIn() ? (
+      {builds?.length === 0 && userObject.isLoggedIn(uuid) ? (
         <div className="flex">
           <CreateBuild />
         </div>

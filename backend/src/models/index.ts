@@ -1,5 +1,5 @@
 import sequelize from "../database";
-import { Collection } from "./Collection";
+import Collection from "./Collection";
 import { Tag } from "./Tag";
 import { Category } from "./Category";
 import User from "./User";
@@ -35,6 +35,20 @@ const UserCollectionBookmarks = sequelize.define(
 
 const UserSavedBuilds = sequelize.define(
   "userSavedBuilds",
+  {
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: NOW,
+    },
+  },
+  {
+    timestamps: false,
+  }
+);
+
+const UserFavoriteCollections = sequelize.define(
+  "userFavoriteCollections",
   {
     createdAt: {
       type: DataTypes.DATE,
@@ -138,8 +152,15 @@ User.belongsToMany(User, {
   otherKey: "followedUuid",
 });
 
-// User.belongsToMany(Collection, { through: "userFavoriteCollections", as: "favoriteCollections" });
-// Collection.belongsToMany(User, { through: "userFavoriteCollections", as: "favoriteCollections" });
+User.belongsToMany(Collection, {
+  through: UserFavoriteCollections,
+  as: "favoriteCollections",
+});
+Collection.belongsToMany(User, {
+  through: UserFavoriteCollections,
+  as: "favoriteCollections",
+});
+
 User.belongsToMany(Collection, {
   through: UserCollectionBookmarks,
   as: "collectionBookmarks",
@@ -182,4 +203,5 @@ export {
   BuildView,
   BuildDownload,
   UserSavedBuilds,
+  UserFavoriteCollections,
 };

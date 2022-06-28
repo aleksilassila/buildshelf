@@ -11,7 +11,7 @@ const Row = ({ build }: { build: Build }) => {
       {/*<div className="picture" />*/}
       <div className="content">
         <div className="content-left">
-          <h3>{build.title}</h3>
+          <h3>{build.name}</h3>
           <span>By {build.creator?.username}</span>
         </div>
         <div className="content-right">
@@ -62,7 +62,9 @@ const BuildsTableView = ({ builds, loading, error }) => {
   return (
     <div className="builds-table-view">
       {builds.map((item, index) => (
-        <div className="row" key={index}><Row build={item} /></div>
+        <div className="row" key={index}>
+          <Row build={item} />
+        </div>
       ))}
       <style jsx>
         {`
@@ -72,7 +74,6 @@ const BuildsTableView = ({ builds, loading, error }) => {
             padding: 1em;
             background-color: ${theme.lightHighContrast};
             border-radius: 4px;
-            
           }
 
           .row:not(:last-child) {

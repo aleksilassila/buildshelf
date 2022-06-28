@@ -2,6 +2,7 @@ import { Collection } from "../models";
 import { Op } from "sequelize";
 import { searchQueryBuilder } from "../utils";
 import { errors } from "../client-error";
+import { CollectionReq, Res } from "../../types";
 
 const search = async function (req, res) {
   const { category, name, sort, uuid } = req.query;
@@ -14,7 +15,7 @@ const search = async function (req, res) {
     };
   }
 
-  // Title
+  // Name
   if (name) {
     searchQuery.where.name = {
       [Op.iLike]: "%" + name + "%",
@@ -40,20 +41,9 @@ const search = async function (req, res) {
   res.send(await Promise.all(collections.map((c) => c.toJSON())));
 };
 
-const getCollection = async function (req, res) {
-  const { collectionId } = req.params;
+const getCollection = async function (req: CollectionReq, res: Res) {
+  const { collection } = req;
 
-  const collection = await Collection.findOne({
-    where: {
-      id: collectionId,
-    },
-    include: ["builds", "creator", "images"],
-  }).catch((ignored) => {});
-
-  if (!collection) {
-    errors.NOT_FOUND.send(res, "Collection not found");
-    return;
-  }
   res.send(await collection.toJSON(req.user));
 };
 
@@ -86,21 +76,9 @@ const deleteCollection = async function (req, res) {
   res.send("OK");
 };
 
-const favorite = async function (req, res) {
-  const user = req.user;
-  const { collectionId } = req.params;
+const favorite = async function (req: CollectionReq, res: Res) {
+  const { user, collection } = req;
   const addFavorite = req.body.favorite;
-
-  const collection = await Collection.findOne({
-    where: {
-      id: collectionId,
-    },
-  }).catch((ignored) => {});
-
-  if (!collection) {
-    res.status(404).send("Collection not found");
-    return;
-  }
 
   const inFavorites = await user.hasFavoriteCollection(collection);
 
@@ -112,13 +90,11 @@ const favorite = async function (req, res) {
 
   await collection.updateTotalFavorites();
 
-  res
-    .status(200)
-    .send(
-      addFavorite
-        ? "Collection added to favorites"
-        : "Collection removed from favorites"
-    );
+  res.send(
+    addFavorite
+      ? "Collection added to favorites"
+      : "Collection removed from favorites"
+  );
 };
 
 const update = async function (req, res) {};

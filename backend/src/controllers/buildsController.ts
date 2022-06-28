@@ -80,12 +80,12 @@ const litematicSchema = {
 const create = async function (req: AuthReq, res: Res) {
   const {
     description,
-    title,
+    name,
     categoryName,
     imageIds,
   }: {
     description?: string;
-    title?: string;
+    name?: string;
     categoryName?: string;
     collectionId?: number;
     imageIds?: string[];
@@ -148,7 +148,7 @@ const create = async function (req: AuthReq, res: Res) {
   });
 
   const build = await Build.create({
-    title,
+    name,
     description,
     creatorUuid: req.user.uuid,
     collectionId,
@@ -216,7 +216,7 @@ const search = async function (
         tags: string[];
         collection: number;
         category: string;
-        title: string;
+        name: string;
         sort: "top" | "new" | "popular";
         uuid: string;
         approved: boolean;
@@ -230,7 +230,7 @@ const search = async function (
     tags,
     collection,
     category,
-    title,
+    name,
     sort,
     uuid,
     approved,
@@ -243,9 +243,9 @@ const search = async function (
     collectionId:
       parseInt(typeof collection === "string" ? collection : "") || undefined,
     categoryName: category ? { [Op.startsWith]: category } : undefined,
-    title: title
+    name: name
       ? {
-          [Op.iLike]: "%" + title + "%",
+          [Op.iLike]: "%" + name + "%",
         }
       : undefined,
     creatorUuid: uuid,
@@ -333,13 +333,13 @@ const update = async function (req: BuildReq & AuthReq, res: Res) {
   const { user, build } = req;
   const {
     description,
-    title,
+    name,
     collectionId,
     imageIds,
     private: isPrivate,
   }: {
     description?: string;
-    title?: string;
+    name?: string;
     collectionId?: number;
     imageIds?: string[];
     private?: boolean;
@@ -348,7 +348,7 @@ const update = async function (req: BuildReq & AuthReq, res: Res) {
   await build
     .update({
       description: description || build.description,
-      title: title || build.title,
+      name: name || build.name,
       collectionId: collectionId || build.collectionId,
       private: isPrivate !== undefined ? isPrivate : build.private,
     })

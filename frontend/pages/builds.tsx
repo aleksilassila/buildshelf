@@ -18,7 +18,7 @@ import { Banner, BannerSubtitle, BannerTitle } from "../components/Banner";
 const Builds = () => {
   const [params, setParams] = useState({
     sort: "popular",
-    title: "",
+    name: "",
     category: "",
   });
 
@@ -27,28 +27,28 @@ const Builds = () => {
     {
       params: {
         sort: params.sort.toLowerCase(),
-        title: params.title,
+        name: params.name,
         category: params.category,
       },
     }
   );
 
   const doSearch = ({
-    title = params.title,
+    name = params.name,
     category = params.category,
     sort = params.sort,
   }) => {
     if (
-      title === params.title &&
+      name === params.name &&
       category === params.category &&
       sort === params.sort
     )
       return;
 
-    setParams({ ...params, title, category, sort });
+    setParams({ ...params, name, category, sort });
     refetch({
       params: {
-        title,
+        name,
         sort: sort.toLowerCase(),
         category,
       },
@@ -77,8 +77,8 @@ const Builds = () => {
               </Dropdown.Group>
             </Dropdown.Root>
             <SearchInput
-              doSearch={(title) => doSearch({ title })}
-              placeholder="Search builds by title"
+              doSearch={(name) => doSearch({ name })}
+              placeholder="Search builds by name"
             />
           </SortingBarLeft>
           <SortingBarRight>

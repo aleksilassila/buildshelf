@@ -3,7 +3,7 @@ export interface UserObject {
   token: string;
   uuid: string;
   iat: number;
-  isLoggedIn: () => boolean;
+  isLoggedIn: (uuid?: string) => boolean;
 }
 
 class Auth {
@@ -20,8 +20,8 @@ class Auth {
       userObject = {};
     }
 
-    userObject.isLoggedIn = () => {
-      return !!userObject?.token;
+    userObject.isLoggedIn = (uuid = undefined) => {
+      return !!userObject?.token && (!uuid || userObject.uuid === uuid);
     };
 
     return userObject;

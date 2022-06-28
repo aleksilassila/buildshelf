@@ -13,7 +13,7 @@ const fetchRemote = async function (req: AuthReq, res: Res) {
         id: build?.id,
         md5: build?.buildFile?.md5,
         url: "/files/" + build?.buildFile?.filename,
-        name: build?.title,
+        name: build?.name,
         updatedAt: build.updatedAt,
       }))
     )

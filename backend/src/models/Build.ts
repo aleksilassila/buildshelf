@@ -15,11 +15,12 @@ import {
 import sequelize from "../database";
 import User, { UserJSON } from "./User";
 import Image, { ImageJSON } from "./Image";
-import { CollectionJSON, CollectionModel } from "./Collection";
+import Collection, { CollectionJSON } from "./Collection";
 import { TagModel } from "./Tag";
 import { BuildFileModel } from "./BuildFile";
 import { CategoryModel } from "./Category";
 import { BuildDownload, BuildView, UserSavedBuilds } from "./index";
+import PostBase from "./PostBase";
 
 export interface BuildJSON {
   images: ImageJSON[] | undefined;
@@ -28,7 +29,7 @@ export interface BuildJSON {
   totalDownloads: number;
   description: string;
   collection: CollectionJSON | undefined;
-  title: string;
+  name: string;
   tags: TagModel[];
   totalSaves: number;
   createdAt: Date;
@@ -109,29 +110,18 @@ export const cache: Cache = {
   downloads: {},
 };
 
-class Build extends Model<
+class Build extends PostBase<
   InferAttributes<Build>,
   InferCreationAttributes<Build>
 > {
-  declare id?: CreationOptional<number>;
-  declare title: string;
-  declare description: string;
   declare totalDownloads: CreationOptional<number>;
   declare totalSaves: CreationOptional<number>;
-  declare totalViews: CreationOptional<number>;
-  declare createdAt: CreationOptional<Date>;
-  declare updatedAt: CreationOptional<Date>;
-  declare private: CreationOptional<boolean>;
-  declare approved: CreationOptional<boolean>;
-  declare score: CreationOptional<number>;
 
-  declare creatorUuid?: string;
   declare collectionId?: number;
   declare categoryName?: string;
   declare buildFileId?: number;
 
-  declare creator?: CreationOptional<User>;
-  declare collection?: CreationOptional<CollectionModel>;
+  declare collection?: CreationOptional<Collection>;
   declare buildFile?: CreationOptional<BuildFileModel>;
 
   declare addTag: BelongsToManyAddAssociationMixin<Build, TagModel>;
@@ -157,7 +147,7 @@ class Build extends Model<
 
     return {
       id: this.id,
-      title: this.title,
+      name: this.name,
       description: this.description,
       buildFile: await this.getBuildFile(),
       images: await Promise.all(
@@ -185,22 +175,6 @@ class Build extends Model<
     );
   }
 
-  async canEdit(user: User = null) {
-    if (user?.moderator === true) return true;
-    return user?.uuid === this.creatorUuid;
-  }
-
-  canView(user: User = null) {
-    if (user?.moderator === true) return true;
-    if (this.private || !this.approved) {
-      if (!user || user?.uuid !== this.creator?.uuid) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   addView() {
     cache.addView(this.id);
   }
@@ -210,7 +184,7 @@ class Build extends Model<
   }
 
   async updateTotals(): Promise<Build> {
-    const totalSaves = await sequelize.model("userSavedBuilds").count({
+    const totalSaves = await UserSavedBuilds.count({
       where: {
         buildId: this.id,
       },
@@ -289,8 +263,7 @@ class Build extends Model<
 
 Build.init(
   {
-    title: { type: DataTypes.STRING, allowNull: false },
-    description: { type: DataTypes.TEXT, allowNull: false },
+    ...PostBase.getCommonAttributes(),
     totalDownloads: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -300,36 +273,6 @@ Build.init(
       type: DataTypes.INTEGER,
       defaultValue: 0,
       allowNull: false,
-    },
-    totalViews: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: NOW,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: NOW,
-    },
-    approved: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true, // FIXME prod
-    },
-    private: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    score: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
     },
   },
   { timestamps: false, sequelize, modelName: "build" }

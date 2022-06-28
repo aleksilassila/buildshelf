@@ -1,15 +1,20 @@
 import TitleBar from "../../components/bars/TitleBar";
-import {useApi} from "../../utils/api";
-import {Collection} from "../../interfaces/ApiResponses";
-import {useRouter} from "next/router";
+import { useApi } from "../../utils/api";
+import { Collection } from "../../interfaces/ApiResponses";
+import { useRouter } from "next/router";
 import Loading from "../../components/statuses/Loading";
 import NetworkError from "../../components/statuses/NetworkError";
 import CardsGridView from "../../containers/CardsGridView";
 import CollectionTitle from "../../components/collectionPage/CollectionTitle";
-import {Banner} from "../../components/Banner";
+import { Banner } from "../../components/Banner";
+import Separator from "../../components/utils/Separator";
+import Button from "../../components/ui/Button";
+import Auth from "../../utils/auth";
 
 const CollectionPage = () => {
   const { collectionId } = useRouter().query;
+  const userObject = Auth.getUser();
+
   const [collection, loading, error] = useApi<Collection>(
     "/collections/" + collectionId,
     {},
@@ -47,6 +52,15 @@ const CollectionPage = () => {
       </Banner>
 
       <div className="page-container">
+        <div className="flex justify-between">
+          <Button mode={collection.isFavorite ? "default" : "primary"}>
+            Favorite
+          </Button>
+          {userObject.isLoggedIn(collection.creator.uuid) && (
+            <Button mode="default">Edit</Button>
+          )}
+        </div>
+        {Separator}
         <CardsGridView
           builds={collection?.builds?.length ? collection?.builds : []}
           loading={loading}

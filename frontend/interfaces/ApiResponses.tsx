@@ -14,11 +14,12 @@ export interface Collection {
   totalFavorites: number;
   builds: Build[] | undefined;
   creator: User | undefined;
+  isFavorite?: boolean;
 }
 
 export interface Build {
   id: number;
-  title: string;
+  name: string;
   description: string;
   buildFile: BuildFile;
   images: Image[];
