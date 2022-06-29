@@ -119,7 +119,7 @@ const loginMicrosoft = async (req, res) => {
         client_secret: process.env.MICROSOFT_CLIENT_SECRET,
         code,
         grant_type: "authorization_code",
-        redirect_uri: process.env.MICROSOFT_REDIRECT_URI,
+        redirect_uri: process.env.FRONTEND_ENDPOINT + "/login",
       })
     )
     .catch((err) => err.response);

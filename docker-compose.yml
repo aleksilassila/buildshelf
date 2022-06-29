@@ -36,7 +36,7 @@ services:
       - ./frontend:/usr/src/app
     environment:
       BACKEND_ENDPOINT: ${BACKEND_ENDPOINT}
-      MICROSOFT_REDIRECT_URI: ${MICROSOFT_REDIRECT_URI}
+      FRONTEND_ENDPOINT: ${FRONTEND_ENDPOINT}
     ports:
       - 3000:3000
 
