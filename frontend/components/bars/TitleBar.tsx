@@ -18,7 +18,7 @@ export type ActiveMain =
   | "upload"
   | "login";
 
-export type ActiveSub = "profile" | "collections" | "saves" | "bookmarks";
+export type ActiveSub = "profile" | "user-collections" | "saves" | "bookmarks";
 
 const TitleBar = ({
   active = null,
@@ -135,7 +135,7 @@ const TitleBar = ({
         </NavLink>
         <NavLink
           href={"/users/" + userObject?.uuid + "/collections"}
-          name="collections"
+          name="user-collections"
         >
           Collections
         </NavLink>

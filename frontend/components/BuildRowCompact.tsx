@@ -1,4 +1,4 @@
-import {Build} from "../interfaces/ApiResponses";
+import { Build } from "../interfaces/ApiResponses";
 import Heart from "./icons/Heart";
 import theme from "../constants/theme";
 
@@ -8,11 +8,13 @@ const BuildRowCompact = ({ build }: { build: Build }) => {
       <div className="picture" />
       <div className="content">
         <div className="content-left">
-          <h3>{build.title}</h3>
+          <h3>{build.name}</h3>
           <span>By {build.creator?.username}</span>
         </div>
         <div className="content-right">
-          <span><Heart /> {build.totalSaves}</span>
+          <span>
+            <Heart /> {build.totalSaves}
+          </span>
         </div>
       </div>
       <style jsx>{`
@@ -22,14 +24,16 @@ const BuildRowCompact = ({ build }: { build: Build }) => {
           overflow: hidden;
           box-shadow: ${theme.bottomShadow};
         }
-        
+
         .picture {
           height: 80px;
           width: 110px;
-          background: url("${process.env.BACKEND_ENDPOINT}/files/${build.images[0]}") center;
+          background: url("${process.env.BACKEND_ENDPOINT}/files/${build
+              .images[0]}")
+            center;
           background-size: cover;
         }
-        
+
         .content {
           flex: 1 0 auto;
           display: flex;

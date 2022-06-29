@@ -9,7 +9,6 @@ import theme from "../constants/theme";
 import Localstorage from "../utils/localstorage";
 import Tag from "../components/ui/Tag";
 import * as Form from "../components/form/Form";
-import useFormData from "../hooks/useFormData";
 import FormMarkdownEditor from "../components/form/FormMarkdownEditor";
 import ImageUpload from "../components/form/ImageUpload";
 import { Toast, useToast } from "../components/ui/Toast";
@@ -68,7 +67,8 @@ const Clear = ({ setFormData }) => (
 
 const Upload = () => {
   const userObject = Auth.getUser();
-  const [formData, setFormData, changeField] = useFormData<FormData>(
+  const router = useRouter();
+  const [formData, setFormData, changeField] = Form.useFormData<FormData>(
     initialFormData,
     "uploadFormData"
   );
@@ -93,17 +93,6 @@ const Upload = () => {
 
   // Toast props
   const [toast, toastProps] = useToast();
-
-  const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      Localstorage.set("uploadFormData", {
-        ...formData,
-        buildFile: initialFormData.buildFile,
-      });
-    }
-  }, [formData]);
 
   if (formData === null) return <div />;
 

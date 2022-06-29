@@ -5,7 +5,6 @@ import { Build, Image } from "../../../interfaces/ApiResponses";
 import Loading from "../../../components/statuses/Loading";
 import NetworkError from "../../../components/statuses/NetworkError";
 import * as Form from "../../../components/form/Form";
-import UseFormData from "../../../hooks/useFormData";
 import Button from "../../../components/ui/Button";
 import FormMarkdownEditor from "../../../components/form/FormMarkdownEditor";
 import { useEffect } from "react";
@@ -13,6 +12,7 @@ import { Toast, useToast } from "../../../components/ui/Toast";
 import ImageUpload from "../../../components/form/ImageUpload";
 import * as AlertDialog from "../../../components/ui/AlertDialog";
 import Auth from "../../../utils/auth";
+import theme from "../../../constants/theme";
 
 interface FormData {
   description: string;
@@ -25,7 +25,7 @@ const Edit = () => {
   const user = Auth.getUser();
 
   const [toast, toastProps] = useToast();
-  const [formData, setFormData, changeField] = UseFormData<FormData>({
+  const [formData, setFormData, changeField] = Form.useFormData<FormData>({
     description: "",
     images: [],
   });
@@ -75,7 +75,7 @@ const Edit = () => {
       <TitleBar />
       <Form.Root>
         <Form.Label className="flex flex-row justify-between items-end">
-          <h2 className="font-bold text-2xl">Edit build {build.name}</h2>
+          <h2 className={theme.text.bold}>Edit build {build.name}</h2>
           <a href={"/builds/" + buildId}>
             <Button onClick={() => {}}>View Build Page</Button>
           </a>

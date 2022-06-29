@@ -1,5 +1,35 @@
 import * as LabelPrimitive from "@radix-ui/react-label";
 import Styled from "../Styled";
+import { useEffect, useState } from "react";
+import Localstorage from "../../utils/localstorage";
+
+const useFormData = function <T>(
+  initialData: T,
+  localStorageKey: string = null
+): [T, (T) => void, (any) => (any) => void] {
+  const [data, setData] = useState<T>(localStorageKey ? null : initialData);
+
+  const changeField = (field) => (value) => {
+    setData({
+      ...data,
+      [field]: value,
+    });
+  };
+
+  useEffect(() => {
+    if (data === null && typeof window !== "undefined") {
+      setData(Localstorage.get(localStorageKey) || initialData);
+    } else if (typeof window !== "undefined") {
+      console.log("asd");
+      Localstorage.set(localStorageKey, {
+        ...data,
+        buildFile: null,
+      });
+    }
+  }, [data]);
+
+  return [data, setData, changeField];
+};
 
 const Root = ({ children }) => (
   <div className="page-container">
@@ -31,4 +61,4 @@ const Label = ({
 const Tip = Styled("text-xs text-stone-700 mt-2");
 const LabelText = Styled("font-medium mb-2");
 
-export { Root, Label, Tip, LabelText, Section };
+export { Root, Label, Tip, LabelText, Section, useFormData };

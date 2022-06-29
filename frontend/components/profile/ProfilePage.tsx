@@ -1,14 +1,14 @@
 import Link from "next/link";
-import {useRouter} from "next/router";
-import TitleBar, {ActiveSub} from "../bars/TitleBar";
+import { useRouter } from "next/router";
+import TitleBar, { ActiveSub } from "../bars/TitleBar";
 import Auth from "../../utils/auth";
-import {useState} from "react";
-import {User} from "../../interfaces/ApiResponses";
+import { useState } from "react";
+import { User } from "../../interfaces/ApiResponses";
 import theme from "../../constants/theme";
 import Button from "../ui/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
-import {apiRequest, useApi} from "../../utils/api";
+import { apiRequest, useApi } from "../../utils/api";
 
 /*
 when joined?
@@ -79,7 +79,6 @@ const ProfilePage = ({
         }}
       >
         <div className="h-40 md:h-56 p-4 backdrop-blur-sm grid grid-cols-2 grid-rows-2 md:p-6">
-          {/*<div className="">/!*<span>Builds: 13</span>*!/</div>*/}
           <div className="row-start-2 col-start-1 flex items-end">
             <div className="flex flex-row items-center gap-2 md:gap-4">
               <div
@@ -103,7 +102,6 @@ const ProfilePage = ({
             </div>
           ) : null}
         </div>
-        {/*<div className="profile-mask" />*/}
       </div>
       <div className="border-t-2 border-t-stone-300 py-6 px-4 md:px-8 lg:px-16">
         <ProfileNavBar
@@ -141,7 +139,7 @@ const ProfileNavBar = ({
         </div>
       </Link>
       <Link href={"/users/" + user.uuid + "/collections"}>
-        <div className={`${tabName === "collections" && "active"} item`}>
+        <div className={`${tabName === "user-collections" && "active"} item`}>
           Collections {getCount("collections")}
         </div>
       </Link>
