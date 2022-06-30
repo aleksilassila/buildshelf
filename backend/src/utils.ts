@@ -1,20 +1,43 @@
-const Validator = require("jsonschema").Validator;
-const { Op } = require("sequelize");
-const { errors } = require("./client-error");
-const fs = require("fs");
-const { parse, writeUncompressed, simplify } = require("prismarine-nbt");
+import { Validator } from "jsonschema";
+import { Op } from "sequelize";
+import { errors } from "./client-error";
+import fs from "fs";
+import { parse, simplify, writeUncompressed } from "prismarine-nbt";
 
 const validator = new Validator();
+
+interface SearchWhere {
+  createdAt?: any;
+}
+
+const removeUndefined = (object) => {
+  const out = {};
+
+  for (const key of Object.keys(object)) {
+    if (typeof object[key] === "object") {
+      out[key] = object[key];
+      for (const ikey of Object.getOwnPropertySymbols(object[key])) {
+        if (object[key][ikey] === undefined) {
+          delete out[key];
+        }
+      }
+    } else if (object[key] !== undefined) {
+      out[key] = object[key];
+    }
+  }
+
+  return out;
+};
 
 /**
  * Returns the basis for a search query options
  * @param query req.query
  * @returns {{offset: number, limit: number, where: {}}}
  */
-module.exports.searchQueryBuilder = (query) => {
+const searchQueryBuilder = (query) => {
   const { timespan, offset, amount } = query;
 
-  const where = {};
+  const where: SearchWhere = {};
   let _offset = 0;
   let _amount = 20;
 
@@ -69,7 +92,7 @@ const castTypes = (validator) =>
     }
   };
 
-module.exports.validateBody = (schema) => {
+const validateBody = (schema) => {
   return function (req, res, next) {
     const validation = validator.validate(req.body, schema, {
       preValidateProperty: castTypes(validator),
@@ -83,7 +106,7 @@ module.exports.validateBody = (schema) => {
   };
 };
 
-module.exports.validateQuery = (schema) => {
+const validateQuery = (schema) => {
   return function (req, res, next) {
     const validation = validator.validate(req.query, schema, {
       preValidateProperty: castTypes(validator),
@@ -97,18 +120,30 @@ module.exports.validateQuery = (schema) => {
   };
 };
 
-module.exports.parseSimplifiedLitematic = async (filename) => {
+const parseSimplifiedLitematic = async (filename) => {
   return await parse(await fs.promises.readFile(filename))
     .then((result) => simplify(result.parsed))
     .catch((err) => ({}));
 };
 
-module.exports.parseLitematic = async (filename) => {
-  return await parse(await fs.promises.readFile(filename)).catch((err) => ({}));
+const parseLitematic = async (filename) => {
+  return await parse(await fs.promises.readFile(filename)).catch(
+    (err) => undefined
+  );
 };
 
-module.exports.writeLitematic = async (filename, nbtData) => {
+const writeLitematic = async (filename, nbtData): Promise<void> => {
   return new Promise((resolve, reject) => {
     fs.writeFile(filename, writeUncompressed(nbtData), () => resolve());
   });
+};
+
+export {
+  searchQueryBuilder,
+  validateBody,
+  validateQuery,
+  parseSimplifiedLitematic,
+  parseLitematic,
+  writeLitematic,
+  removeUndefined,
 };

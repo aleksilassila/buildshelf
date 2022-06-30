@@ -1,15 +1,22 @@
 import {
   CreationOptional,
   DataTypes,
+  Includeable,
+  InferAttributes,
+  InferCreationAttributes,
   Model,
-  ModelAttributes,
+  ModelStatic,
   NOW,
+  Op,
 } from "sequelize";
 import User from "./User";
+import { removeUndefined } from "../utils";
+import { OptionalAuthReq } from "../../types";
+import { Request } from "express";
 
-class PostBase<Attributes, CreationAttributes> extends Model<
-  Attributes,
-  CreationAttributes
+class PostBase<T extends Model> extends Model<
+  InferAttributes<T>,
+  InferCreationAttributes<T>
 > {
   declare id?: CreationOptional<number>;
   declare name: string;
@@ -39,6 +46,46 @@ class PostBase<Attributes, CreationAttributes> extends Model<
     }
 
     return true;
+  }
+
+  static search<TT extends Model>(
+    this: ModelStatic<TT>,
+    options: {
+      where: { [key: string]: any };
+      order;
+      include: Includeable[];
+    },
+    req: OptionalAuthReq<Request<{}, {}, {}, any>>
+  ): Promise<TT[]> {
+    const { name, creatorUuid, timespan, approved, offset, amount } = req.query;
+
+    return this.findAll({
+      // @ts-ignore
+      where: {
+        ...removeUndefined({
+          ...options.where,
+          creatorUuid,
+          name: {
+            [Op.iLike]: name ? "%" + name + "%" : undefined,
+          },
+        }),
+        ...(parseFloat(timespan) && {
+          createdAt: {
+            [Op.gte]: new Date(new Date().getTime() - parseFloat(timespan)),
+          },
+        }),
+        ...(req.user?.moderator && approved !== undefined
+          ? { approved: approved }
+          : { approved: true }),
+        ...(req.user?.moderator && req.query.private !== undefined
+          ? { private: req.query.private }
+          : { private: false }),
+      },
+      offset: offset || 0,
+      limit: amount || 20,
+      order: options.order || [["createdAt", "DESC"]],
+      include: options.include,
+    });
   }
 
   static getCommonAttributes() {

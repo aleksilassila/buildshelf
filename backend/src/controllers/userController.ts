@@ -1,4 +1,4 @@
-import { User, Collection, Build } from "../models/index";
+import { Build, User } from "../models/index";
 import { errors } from "../client-error";
 import { AuthReq, Res } from "../../types";
 import { Op } from "sequelize";

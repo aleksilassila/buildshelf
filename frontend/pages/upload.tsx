@@ -43,7 +43,7 @@ const initialFormData: FormData = {
   tags: [],
   tagsInput: "",
   images: [],
-  category: "",
+  categoryName: "",
   collection: {
     name: "",
     id: "",
@@ -109,8 +109,8 @@ const Upload = () => {
       data.append("imageIds[]", image.id.toString());
     }
 
-    if (formData.category.length > 0) {
-      data.append("categoryName", formData.category);
+    if (formData.categoryName.length > 0) {
+      data.append("categoryName", formData.categoryName);
     }
 
     if (formData.collection.action === "existing") {
@@ -180,7 +180,7 @@ const Upload = () => {
   const setCategory = (category) => {
     setFormData({
       ...formData,
-      category,
+      category: categoryName,
     });
   };
 

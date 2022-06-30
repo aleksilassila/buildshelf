@@ -1,11 +1,11 @@
 import {
+  CreationOptional,
   DataTypes,
   InferAttributes,
   InferCreationAttributes,
-  ModelStatic,
   Model,
+  ModelStatic,
   NOW,
-  CreationOptional,
 } from "sequelize";
 import sequelize from "../database";
 import config from "../config";

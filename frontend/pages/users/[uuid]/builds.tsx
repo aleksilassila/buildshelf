@@ -9,14 +9,16 @@ import Auth from "../../../utils/auth";
 
 const Builds = () => {
   const router = useRouter();
-  const uuid = Array.isArray(router.query) ? router.query[0] : router.query;
+  const { uuid: creatorUuid } = Array.isArray(router.query)
+    ? router.query[0]
+    : router.query;
 
   const userObject = Auth.getUser();
 
   const [builds, loading, error] = useApi<Build[]>(
     "/builds/search",
-    { params: { uuid } },
-    [uuid]
+    { params: { creatorUuid } },
+    [creatorUuid]
   );
 
   const CreateBuild = () => (
@@ -31,7 +33,7 @@ const Builds = () => {
 
   return (
     <ProfilePage count={builds?.length}>
-      {builds?.length === 0 && userObject.isLoggedIn(uuid) ? (
+      {builds?.length === 0 && userObject.isLoggedIn(creatorUuid) ? (
         <div className="flex">
           <CreateBuild />
         </div>

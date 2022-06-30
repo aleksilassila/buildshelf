@@ -31,7 +31,7 @@ const BuildCard: ({
       >
         <h3 className="text-white font-semibold">{build.name}</h3>
         <h3 className="font-semibold text-stone-200 justify-self-end">
-          {[build.category?.name]
+          {[build.categoryName?.name]
             .concat(build?.tags?.map((tag) => "#" + tag.name))
             .join(", ")}
         </h3>

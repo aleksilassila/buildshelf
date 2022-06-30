@@ -5,10 +5,6 @@ import {
   BelongsToManySetAssociationsMixin,
   CreationOptional,
   DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-  NOW,
   Op,
 } from "sequelize";
 
@@ -37,7 +33,7 @@ export interface BuildJSON {
   approved: boolean;
   isSaved: boolean;
   id: number;
-  category: CategoryModel;
+  categoryName: string;
   updatedAt: Date;
 }
 
@@ -110,10 +106,7 @@ export const cache: Cache = {
   downloads: {},
 };
 
-class Build extends PostBase<
-  InferAttributes<Build>,
-  InferCreationAttributes<Build>
-> {
+class Build extends PostBase<Build> {
   declare totalDownloads: CreationOptional<number>;
   declare totalSaves: CreationOptional<number>;
 
@@ -156,7 +149,7 @@ class Build extends PostBase<
       totalDownloads: this.totalDownloads,
       totalSaves: this.totalSaves,
       creator: this.creator ? await this.creator.toJSON() : undefined,
-      category: await this.getCategory(),
+      categoryName: await this.getCategory().then((c) => c.name),
       tags: await this.getTags(),
       collection: this.collection ? await this.collection.toJSON() : undefined,
       createdAt: this.createdAt,

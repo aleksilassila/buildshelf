@@ -19,7 +19,7 @@ const Builds = () => {
   const [params, setParams] = useState({
     sort: "popular",
     name: "",
-    category: "",
+    categoryName: "",
   });
 
   const [builds, loading, error, fetchMore, refetch] = useApiFeed<Build>(
@@ -28,29 +28,30 @@ const Builds = () => {
       params: {
         sort: params.sort.toLowerCase(),
         name: params.name,
-        category: params.category,
+        categoryName: params.categoryName,
+        private: false,
       },
     }
   );
 
   const doSearch = ({
     name = params.name,
-    category = params.category,
+    categoryName = params.categoryName,
     sort = params.sort,
   }) => {
     if (
       name === params.name &&
-      category === params.category &&
+      categoryName === params.categoryName &&
       sort === params.sort
     )
       return;
 
-    setParams({ ...params, name, category, sort });
+    setParams({ ...params, name, categoryName, sort });
     refetch({
       params: {
         name,
         sort: sort.toLowerCase(),
-        category,
+        categoryName,
       },
     });
   };
@@ -58,7 +59,7 @@ const Builds = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <TitleBar active="builds" />
-      <Banner url="/mockImages/landscape.png">
+      <Banner url="/mockImages/landscape.jpg">
         <BannerTitle>Builds</BannerTitle>
         <BannerSubtitle>Browse popular builds</BannerSubtitle>
       </Banner>
@@ -83,7 +84,7 @@ const Builds = () => {
           </SortingBarLeft>
           <SortingBarRight>
             <CategoriesDropdown
-              doSearch={(category) => doSearch({ category })}
+              doSearch={(categoryName) => doSearch({ categoryName })}
             />
           </SortingBarRight>
         </SortingBar>

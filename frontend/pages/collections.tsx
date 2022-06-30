@@ -1,23 +1,27 @@
 import TitleBar from "../components/bars/TitleBar";
 import ListView from "../containers/ListView";
-import {useState} from "react";
+import { useState } from "react";
 import CollectionCard from "../components/CollectionCard";
 import theme from "../constants/theme";
 import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
-import {useApiFeed} from "../utils/api";
-import {Collection} from "../interfaces/ApiResponses";
-import {SortingBar, SortingBarLeft, SortingBarRight,} from "../components/bars/SortingBar";
+import { useApiFeed } from "../utils/api";
+import { Collection } from "../interfaces/ApiResponses";
+import {
+  SortingBar,
+  SortingBarLeft,
+  SortingBarRight,
+} from "../components/bars/SortingBar";
 import * as Dropdown from "../components/ui/Dropdown";
 import SearchInput from "../components/bars/sortingBar/SearchInput";
 import CategoriesDropdown from "../components/bars/sortingBar/CategoriesDropdown";
-import {Banner, BannerSubtitle, BannerTitle} from "../components/Banner";
+import { Banner, BannerSubtitle, BannerTitle } from "../components/Banner";
 
 const Collections = () => {
   const [params, setParams] = useState({
     sort: "top",
     name: "",
-    category: "",
+    categoryName: "",
   });
 
   const [collections, loading, error, fetchMore, refetch] =
@@ -34,17 +38,17 @@ const Collections = () => {
 
   const doSearch = ({
     name = params.name,
-    category = params.category,
+    category = params.categoryName,
     sort = params.sort,
   }) => {
     if (
       name === params.name &&
-      category === params.category &&
+      category === params.categoryName &&
       sort === params.sort
     )
       return;
 
-    setParams({ ...params, name, category, sort });
+    setParams({ ...params, name, category: categoryName, sort });
     refetch({
       params: {
         name,
@@ -57,7 +61,7 @@ const Collections = () => {
   return (
     <div className="collections">
       <TitleBar active="collections" />
-      <Banner url="/mockImages/village.png">
+      <Banner url="/mockImages/village.jpg">
         <BannerTitle>Collections</BannerTitle>
         <BannerSubtitle>Browse popular build collections</BannerSubtitle>
       </Banner>
@@ -84,7 +88,7 @@ const Collections = () => {
           </SortingBarLeft>
           <SortingBarRight>
             <CategoriesDropdown
-              doSearch={(category) => doSearch({ category })}
+              doSearch={(category) => doSearch({ category: categoryName })}
             />
           </SortingBarRight>
         </SortingBar>
@@ -108,17 +112,6 @@ const Collections = () => {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-          }
-
-          .large-page-container {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-              url("/mockImages/village.png") no-repeat center center;
-            background-size: cover;
-          }
-
-          .large-page-container > * {
-            color: ${theme.light};
-            text-align: center;
           }
 
           .page-container {

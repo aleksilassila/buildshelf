@@ -1,10 +1,4 @@
-import {
-  Association,
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-} from "sequelize";
+import { Association, CreationOptional, DataTypes } from "sequelize";
 import sequelize from "../database";
 import { BuildJSON } from "./Build";
 import User, { UserJSON } from "./User";
@@ -23,10 +17,7 @@ export interface CollectionJSON {
   isFavorite: boolean;
 }
 
-class Collection extends PostBase<
-  InferAttributes<Collection>,
-  InferCreationAttributes<Collection>
-> {
+class Collection extends PostBase<Collection> {
   declare totalFavorites: CreationOptional<number>;
 
   declare creatorUuid?: string;

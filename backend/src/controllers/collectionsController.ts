@@ -1,44 +1,46 @@
 import { Collection } from "../models";
 import { Op } from "sequelize";
-import { searchQueryBuilder } from "../utils";
 import { errors } from "../client-error";
-import { CollectionReq, Res } from "../../types";
+import { CollectionReq, OptionalAuthReq, Res } from "../../types";
+import { Request } from "express/ts4.0";
 
-const search = async function (req, res) {
-  const { category, name, sort, uuid } = req.query;
-  const searchQuery = searchQueryBuilder(req.query);
+const search = async function (
+  req: OptionalAuthReq<
+    Request<
+      {},
+      {},
+      {},
+      {
+        categoryName: string;
+        name: string;
+        sort: "top" | "new" | "popular";
+        creatorUuid: string;
+      }
+    >
+  >,
+  res: Res
+) {
+  const { categoryName, sort } = req.query;
 
-  // Category
-  if (category) {
-    searchQuery.where.categoryName = {
-      [Op.startsWith]: category,
-    };
-  }
-
-  // Name
-  if (name) {
-    searchQuery.where.name = {
-      [Op.iLike]: "%" + name + "%",
-    };
-  }
-
-  if (uuid) {
-    searchQuery.where.creatorUuid = uuid;
-  }
-
-  // Sorting order
-  if (sort === "new") {
-    searchQuery.order = [["createdAt", "DESC"]];
-  } else if (sort === "top") {
-    searchQuery.order = [["totalFavorites", "DESC"]];
-  }
-
-  const collections = await Collection.findAll({
-    ...searchQuery,
-    include: ["builds", "creator", "images"],
-  }).catch((ignored) => []);
-
-  res.send(await Promise.all(collections.map((c) => c.toJSON())));
+  await Collection.search(
+    {
+      where: {
+        categoryName: {
+          [Op.startsWith]: categoryName,
+        },
+      },
+      order: {
+        new: [["createdAt", "DESC"]],
+        top: [["totalFavorites", "DESC"]],
+      }[sort || "new"],
+      include: ["builds", "creator", "images"],
+    },
+    req
+  )
+    .then(async (collections) =>
+      res.send(await Promise.all(collections.map((c) => c.toJSON())))
+    )
+    .catch((err) => errors.SERVER_ERROR.send(res));
 };
 
 const getCollection = async function (req: CollectionReq, res: Res) {

@@ -31,9 +31,9 @@ module.exports = {
       "world-prefabs",
       "portals",
       "bridges",
-      "other",
       "ruins",
       "walls",
+      "other",
     ];
 
     await queryInterface.bulkInsert(

@@ -12,11 +12,9 @@ const ClientError = function (
 
 ClientError.prototype.send = function (res: Response, message = "") {
   this.info = this.info || message;
-  res
-    .status(this.status)
-    .send({
-      error: { status: this.status, code: this.code, message: this.info },
-    });
+  res.status(this.status).send({
+    error: { status: this.status, code: this.code, message: this.info },
+  });
 };
 
 ClientError.prototype.toString = function () {

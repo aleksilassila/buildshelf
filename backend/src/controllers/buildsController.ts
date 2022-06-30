@@ -1,17 +1,16 @@
 import { Op } from "sequelize";
 import {
   Build,
+  BuildFile,
+  Category,
   Collection,
+  Image,
   Tag,
   User,
-  Category,
-  Image,
-  BuildFile,
 } from "../models";
 import {
-  searchQueryBuilder,
-  parseSimplifiedLitematic,
   parseLitematic,
+  parseSimplifiedLitematic,
   writeLitematic,
 } from "../utils";
 import { errors } from "../client-error";
@@ -161,9 +160,9 @@ const create = async function (req: AuthReq, res: Res) {
   }
 
   // Add file id to the build file
-  const { parsed: litematicWithId } = await parseLitematic(
-    "uploads/" + buildFile.filename
-  );
+  const litematicWithId = (
+    await parseLitematic("uploads/" + buildFile.filename)
+  )?.parsed;
 
   if (litematicWithId?.value?.Metadata?.value) {
     litematicWithId.value.Metadata.value.Id = {
@@ -205,84 +204,50 @@ const create = async function (req: AuthReq, res: Res) {
   }
 };
 
-// FIXME clean this
 const search = async function (
-  req: OptionalAuthReq<
-    Request<
-      {},
-      {},
-      {},
-      {
-        tags: string[];
-        collection: number;
-        category: string;
-        name: string;
-        sort: "top" | "new" | "popular";
-        uuid: string;
-        approved: boolean;
-        includePrivate: boolean;
-      }
-    >
-  >,
+  req: OptionalAuthReq<Request<{}, {}, {}, any>>,
   res: Res
 ) {
-  const {
-    tags,
-    collection,
-    category,
-    name,
-    sort,
-    uuid,
-    approved,
-    includePrivate,
-  } = req.query;
-  const searchQuery = searchQueryBuilder(req.query);
+  const { tags, collectionId, categoryName, sort } = req.query;
 
-  // Sorting order
-  const where = {
-    collectionId:
-      parseInt(typeof collection === "string" ? collection : "") || undefined,
-    categoryName: category ? { [Op.startsWith]: category } : undefined,
-    name: name
-      ? {
-          [Op.iLike]: "%" + name + "%",
-        }
-      : undefined,
-    creatorUuid: uuid,
-    approved,
-    ...(!(req.user?.moderator && includePrivate) && { private: false }),
-  };
-
-  Build.findAll({
-    ...searchQuery,
-    where: Object.fromEntries(
-      Object.entries(where).filter(([k, v]) => v !== undefined)
-    ),
-    ...(sort === "new" && { order: [["createdAt", "DESC"]] }),
-    ...(sort === "top" && { order: [["totalSaves", "DESC"]] }),
-    ...(sort === "popular" && { order: [["score", "DESC"]] }),
-    include: [
-      {
-        model: Tag,
-        ...(tags && {
-          where: {
-            name: {
-              [Op.in]: tags.map((i) => i.toLowerCase()),
+  Build.search(
+    {
+      where: {
+        collectionId,
+        categoryName: { [Op.startsWith]: categoryName },
+      },
+      order: {
+        new: [["createdAt", "DESC"]],
+        top: [["totalSaves", "DESC"]],
+        popular: [["score", "DESC"]],
+      }[sort || "new"],
+      include: [
+        {
+          model: Tag,
+          ...(tags && {
+            where: {
+              name: {
+                [Op.in]: tags.map((i) => i.toLowerCase()),
+              },
             },
-          },
-        }),
-      },
-      {
-        model: User,
-        as: "creator",
-      },
-      { model: Image, as: "images" },
-    ],
-  })
+          }),
+        },
+        {
+          model: User,
+          as: "creator",
+        },
+        { model: Image, as: "images" },
+      ],
+    },
+    req
+  )
     .then(async (builds) => {
       res.send(await Build.toJSONArray(builds, req.user));
     })
-    .catch((err) => errors.SERVER_ERROR.send(res, err));
+    .catch((err) => {
+      console.log(err);
+      errors.SERVER_ERROR.send(res);
+    });
 };
 
 const downloadBuild = async function (req: BuildReq, res: Res) {

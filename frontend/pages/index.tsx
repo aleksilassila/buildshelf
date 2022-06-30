@@ -13,10 +13,9 @@ const Banner = ({ children, uri }) => (
     className="bg-cover h-[75vh] flex flex-col justify-center"
     style={{
       background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-              url(${
-                process.env.BACKEND_ENDPOINT + "/files/" + uri
-              }) fixed no-repeat center center`,
+              url("/mockImages/outpost.jpg") fixed no-repeat center center`,
       marginTop: "0",
+      backgroundSize: "cover",
     }}
   >
     <div className="m-auto w-3/4 max-w-5xl text-center bg-stone-800 text-stone-300 p-8 px-16">
@@ -29,12 +28,12 @@ const Padded = styled("px-8 xl:px-16 2xl:px-24");
 
 const Home = () => {
   const [popularData, popularLoading, popularError] = useApi<Build[]>(
-    "/builds/search?sort=popular",
+    "/builds/search?sort=popular&private=false",
     {},
     []
   );
   const [newData, newLoading, newError] = useApi<Build[]>(
-    "/builds/search?sort=new",
+    "/builds/search?sort=new&private=false",
     {},
     []
   );
@@ -53,6 +52,7 @@ const Home = () => {
    *  - Manage collections
    *  - Optimize photo sizes
    * TODO:
+   *  - Make error messages and loading screens consistent
    *  - Improve ui components
    *    - States inside components and callbacks
    *  - Form validation
@@ -70,10 +70,10 @@ const Home = () => {
    *  - Fix multiplebutton
    * */
 
-  const CategoryLink = ({ href, text }) => (
+  const CategoryLink = ({ href, children }) => (
     <Link href={href}>
       <h2 className="font-bold text-xl cursor-pointer hover:underline">
-        {text}
+        {children}
       </h2>
     </Link>
   );
@@ -87,8 +87,8 @@ const Home = () => {
         </h2>
         <p className="tracking-wide text-lg">
           Buildshelf is a place to find, store and share all kinds of Minecraft
-          builds and projects. This project mainly utilises a minecraft
-          blueprinting mod called Litematica. You can download Litematica{" "}
+          builds and projects. This project utilises a Minecraft blueprinting
+          mod called Litematica. You can download Litematica{" "}
           <a
             href="https://www.curseforge.com/minecraft/mc-mods/litematica"
             className={theme.text.linkDark}
@@ -110,37 +110,35 @@ const Home = () => {
           <li>
             <span className={"text-green-600 font-bold"}>2.</span> Download{" "}
             <a href={""} className={theme.text.link}>
-              Buildshelf extension
+              Litematica extension
             </a>{" "}
             for Litematica to automatically sync your builds
           </li>
           <li>
             <span className={"text-green-600 font-bold"}>3.</span> Browse and
-            save builds in Buildshelf to automatically have them synced to your
-            minecraft client
+            save builds in Buildshelf to automatically have them downloaded to
+            your Minecraft client
           </li>
         </ul>
       </Padded>
       <Padded className={"flex flex-col gap-16"}>
         <CardsRowView builds={popularData || []}>
-          <CategoryLink
-            href="/builds"
-            text={!!popularData ? "Popular builds right now" : messages.loading}
-          />
+          <CategoryLink href="/builds">
+            {!!popularData ? "Popular builds right now" : messages.loading}
+          </CategoryLink>
         </CardsRowView>
         <CardsRowView builds={newData || []}>
-          <CategoryLink
-            href="/builds"
-            text={!!newData ? "New builds" : messages.loading}
-          />
+          <CategoryLink href="/builds">
+            {!!newData ? "New builds" : messages.loading}
+          </CategoryLink>
         </CardsRowView>
-        {followedData?.length !== 0 ? (
+        {!!followedData?.length ? (
           <CardsGridView
             builds={followedData || []}
             error={followedError}
             loading={followedLoading}
           >
-            <h2 className="font-bold text-xl">
+            <h2 className="font-bold text-xl mb-2">
               {followedData ? "Followed creators" : messages.loading}
             </h2>
           </CardsGridView>

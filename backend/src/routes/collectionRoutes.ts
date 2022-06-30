@@ -46,10 +46,12 @@ collectionRoutes.get(
   validateQuery({
     type: "object",
     properties: {
-      category: { type: "string" },
+      categoryName: { type: "string" },
       name: { type: "string" },
       sort: { enum: ["top", "new"] },
-      uuid: { type: "string" },
+      creatorUuid: { type: "string" },
+      approved: { type: "boolean" },
+      private: { type: "boolean" },
       timespan: { type: "number" },
       offset: { type: "number", minimum: 0 },
       amount: { type: "number", minimum: 1, maximum: 50 },

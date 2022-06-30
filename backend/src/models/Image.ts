@@ -1,13 +1,11 @@
 import {
+  CreationOptional,
   DataTypes,
-  NOW,
-  Model,
+  HasManyGetAssociationsMixin,
   InferAttributes,
   InferCreationAttributes,
-  ModelStatic,
-  CreationOptional,
-  HasManyGetAssociationsMixin,
-  Association,
+  Model,
+  NOW,
 } from "sequelize";
 import sequelize from "../database";
 import config from "../config";
