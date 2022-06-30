@@ -27,7 +27,7 @@ interface FormData {
   tags: string[];
   tagsInput: string;
   images: Image[];
-  category: string;
+  categoryName: string;
   collection: {
     action: "none" | "existing" | "new";
     description: string;
@@ -177,10 +177,10 @@ const Upload = () => {
     });
   };
 
-  const setCategory = (category) => {
+  const setCategory = (categoryName) => {
     setFormData({
       ...formData,
-      category: categoryName,
+      categoryName,
     });
   };
 

@@ -27,7 +27,7 @@ export interface Build {
   totalSaves: number;
   creator?: User;
   tags: Tag[];
-  category: Category;
+  categoryName: string;
   collection?: Collection;
   createdAt: string;
   updatedAt: string;

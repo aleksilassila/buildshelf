@@ -38,17 +38,17 @@ const Collections = () => {
 
   const doSearch = ({
     name = params.name,
-    category = params.categoryName,
+    categoryName = params.categoryName,
     sort = params.sort,
   }) => {
     if (
       name === params.name &&
-      category === params.categoryName &&
+      categoryName === params.categoryName &&
       sort === params.sort
     )
       return;
 
-    setParams({ ...params, name, category: categoryName, sort });
+    setParams({ ...params, name, categoryName, sort });
     refetch({
       params: {
         name,
@@ -88,7 +88,7 @@ const Collections = () => {
           </SortingBarLeft>
           <SortingBarRight>
             <CategoriesDropdown
-              doSearch={(category) => doSearch({ category: categoryName })}
+              doSearch={(categoryName) => doSearch({ categoryName })}
             />
           </SortingBarRight>
         </SortingBar>
