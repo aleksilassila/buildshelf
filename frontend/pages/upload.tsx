@@ -244,9 +244,9 @@ const Upload = () => {
           <Form.LabelText>Images</Form.LabelText>
           <ImageUpload
             initialImages={formData.images}
-            uploadCallback={(res) => {
+            uploadCallback={(res, images) => {
               if (res.status === 200) {
-                changeField("images")(res.data);
+                changeField("images")(images);
               }
             }}
           />

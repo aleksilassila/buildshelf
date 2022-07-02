@@ -20,6 +20,7 @@ import crypto from "crypto";
 import { Express } from "express";
 import { AuthReq, BuildReq, OptionalAuthReq, Res } from "../../types";
 import { Request } from "express/ts4.0";
+import { MulterError } from "multer";
 
 const canView = (res, build, user, message = "Build not found.") => {
   if (!build || !build.canView(user)) {
@@ -340,9 +341,18 @@ const approve = async function (req: BuildReq, res: Res) {
 
 const uploadImages = async function (
   req: AuthReq & { files: Express.Multer.File[] },
-  res: Res
+  res: Res,
+  multerError: MulterError | undefined
 ) {
   const images = req.files;
+
+  if (multerError?.code === "LIMIT_FILE_SIZE") {
+    errors.FILE_TOO_LARGE.send(res);
+    return;
+  } else if (multerError) {
+    errors.SERVER_ERROR.send(res);
+    return;
+  }
 
   if (!images || !images.length) {
     errors.BAD_REQUEST.send(res);

@@ -149,7 +149,7 @@ class Build extends PostBase<Build> {
       totalDownloads: this.totalDownloads,
       totalSaves: this.totalSaves,
       creator: this.creator ? await this.creator.toJSON() : undefined,
-      categoryName: await this.getCategory().then((c) => c.name),
+      categoryName: await this.getCategory().then((c) => c?.name),
       tags: await this.getTags(),
       collection: this.collection ? await this.collection.toJSON() : undefined,
       createdAt: this.createdAt,

@@ -1,10 +1,10 @@
 import Button from "../ui/Button";
-import {createRef, useState} from "react";
-import {apiRequest} from "../../utils/api";
+import { createRef, useState } from "react";
+import { apiRequest } from "../../utils/api";
 import ImageCollection from "../ImageCollection";
-import {Image} from "../../interfaces/ApiResponses";
-import {AxiosResponse} from "axios";
-import {Toast, useToast} from "../ui/Toast";
+import { Image } from "../../interfaces/ApiResponses";
+import { AxiosResponse } from "axios";
+import { Toast, useToast } from "../ui/Toast";
 
 const ImageUpload: ({
   uploadCallback,
@@ -44,7 +44,11 @@ const ImageUpload: ({
           uploadCallback(res, [...remoteImages, ...res.data]);
         })
         .catch((err) => {
-          toast("File Size", "The file is larger than 15 MB");
+          if (err?.code === "LIMIT_FILE_SIZE") {
+            toast("File Size", "The file is larger than 15 MB");
+          } else {
+            toast("Error", "There was an error uploading the images", "danger");
+          }
           uploadCallback(err, remoteImages);
         })
         .finally(() => setLocalFiles([]));

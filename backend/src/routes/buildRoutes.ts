@@ -1,4 +1,4 @@
-import { BuildReq, Res } from "../../types";
+import { AuthReq, BuildReq, Res } from "../../types";
 
 import * as buildsController from "../controllers/buildsController";
 import { Router } from "express";
@@ -86,6 +86,8 @@ buildRoutes.get(
   attachBuild({ include: ["buildFile"] }),
   buildsController.downloadBuild
 );
+
+const buildFileUpload = upload.single("buildFile");
 
 buildRoutes.post(
   routes.builds.post.create,
@@ -228,11 +230,12 @@ buildRoutes.post(
   buildsController.approve
 );
 
-buildRoutes.post(
-  routes.builds.post.approve,
-  auth,
-  upload.array("images", 5),
-  buildsController.uploadImages
-);
+const imageUpload = upload.array("images", 5);
+
+buildRoutes.post(routes.builds.post.uploadImages, auth, (req: any, res) => {
+  imageUpload(req, res, async (err) => {
+    await buildsController.uploadImages(req, res, err);
+  });
+});
 
 export default buildRoutes;
