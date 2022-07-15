@@ -43,11 +43,11 @@ const Input = ({
 
   return (
     <div
-      className={`input ${theme.ui.outline} ${theme.ui.borders} ${
-        theme.ui.spacing
-      } w-full ${
+      className={`input ${theme.ui.outline} ${
+        theme.ui.borders
+      } flex items-center px-4 h-10 w-full ${
         textArea && "h-min"
-      } px-0 pl-4 cursor-text bg-white ${className}`}
+      } p-4 py-0 cursor-text bg-white ${className}`}
       onClick={() => focusRef.current.focus()}
       {...rest}
     >

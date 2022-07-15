@@ -16,7 +16,7 @@ import { TagModel } from "./Tag";
 import { BuildFileModel } from "./BuildFile";
 import { CategoryModel } from "./Category";
 import { BuildDownload, BuildView, UserSavedBuilds } from "./index";
-import PostBase from "./PostBase";
+import PostBase, { Cache } from "./PostBase";
 
 export interface BuildJSON {
   images: ImageJSON[] | undefined;
@@ -37,74 +37,54 @@ export interface BuildJSON {
   updatedAt: Date;
 }
 
-interface Cache {
-  writeThreshold: number;
-  addView: (buildId: number) => void;
-  addDownload: (buildId: number) => void;
-  getViews: (buildId: number) => Date[];
-  getDownloads: (buildId: number) => Date[];
-  write: (buildId: number) => Promise<Build | void>;
-  views: { [buildId: number]: Date[] };
-  downloads: { [buildId: number]: Date[] };
-}
+class BuildCache extends Cache<Build> {
+  async write(
+    field: "views" | "downloads" | "favorites",
+    id: number
+  ): Promise<void | Build> {
+    const build = await Build.findByPk(id).catch(() => undefined);
 
-export const cache: Cache = {
-  writeThreshold: 50,
-  getViews: (buildId: number) => {
-    if (!cache.views[buildId]) {
-      cache.views[buildId] = [];
-    }
-
-    return cache.views[buildId];
-  },
-  getDownloads: (buildId: number) => {
-    if (!cache.downloads[buildId]) {
-      cache.downloads[buildId] = [];
-    }
-
-    return cache.downloads[buildId];
-  },
-  addView: (buildId: number) => {
-    const views = cache.getViews(buildId);
-
-    views.push(new Date());
-    if (views.length > cache.writeThreshold) cache.write(buildId).then();
-  },
-  addDownload: (buildId: number) => {
-    const downloads = cache.getDownloads(buildId);
-
-    downloads.push(new Date());
-    if (downloads.length > cache.writeThreshold) cache.write(buildId).then();
-  },
-  write: async (buildId) => {
-    const views = cache.getViews(buildId);
-    const downloads = cache.getDownloads(buildId);
-    if (!views && !downloads) return;
-
-    // Lock so values won't be updated twice
-    const backup = [views, downloads];
-    delete cache.views[buildId];
-    delete cache.downloads[buildId];
-
-    const build = await Build.findByPk(buildId).catch(() => undefined);
+    const views = this.get("views", id);
+    const downloads = this.get("downloads", id);
 
     if (build) {
       return Promise.all([
         views &&
-          BuildView.bulkCreate(views.map((d) => ({ createdAt: d, buildId }))),
+          BuildView.bulkCreate(
+            views.map((view) => ({
+              createdAt: view.date,
+              buildId: id,
+              viewerUuid: view.uuid,
+            }))
+          ),
         downloads &&
           BuildDownload.bulkCreate(
-            downloads.map((d) => ({ createdAt: d, buildId }))
+            downloads.map((download) => ({
+              createdAt: download.date,
+              buildId: id,
+              downloaderUuid: download.uuid,
+            }))
           ),
       ]).then(() => build.updateTotals());
     }
+  }
 
-    cache.views[buildId] = backup[0];
-    cache.downloads[buildId] = backup[1];
-  },
-  views: {},
-  downloads: {},
-};
+  async writeAll(): Promise<void> {
+    const buildIds = [
+      ...Object.keys(this.data.views),
+      ...Object.keys(this.data.downloads),
+    ];
+
+    return Promise.all(
+      buildIds.map((id) =>
+        Promise.all([
+          this.write("views", Number(id)),
+          this.write("downloads", Number(id)),
+        ])
+      )
+    ).then(() => undefined);
+  }
+}
 
 class Build extends PostBase<Build> {
   declare totalDownloads: CreationOptional<number>;
@@ -168,12 +148,12 @@ class Build extends PostBase<Build> {
     );
   }
 
-  addView() {
-    cache.addView(this.id);
+  addView(uuid: string = undefined) {
+    Build.cache.increment("views", this.id, uuid);
   }
 
-  addDownload() {
-    cache.addDownload(this.id);
+  addDownload(uuid: string) {
+    Build.cache.increment("downloads", this.id, uuid);
   }
 
   async updateTotals(): Promise<Build> {
@@ -252,6 +232,8 @@ class Build extends PostBase<Build> {
       res.filter((i) => i !== undefined)
     );
   }
+
+  static cache = new BuildCache();
 }
 
 Build.init(

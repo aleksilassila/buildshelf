@@ -112,8 +112,17 @@ User.belongsToMany(Build, {
 Build.hasMany(BuildView);
 BuildView.belongsTo(Build);
 
+User.hasMany(BuildView, { as: "views", foreignKey: "viewerUuid" });
+BuildView.belongsTo(User, { as: "viewer", foreignKey: "viewerUuid" });
+
 Build.hasMany(BuildDownload);
 BuildDownload.belongsTo(Build);
+
+User.hasMany(BuildDownload, { as: "downloads", foreignKey: "downloaderUuid" });
+BuildDownload.belongsTo(User, {
+  as: "downloader",
+  foreignKey: "downloaderUuid",
+});
 
 User.hasMany(Build, { as: "builds", foreignKey: "creatorUuid" });
 Build.belongsTo(User, { as: "creator", foreignKey: "creatorUuid" });

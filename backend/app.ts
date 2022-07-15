@@ -18,18 +18,12 @@ import buildRoutes from "./src/routes/buildRoutes";
 import userRoutes from "./src/routes/userRoutes";
 import collections from "./src/routes/collectionRoutes";
 import client from "./src/routes/clientRoutes";
-import Build, { cache as buildsCache } from "./src/models/Build";
+import Build from "./src/models/Build";
 import { Op } from "sequelize";
 
 cron.schedule("*/15 * * * *", async () => {
   // Update views, downloads and saves
-  const buildIds = [
-    ...Object.keys(buildsCache.views),
-    ...Object.keys(buildsCache.downloads),
-  ];
-  await Promise.all(
-    buildIds.map((buildId) => buildsCache.write(parseInt(buildId)))
-  );
+  await Build.cache.writeAll();
 
   // Update popularity score
   Build.findAll({
