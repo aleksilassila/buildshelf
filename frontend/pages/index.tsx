@@ -52,22 +52,21 @@ const Home = () => {
    *  - Manage collections
    *  - Optimize photo sizes
    * TODO:
+   *  - logging
    *  - Make error messages and loading screens consistent
    *  - Improve ui components
    *    - States inside components and callbacks
    *  - Form validation
-   *  - Ban uuids
    *  - Popular collection = best average score
    *  - More middleware to make code dry
-   *  - Make api endpoints consistent
    *  - Adjust image order
    *  - Administration tools
+   *    - Ban uuids
    *  - Implement private (paid) builds
    *  - Browse creators
    *  - Api documentation
    *  - New dedicated search page?
    *  - Search and sort by date and time
-   *  - Fix multiplebutton
    * */
 
   const CategoryLink = ({ href, children }) => (

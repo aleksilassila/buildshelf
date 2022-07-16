@@ -75,9 +75,9 @@ const TitleBar = ({
           <NavLink name="builds" href="/builds">
             Builds
           </NavLink>
-          <NavLink name="collections" href="/collections">
-            Collections
-          </NavLink>
+          {/*<NavLink name="collections" href="/collections">*/}
+          {/*  Collections*/}
+          {/*</NavLink>*/}
           {userObject?.username ? (
             <>
               <NavLink name="upload" href="/upload">

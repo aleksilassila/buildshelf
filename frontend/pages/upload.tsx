@@ -1,12 +1,10 @@
 import Auth from "../utils/auth";
 import TitleBar from "../components/bars/TitleBar";
-import { useEffect } from "react";
 import { AxiosResponse } from "axios";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
 import Button from "../components/ui/Button";
 import theme from "../constants/theme";
-import Localstorage from "../utils/localstorage";
 import Tag from "../components/ui/Tag";
 import * as Form from "../components/form/Form";
 import FormMarkdownEditor from "../components/form/FormMarkdownEditor";
@@ -17,8 +15,6 @@ import * as AlertDialog from "../components/ui/AlertDialog";
 import { useRouter } from "next/router";
 import * as Dropdown from "../components/ui/Dropdown";
 import { apiRequest, useApi } from "../utils/api";
-import * as RadioAccordion from "../components/ui/RadioAccordion";
-import * as RadioGroup from "../components/ui/RadioGroup";
 
 interface FormData {
   name: string;
@@ -300,105 +296,105 @@ const Upload = () => {
           </Dropdown.Root>
           <Form.Tip>A noun defining the type of the build.</Form.Tip>
         </Form.Section>
-        <Form.Section>
-          <Form.LabelText>Add to a Build Collection</Form.LabelText>
-          <RadioAccordion.Root
-            defaultValue={formData.collection.action}
-            onValueChange={(action) =>
-              setFormData({
-                ...formData,
-                collection: { ...formData.collection, action },
-              })
-            }
-          >
-            <RadioAccordion.Item value="none">
-              <RadioAccordion.Trigger value="none">None</RadioAccordion.Trigger>
-              <RadioAccordion.Content>
-                Don't add the build to a collection.
-              </RadioAccordion.Content>
-            </RadioAccordion.Item>
-            <RadioAccordion.Item value="existing">
-              <RadioAccordion.Trigger value="existing">
-                Existing Collection
-              </RadioAccordion.Trigger>
-              <RadioAccordion.Content>
-                {collections?.length ? (
-                  <div>
-                    <Form.LabelText>
-                      Add the build to an exising collection
-                    </Form.LabelText>
-                    <RadioGroup.Root
-                      onValueChange={(id) =>
-                        setFormData({
-                          ...formData,
-                          collection: { ...formData.collection, id },
-                        })
-                      }
-                    >
-                      {collections?.map((collection, key) => (
-                        <RadioGroup.Item
-                          className="gap-2"
-                          key={key}
-                          value={`${collection.id}`}
-                        >
-                          <span className="font-medium flex-initial">
-                            {collection.name}
-                          </span>
-                          <span className="text-left flex-auto">
-                            {collection.description}
-                          </span>
-                          <span className="text-stone-600 text-sm flex-initial">
-                            {collection.builds?.length} builds
-                          </span>
-                        </RadioGroup.Item>
-                      ))}
-                    </RadioGroup.Root>
-                  </div>
-                ) : (
-                  <div>You don't seem to have any existing collections.</div>
-                )}
-              </RadioAccordion.Content>
-            </RadioAccordion.Item>
-            <RadioAccordion.Item value="new">
-              <RadioAccordion.Trigger value="new">
-                New Collection
-              </RadioAccordion.Trigger>
-              <RadioAccordion.Content>
-                <Form.LabelText>Create a new collection</Form.LabelText>
-                <RadioAccordion.Section>
-                  Name:
-                  <Input
-                    value={formData.collection.name}
-                    setValue={(name) =>
-                      setFormData({
-                        ...formData,
-                        collection: { ...formData.collection, name },
-                      })
-                    }
-                    placeholder="Collection Name"
-                  />
-                </RadioAccordion.Section>
-                <RadioAccordion.Section>
-                  Description:
-                  <Input
-                    value={formData.collection.description}
-                    setValue={(description) =>
-                      setFormData({
-                        ...formData,
-                        collection: { ...formData.collection, description },
-                      })
-                    }
-                    placeholder="Collection Description"
-                  />
-                </RadioAccordion.Section>
-                <RadioAccordion.Section>
-                  Images:
-                  <ImageUpload />
-                </RadioAccordion.Section>
-              </RadioAccordion.Content>
-            </RadioAccordion.Item>
-          </RadioAccordion.Root>
-        </Form.Section>
+        {/*<Form.Section>*/}
+        {/*  <Form.LabelText>Add to a Build Collection</Form.LabelText>*/}
+        {/*  <RadioAccordion.Root*/}
+        {/*    defaultValue={formData.collection.action}*/}
+        {/*    onValueChange={(action) =>*/}
+        {/*      setFormData({*/}
+        {/*        ...formData,*/}
+        {/*        collection: { ...formData.collection, action },*/}
+        {/*      })*/}
+        {/*    }*/}
+        {/*  >*/}
+        {/*    <RadioAccordion.Item value="none">*/}
+        {/*      <RadioAccordion.Trigger value="none">None</RadioAccordion.Trigger>*/}
+        {/*      <RadioAccordion.Content>*/}
+        {/*        Don't add the build to a collection.*/}
+        {/*      </RadioAccordion.Content>*/}
+        {/*    </RadioAccordion.Item>*/}
+        {/*    <RadioAccordion.Item value="existing">*/}
+        {/*      <RadioAccordion.Trigger value="existing">*/}
+        {/*        Existing Collection*/}
+        {/*      </RadioAccordion.Trigger>*/}
+        {/*      <RadioAccordion.Content>*/}
+        {/*        {collections?.length ? (*/}
+        {/*          <div>*/}
+        {/*            <Form.LabelText>*/}
+        {/*              Add the build to an exising collection*/}
+        {/*            </Form.LabelText>*/}
+        {/*            <RadioGroup.Root*/}
+        {/*              onValueChange={(id) =>*/}
+        {/*                setFormData({*/}
+        {/*                  ...formData,*/}
+        {/*                  collection: { ...formData.collection, id },*/}
+        {/*                })*/}
+        {/*              }*/}
+        {/*            >*/}
+        {/*              {collections?.map((collection, key) => (*/}
+        {/*                <RadioGroup.Item*/}
+        {/*                  className="gap-2"*/}
+        {/*                  key={key}*/}
+        {/*                  value={`${collection.id}`}*/}
+        {/*                >*/}
+        {/*                  <span className="font-medium flex-initial">*/}
+        {/*                    {collection.name}*/}
+        {/*                  </span>*/}
+        {/*                  <span className="text-left flex-auto">*/}
+        {/*                    {collection.description}*/}
+        {/*                  </span>*/}
+        {/*                  <span className="text-stone-600 text-sm flex-initial">*/}
+        {/*                    {collection.builds?.length} builds*/}
+        {/*                  </span>*/}
+        {/*                </RadioGroup.Item>*/}
+        {/*              ))}*/}
+        {/*            </RadioGroup.Root>*/}
+        {/*          </div>*/}
+        {/*        ) : (*/}
+        {/*          <div>You don't seem to have any existing collections.</div>*/}
+        {/*        )}*/}
+        {/*      </RadioAccordion.Content>*/}
+        {/*    </RadioAccordion.Item>*/}
+        {/*    <RadioAccordion.Item value="new">*/}
+        {/*      <RadioAccordion.Trigger value="new">*/}
+        {/*        New Collection*/}
+        {/*      </RadioAccordion.Trigger>*/}
+        {/*      <RadioAccordion.Content>*/}
+        {/*        <Form.LabelText>Create a new collection</Form.LabelText>*/}
+        {/*        <RadioAccordion.Section>*/}
+        {/*          Name:*/}
+        {/*          <Input*/}
+        {/*            value={formData.collection.name}*/}
+        {/*            setValue={(name) =>*/}
+        {/*              setFormData({*/}
+        {/*                ...formData,*/}
+        {/*                collection: { ...formData.collection, name },*/}
+        {/*              })*/}
+        {/*            }*/}
+        {/*            placeholder="Collection Name"*/}
+        {/*          />*/}
+        {/*        </RadioAccordion.Section>*/}
+        {/*        <RadioAccordion.Section>*/}
+        {/*          Description:*/}
+        {/*          <Input*/}
+        {/*            value={formData.collection.description}*/}
+        {/*            setValue={(description) =>*/}
+        {/*              setFormData({*/}
+        {/*                ...formData,*/}
+        {/*                collection: { ...formData.collection, description },*/}
+        {/*              })*/}
+        {/*            }*/}
+        {/*            placeholder="Collection Description"*/}
+        {/*          />*/}
+        {/*        </RadioAccordion.Section>*/}
+        {/*        <RadioAccordion.Section>*/}
+        {/*          Images:*/}
+        {/*          <ImageUpload />*/}
+        {/*        </RadioAccordion.Section>*/}
+        {/*      </RadioAccordion.Content>*/}
+        {/*    </RadioAccordion.Item>*/}
+        {/*  </RadioAccordion.Root>*/}
+        {/*</Form.Section>*/}
         <Form.Section className="flex flex-row justify-between">
           <Button onClick={submitData} mode="primary">
             Upload
@@ -409,12 +405,6 @@ const Upload = () => {
       <Toast toastProps={toastProps} />
       <style jsx>
         {`
-          .container {
-            display: flex;
-            flex-direction: column;
-            background-color: ${theme.light};
-          }
-
           .tags > :global(.table) {
             margin-bottom: 0.5em;
             grid-template-columns: 1fr max-content;
