@@ -1,113 +1,28 @@
 "use strict";
 
-const description = `
-# A demo of \`react-markdown\`
+// 49fb0ab6-2177-49b8-a35f-7b16736cf480
+const spruceDesc = `
+A Building created by MythicalSausage @ youtube.com/watch?v=bClClR9ZkzQ&
+`;
 
-\`react-markdown\` is a markdown component for React.
+const spruceFiles = {
+  cart: { category: "decorations", name: "Cart" },
+  "cart-big": { category: "decorations", name: "Big Cart" },
+  gate: { category: "decorations", name: "Spruce Gate" },
+  well: { category: "decorations", name: "Well" },
+  stall: { category: "decorations", name: "Spruce Stand" },
+  "gate-big": { category: "gates", name: "Big Spruce Gate" },
+  "spruce-tree-tall": { category: "trees", name: "Tall Spruce Tree" },
+  "spruce-tree-short": { category: "trees", name: "Short Spruce Tree" },
+  "house-tiny": { category: "houses", name: "Tiny Stone House" },
+  "house-medium-1": { category: "houses", name: "Medium Spruce House" },
+  "house-medium-2": { category: "houses", name: "Medium Spruce House" },
+  church: { category: "houses", name: "Spruce Church" },
+  stable: { category: "houses", name: "Spruce Stable" },
+};
 
-👉 Changes are re-rendered as you type.
-
-👈 Try writing some markdown on the left.
-
-## Overview
-
-* Follows [CommonMark](https://commonmark.org)
-* Optionally follows [GitHub Flavored Markdown](https://github.github.com/gfm/)
-* Renders actual React elements instead of using \`dangerouslySetInnerHTML\`
-* Lets you define your own components (to render \`MyHeading\` instead of \`h1\`)
-* Has a lot of plugins
-
-## Table of contents
-
-Here is an example of a plugin in action
-([\`remark-toc\`](https://github.com/remarkjs/remark-toc)).
-This section is replaced by an actual table of contents.
-
-## Syntax highlighting
-
-Here is an example of a plugin to highlight code:
-[\`rehype-highlight\`](https://github.com/rehypejs/rehype-highlight).
-
-\`\`\`js
-import React from 'react'
-import ReactDOM from 'react-dom'
-import ReactMarkdown from 'react-markdown'
-import rehypeHighlight from 'rehype-highlight'
-
-ReactDOM.render(
-  <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{'# Your markdown here'}</ReactMarkdown>,
-  document.querySelector('#content')
-)
-\`\`\`
-
-Pretty neat, eh?
-
-## GitHub flavored markdown (GFM)
-
-For GFM, you can *also* use a plugin:
-[\`remark-gfm\`](https://github.com/remarkjs/react-markdown#use).
-It adds support for GitHub-specific extensions to the language:
-tables, strikethrough, tasklists, and literal URLs.
-
-These features **do not work by default**.
-👆 Use the toggle above to add the plugin.
-
-| Feature    | Support              |
-| ---------: | :------------------- |
-| CommonMark | 100%                 |
-| GFM        | 100% w/ \`remark-gfm\` |
-
-~~strikethrough~~
-
-* [ ] task list
-* [x] checked item
-
-https://example.com
-
-## HTML in markdown
-
-⚠️ HTML in markdown is quite unsafe, but if you want to support it, you can
-use [\`rehype-raw\`](https://github.com/rehypejs/rehype-raw).
-You should probably combine it with
-[\`rehype-sanitize\`](https://github.com/rehypejs/rehype-sanitize).
-
-<blockquote>
-  👆 Use the toggle above to add the plugin.
-</blockquote>
-
-## Components
-
-You can pass components to change things:
-
-\`\`\`js
-import React from 'react'
-import ReactDOM from 'react-dom'
-import ReactMarkdown from 'react-markdown'
-import MyFancyRule from './components/my-fancy-rule.js'
-
-ReactDOM.render(
-  <ReactMarkdown
-    components={{
-      // Use h2s instead of h1s
-      h1: 'h2',
-      // Use a component instead of hrs
-      hr: ({node, ...props}) => <MyFancyRule {...props} />
-    }}
-  >
-    # Your markdown here
-  </ReactMarkdown>,
-  document.querySelector('#content')
-)
-\`\`\`
-
-## More info?
-
-Much more info is available in the
-[readme on GitHub](https://github.com/remarkjs/react-markdown)!
-
-***
-
-A component by [Espen Hovlandsdal](https://espen.codes/)
+const oakDesc = `
+A build created by Zhevenn @ youtube.com/watch?v=pv2MoQJpuKI&
 `;
 
 module.exports = {
@@ -122,77 +37,21 @@ module.exports = {
      * }], {});
      */
 
-    // array from 99990 to 99999
-    const ids = [
-      99990, 99991, 99992, 99993, 99994, 99995, 99996, 99997, 99998, 99999,
-    ];
-
-    const names = [
-      "Starer house",
-      "Skyscraper",
-      "Cart",
-      "Scarecrow",
-      "Mansion",
-    ];
-
-    await queryInterface.bulkInsert(
-      "builds",
-      ids.map(
-        (id) => ({
-          id,
-          name: names[Math.floor(Math.random() * names.length)],
-          description,
-          buildFileId: 99991,
-          totalDownloads: 100,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
-          collectionId: 99998,
-          categoryName: "houses",
-          approved: true,
-          private: false,
-          score: 0,
-        }),
-        {}
-      )
-    );
-
-    await queryInterface.bulkInsert(
-      "builds",
-      [
-        {
-          id: 99988,
-          name: "Not approved",
-          description,
-          buildFileId: 99991,
-          totalDownloads: 100,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
-          collectionId: 99998,
-          categoryName: "houses",
-          approved: false,
-          score: 0,
-          private: false,
-        },
-        {
-          id: 99989,
-          name: "Private",
-          description,
-          buildFileId: 99991,
-          totalDownloads: 100,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
-          collectionId: 99998,
-          categoryName: "houses",
-          private: true,
-          score: 0,
-          approved: true,
-        },
-      ],
-      {}
-    );
+    const spruceEntries = Object.keys(spruceFiles).map((fileName, index) => ({
+      id: index + 1,
+      name: spruceFiles[fileName].name,
+      description: spruceDesc,
+      buildFileId: index + 1,
+      totalDownloads: 100,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      creatorUuid: "49fb0ab6217749b8a35f7b16736cf480",
+      collectionId: null,
+      categoryName: spruceFiles[fileName].category,
+      approved: true,
+      private: false,
+      score: 0,
+    }));
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -206,7 +65,7 @@ module.exports = {
     await queryInterface.bulkDelete(
       "builds",
       {
-        creatorUuid: "f2cc1eadd681243467e4e11476c27df2",
+        creatorUuid: "49fb0ab6217749b8a35f7b16736cf480",
       },
       {}
     );

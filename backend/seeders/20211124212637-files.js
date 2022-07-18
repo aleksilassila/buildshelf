@@ -8,6 +8,22 @@ const logError = (err) => {
   }
 };
 
+const spruceFiles = {
+  cart: { category: "decorations", name: "Cart" },
+  "cart-big": { category: "decorations", name: "Big Cart" },
+  gate: { category: "decorations", name: "Spruce Gate" },
+  well: { category: "decorations", name: "Well" },
+  stall: { category: "decorations", name: "Spruce Stand" },
+  "gate-big": { category: "gates", name: "Big Spruce Gate" },
+  "spruce-tree-tall": { category: "trees", name: "Tall Spruce Tree" },
+  "spruce-tree-short": { category: "trees", name: "Short Spruce Tree" },
+  "house-tiny": { category: "houses", name: "Tiny Stone House" },
+  "house-medium-1": { category: "houses", name: "Medium Spruce House" },
+  "house-medium-2": { category: "houses", name: "Medium Spruce House" },
+  church: { category: "houses", name: "Spruce Church" },
+  stable: { category: "houses", name: "Spruce Stable" },
+};
+
 const imageNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 module.exports = {
@@ -16,22 +32,25 @@ module.exports = {
       fs.mkdirSync("./uploads");
     }
 
-    imageNumbers.forEach((imageNumber) => {
+    Object.keys(spruceFiles).map((fileName) => {
       fs.copyFile(
-        "./seedFiles/" + imageNumber + ".jpg",
-        "./uploads/" + imageNumber + ".jpg",
+        "./seedFiles/spruce-village/" + fileName + ".litematic",
+        "./uploads/" + fileName + ".litematic",
+        logError
+      );
+      fs.copyFile(
+        "./seedFiles/spruce-village/" + fileName + ".jpeg",
+        "./uploads/" + fileName + ".jpeg",
         logError
       );
     });
 
-    fs.copyFile("./seedFiles/1.litematic", "./uploads/1.litematic", logError);
-
     await queryInterface.bulkInsert(
       "images",
-      imageNumbers.map((imageNumber) => {
+      Object.keys(spruceFiles).map((fileName, index) => {
         return {
-          id: 99990 + imageNumber,
-          filename: imageNumber + ".jpg",
+          id: index + 1,
+          filename: fileName + ".jpeg",
           createdAt: new Date(),
           updatedAt: new Date(),
         };
@@ -41,22 +60,19 @@ module.exports = {
 
     await queryInterface.bulkInsert(
       "buildFiles",
-      [
-        {
-          id: 99991,
-          filename: "1.litematic",
-          version: 5,
-          minecraftDataVersion: 2578,
-          x: 22,
-          y: 8,
-          z: 17,
-          blockCount: 1128,
-          md5: "02b80e13d8c4437bf6b9d20d5b978459",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ],
-      {}
+      Object.keys(spruceFiles).map((fileName, index) => ({
+        id: index + 1,
+        filename: fileName + ".litematic",
+        version: 5,
+        minecraftDataVersion: 2578,
+        x: 22,
+        y: 8,
+        z: 17,
+        blockCount: 1128,
+        md5: "02b80e13d8c4437bf6b9d20d5b978459",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }))
     );
   },
 

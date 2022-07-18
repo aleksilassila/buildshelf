@@ -13,7 +13,7 @@ const Banner = ({ children, uri }) => (
     className="bg-cover h-[75vh] flex flex-col justify-center"
     style={{
       background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-              url("/mockImages/outpost.jpg") fixed no-repeat center center`,
+              url("/mockImages/wheat.png") fixed no-repeat center center`,
       marginTop: "0",
       backgroundSize: "cover",
     }}
@@ -46,6 +46,8 @@ const Home = () => {
 
   /*
    * TODO before launch:
+   *  - add faq
+   *  - add mod info
    *  - Radix icons / more icons
    *  - Make frontpage banner change picture, get proper mock images
    *  - Favorite collections

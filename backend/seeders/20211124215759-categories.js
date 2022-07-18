@@ -16,6 +16,7 @@ module.exports = {
       "houses",
       "decorations",
       "castles",
+      "gates",
       "bases",
       "traps",
       "xp-farms",
