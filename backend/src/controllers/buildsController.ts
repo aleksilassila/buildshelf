@@ -13,7 +13,7 @@ import {
   parseSimplifiedLitematic,
   writeLitematic,
 } from "../utils";
-import { errors } from "../client-error";
+import { ClientError, errors } from "../client-error";
 import fs from "fs";
 import { validate as validateJSON } from "jsonschema";
 import crypto from "crypto";
@@ -245,10 +245,7 @@ const search = async function (
     .then(async (builds) => {
       res.send(await Build.toJSONArray(builds, req.user));
     })
-    .catch((err) => {
-      console.log(err);
-      errors.SERVER_ERROR.send(res);
-    });
+    .catch((err) => ClientError.sendInternalError(err, res));
 };
 
 const downloadBuild = async function (req: BuildReq, res: Res) {
@@ -330,7 +327,7 @@ const deleteBuild = async function (req: BuildReq & AuthReq, res: Res) {
   req.build
     .destroy()
     .then(() => res.send("OK"))
-    .catch((err) => errors.SERVER_ERROR.send(res));
+    .catch((err) => ClientError.sendInternalError(err, res));
 };
 
 const approve = async function (req: BuildReq, res: Res) {
@@ -350,7 +347,7 @@ const uploadImages = async function (
     errors.FILE_TOO_LARGE.send(res);
     return;
   } else if (multerError) {
-    errors.SERVER_ERROR.send(res);
+    ClientError.sendInternalError(multerError, res);
     return;
   }
 

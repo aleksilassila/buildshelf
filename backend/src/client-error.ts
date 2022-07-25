@@ -10,6 +10,11 @@ const ClientError = function (
   this.info = info;
 };
 
+ClientError.sendInternalError = function (err: Error, res: Response) {
+  console.log(err);
+  errors.SERVER_ERROR.send(res);
+};
+
 ClientError.prototype.send = function (res: Response, message = "") {
   this.info = this.info || message;
   res.status(this.status).send({
