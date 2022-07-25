@@ -260,7 +260,7 @@ const downloadBuild = async function (req: BuildReq, res: Res) {
 
 const get = async function (req: BuildReq, res: Res) {
   res.send(await req.build.toJSON(req.user));
-  req.build.addView();
+  await req.build.addView(req.user);
 };
 
 const save = async function (req: BuildReq & AuthReq, res: Res) {

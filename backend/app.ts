@@ -22,9 +22,6 @@ import Build from "./src/models/Build";
 import { Op } from "sequelize";
 
 cron.schedule("*/15 * * * *", async () => {
-  // Update views, downloads and saves
-  await Build.cache.writeAll();
-
   // Update popularity score
   Build.findAll({
     where: {
@@ -71,7 +68,7 @@ api.post("/login/microsoft", loginMicrosoft);
 api.post("/login/token", loginClient);
 
 api.use(userRoutes);
-api.use(collections);
+// api.use(collections);
 api.use(buildRoutes);
 api.use(client);
 

@@ -14,48 +14,6 @@ import { removeUndefined } from "../utils";
 import { OptionalAuthReq } from "../../types";
 import { Request } from "express";
 
-type CacheEntries = { uuid?: string; date: Date }[];
-
-export abstract class Cache<T extends PostBase<T>> {
-  writeThreshold: 50;
-
-  increment(
-    field: "views" | "downloads" | "favorites",
-    id: number,
-    uuid?: string
-  ) {
-    const value = this.get(field, id);
-
-    value.push({ uuid, date: new Date() });
-    if (value.length > this.writeThreshold) this.write(field, id).then();
-  }
-
-  get(field: "views" | "downloads" | "favorites", id: number): CacheEntries {
-    if (!this.data[field][id]) {
-      this.data[field][id] = [];
-    }
-
-    return this.data[field][id];
-  }
-
-  abstract write(
-    field: "views" | "downloads" | "favorites",
-    id: number
-  ): Promise<T | void>;
-
-  abstract writeAll(): Promise<void>;
-
-  data: {
-    views: { [id: number]: CacheEntries };
-    downloads: { [id: number]: CacheEntries };
-    favorites: { [id: number]: CacheEntries };
-  } = {
-    views: {},
-    downloads: {},
-    favorites: {},
-  };
-}
-
 abstract class PostBase<T extends Model> extends Model<
   InferAttributes<T>,
   InferCreationAttributes<T>
@@ -63,12 +21,13 @@ abstract class PostBase<T extends Model> extends Model<
   declare id?: CreationOptional<number>;
   declare name: string;
   declare description: string;
-  declare totalViews: CreationOptional<number>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare private: CreationOptional<boolean>;
   declare approved: CreationOptional<boolean>;
   declare score: CreationOptional<number>;
+
+  declare totalViews: CreationOptional<number>;
 
   declare creatorUuid?: string;
 

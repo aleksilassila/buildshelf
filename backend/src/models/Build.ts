@@ -15,8 +15,8 @@ import Collection, { CollectionJSON } from "./Collection";
 import { TagModel } from "./Tag";
 import { BuildFileModel } from "./BuildFile";
 import { CategoryModel } from "./Category";
-import { BuildDownload, BuildView, UserSavedBuilds } from "./index";
-import PostBase, { Cache } from "./PostBase";
+import { BuildDownload, BuildSave, BuildView } from "./index";
+import PostBase from "./PostBase";
 
 export interface BuildJSON {
   images: ImageJSON[] | undefined;
@@ -35,55 +35,6 @@ export interface BuildJSON {
   id: number;
   categoryName: string;
   updatedAt: Date;
-}
-
-class BuildCache extends Cache<Build> {
-  async write(
-    field: "views" | "downloads" | "favorites",
-    id: number
-  ): Promise<void | Build> {
-    const build = await Build.findByPk(id).catch(() => undefined);
-
-    const views = this.get("views", id);
-    const downloads = this.get("downloads", id);
-
-    if (build) {
-      return Promise.all([
-        views &&
-          BuildView.bulkCreate(
-            views.map((view) => ({
-              createdAt: view.date,
-              buildId: id,
-              viewerUuid: view.uuid,
-            }))
-          ),
-        downloads &&
-          BuildDownload.bulkCreate(
-            downloads.map((download) => ({
-              createdAt: download.date,
-              buildId: id,
-              downloaderUuid: download.uuid,
-            }))
-          ),
-      ]).then(() => build.updateTotals());
-    }
-  }
-
-  async writeAll(): Promise<void> {
-    const buildIds = [
-      ...Object.keys(this.data.views),
-      ...Object.keys(this.data.downloads),
-    ];
-
-    return Promise.all(
-      buildIds.map((id) =>
-        Promise.all([
-          this.write("views", Number(id)),
-          this.write("downloads", Number(id)),
-        ])
-      )
-    ).then(() => undefined);
-  }
 }
 
 class Build extends PostBase<Build> {
@@ -148,16 +99,62 @@ class Build extends PostBase<Build> {
     );
   }
 
-  addView(uuid: string = undefined) {
-    Build.cache.increment("views", this.id, uuid);
+  async addView(user: User = undefined) {
+    if (!user) {
+      return;
+    }
+
+    await BuildView.findOrCreate({
+      where: {
+        viewerUuid: user.uuid,
+        buildId: this.id,
+      },
+      defaults: {
+        buildId: this.id,
+        viewerUuid: user.uuid,
+      },
+    }).then(async () => {
+      await this.countViews();
+    });
   }
 
-  addDownload(uuid: string) {
-    Build.cache.increment("downloads", this.id, uuid);
+  async countViews() {
+    await this.update({
+      totalViews: await BuildView.count({
+        where: { buildId: this.id },
+      }),
+    });
+  }
+
+  async addDownload(user: User = undefined) {
+    if (!user) {
+      return;
+    }
+
+    await BuildDownload.findOrCreate({
+      where: {
+        downloaderUuid: user.uuid,
+        buildId: this.id,
+      },
+      defaults: {
+        buildId: this.id,
+        downloaderUuid: user.uuid,
+      },
+    }).then(async () => {
+      await this.countDownloads();
+    });
+  }
+
+  async countDownloads() {
+    await this.update({
+      totalDownloads: await BuildDownload.count({
+        where: { buildId: this.id },
+      }),
+    });
   }
 
   async updateTotals(): Promise<Build> {
-    const totalSaves = await UserSavedBuilds.count({
+    const totalSaves = await BuildSave.count({
       where: {
         buildId: this.id,
       },
@@ -192,7 +189,7 @@ class Build extends PostBase<Build> {
         },
       },
     });
-    const savesThisWeek = await UserSavedBuilds.count({
+    const savesThisWeek = await BuildSave.count({
       where: {
         buildId: this.id,
         createdAt: {
@@ -232,8 +229,6 @@ class Build extends PostBase<Build> {
       res.filter((i) => i !== undefined)
     );
   }
-
-  static cache = new BuildCache();
 }
 
 Build.init(

@@ -12,7 +12,7 @@ module.exports = {
      * }], {});
      */
     await queryInterface.bulkInsert(
-      "userSavedBuilds",
+      "buildSaves",
       [
         {
           userUuid: "f2cc1eadd681243467e4e11476c27df2",
@@ -50,7 +50,7 @@ module.exports = {
      * await queryInterface.bulkDelete('People', null, {});
      */
     await queryInterface.bulkDelete(
-      "userSavedBuilds",
+      "buildSaves",
       {
         userUuid: "f2cc1eadd681243467e4e11476c27df2",
         buildId: [99991, 99992, 99993],

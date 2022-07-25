@@ -33,8 +33,8 @@ const UserCollectionBookmarks = sequelize.define(
   }
 );
 
-const UserSavedBuilds = sequelize.define(
-  "userSavedBuilds",
+const BuildSave = sequelize.define(
+  "buildSaves",
   {
     createdAt: {
       type: DataTypes.DATE,
@@ -105,7 +105,7 @@ const BuildDownload = sequelize.define(
 );
 
 User.belongsToMany(Build, {
-  through: UserSavedBuilds,
+  through: BuildSave,
   as: "savedBuilds",
 });
 
@@ -211,6 +211,6 @@ export {
   BuildFile,
   BuildView,
   BuildDownload,
-  UserSavedBuilds,
+  BuildSave,
   UserFavoriteCollections,
 };
