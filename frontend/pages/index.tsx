@@ -52,6 +52,7 @@ const Home = () => {
    *  - Manage collections
    *  - Optimize photo sizes
    * TODO:
+   *  - Editing removes old images
    *  - logging
    *  - Make error messages and loading screens consistent
    *  - Improve ui components

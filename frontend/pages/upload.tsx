@@ -241,7 +241,7 @@ const Upload = () => {
           <ImageUpload
             initialImages={formData.images}
             uploadCallback={(res, images) => {
-              if (res.status === 200) {
+              if (res?.status === 200) {
                 changeField("images")(images);
               }
             }}
@@ -268,7 +268,11 @@ const Upload = () => {
             />
             <Button
               onClick={addTag}
-              mode={formData.tags?.length >= 3 ? "disabled" : "default"}
+              mode={
+                formData.tags?.length >= 3 || formData.tagsInput.length === 0
+                  ? "disabled"
+                  : "primary"
+              }
             >
               Add
             </Button>

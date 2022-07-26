@@ -39,6 +39,7 @@ const Edit = () => {
       setFormData({
         ...formData,
         description: build.description,
+        images: build.images,
       });
     }
   }, [build]);
@@ -101,10 +102,10 @@ const Edit = () => {
         <Form.Section>
           <ImageUpload
             initialImages={build.images}
-            uploadCallback={(res, images) => {
+            uploadCallback={(res, allRemoteImages) => {
               setFormData({
                 ...formData,
-                images,
+                images: allRemoteImages,
               });
             }}
           />

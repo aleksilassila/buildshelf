@@ -21,6 +21,8 @@ import { Express } from "express";
 import { AuthReq, BuildReq, OptionalAuthReq, Res } from "../../types";
 import { Request } from "express/ts4.0";
 import { MulterError } from "multer";
+import path from "path";
+import sharp from "sharp";
 
 const canView = (res, build, user, message = "Build not found.") => {
   if (!build || !build.canView(user)) {
@@ -356,14 +358,40 @@ const uploadImages = async function (
     return;
   }
 
+  try {
+    // Compress images
+    for (const image of images) {
+      await sharp(image.path)
+        .resize({
+          width: 1920,
+          height: 1080,
+          fit: "inside",
+        })
+        .jpeg({ quality: 50 })
+        .toFile(image.path.substr(0, image.path.lastIndexOf(".")) + ".jpeg");
+      fs.unlinkSync(image.path);
+    }
+  } catch (err) {
+    ClientError.sendInternalError(err, res);
+    try {
+      for (const image of images) {
+        fs.unlinkSync(image.path);
+      }
+    } catch (ignored) {}
+    return;
+  }
+
   await Image.bulkCreate(
-    images?.map((i) => ({
-      filename: i.filename,
+    images?.map((image) => ({
+      filename:
+        image.filename.substr(0, image.filename.lastIndexOf(".")) + ".jpeg",
       creatorUuid: req.user?.uuid,
     }))
-  ).then(async (images) =>
-    res.send(await Promise.all(images.map((i) => i.toJSON())))
-  );
+  )
+    .then(async (images) =>
+      res.send(await Promise.all(images.map((i) => i.toJSON())))
+    )
+    .catch((err) => ClientError.sendInternalError(err, res));
 };
 
 export {

@@ -17,7 +17,7 @@ const removeUndefined = (object) => {
     if (typeof object[key] === "object") {
       out[key] = object[key];
       for (const ikey of Object.getOwnPropertySymbols(object[key])) {
-        if (object[key][ikey] === undefined) {
+        if (object[key][ikey] === undefined || object[key][ikey] === "") {
           delete out[key];
         }
       }

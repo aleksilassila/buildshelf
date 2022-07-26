@@ -10,9 +10,12 @@ const ImageUpload: ({
   uploadCallback,
   initialImages,
 }: {
-  uploadCallback?: (res: AxiosResponse, allRemoteImages: Image[]) => void;
+  uploadCallback?: (
+    res: AxiosResponse | null,
+    allRemoteImages: Image[]
+  ) => void;
   initialImages?: Image[];
-}) => JSX.Element = ({ uploadCallback = (res) => {}, initialImages = [] }) => {
+}) => JSX.Element = ({ uploadCallback = () => {}, initialImages = [] }) => {
   const [localFiles, setLocalFiles] = useState<File[]>([]);
   const [remoteImages, setRemoteImages] = useState<Image[]>(initialImages);
   const [toast, toastProps] = useToast();
@@ -38,7 +41,7 @@ const ImageUpload: ({
         },
       })
         .then((res) => {
-          toast("Images Added", "Images added successfully.");
+          toast("Images Added", "Images added successfully.", "primary");
           setRemoteImages([...remoteImages, ...res.data]);
 
           uploadCallback(res, [...remoteImages, ...res.data]);
@@ -49,7 +52,7 @@ const ImageUpload: ({
           } else {
             toast("Error", "There was an error uploading the images", "danger");
           }
-          uploadCallback(err, remoteImages);
+          uploadCallback(null, remoteImages);
         })
         .finally(() => setLocalFiles([]));
     }
@@ -60,9 +63,14 @@ const ImageUpload: ({
       {remoteImages.length ? (
         <ImageCollection
           images={remoteImages}
-          remove={(id: number) =>
-            setRemoteImages(remoteImages.filter((i) => (i.id != id ? i : null)))
-          }
+          remove={(id: number) => {
+            const filteredImages = remoteImages.filter(
+              (image) => image.id !== id
+            );
+
+            uploadCallback(null, filteredImages);
+            setRemoteImages(filteredImages);
+          }}
         />
       ) : null}
       <div className="flex gap-2">

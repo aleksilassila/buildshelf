@@ -1,4 +1,5 @@
 import {
+  and,
   CreationOptional,
   DataTypes,
   Includeable,
