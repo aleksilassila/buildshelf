@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 
 const Banner: ({
   children,
@@ -11,7 +11,7 @@ const Banner: ({
   className?: string;
 }) => JSX.Element = ({ children, url, uri, className }) => (
   <div
-    className={"page-container-lg " + className}
+    className={"px-[5vw] py-[8vh] " + className}
     style={{
       background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
           url("${

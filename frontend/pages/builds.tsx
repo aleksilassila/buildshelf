@@ -59,7 +59,7 @@ const Builds = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <TitleBar active="builds" />
-      <Banner url="/mockImages/potatoes-2.png">
+      <Banner url="/mockImages/potatoes-2.jpg">
         <BannerTitle>Builds</BannerTitle>
         <BannerSubtitle>Browse popular builds</BannerSubtitle>
       </Banner>
