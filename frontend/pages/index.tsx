@@ -111,7 +111,12 @@ const Home = () => {
           </li>
           <li>
             <span className={"text-green-600 font-bold"}>2.</span> Download{" "}
-            <a href={""} className={theme.text.link}>
+            <a
+              href={
+                "https://www.curseforge.com/minecraft/mc-mods/buildshelf-sync"
+              }
+              className={theme.text.link}
+            >
               Litematica extension
             </a>{" "}
             for Litematica to automatically sync your builds

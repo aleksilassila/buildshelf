@@ -253,7 +253,7 @@ const search = async function (
 const downloadBuild = async function (req: BuildReq, res: Res) {
   res.download(
     "./uploads/" + req.build.buildFile.filename,
-    req.build.buildFile.filename
+    req.build.name + ".litematic"
   );
 };
 

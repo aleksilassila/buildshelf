@@ -74,7 +74,6 @@ const ConfirmDangerous = ({ onConfirm }) => (
       <h2 className={theme.text.display}>Are you sure?</h2>
       <p className={theme.text.body}>You cannot undo this action.</p>
     </div>
-    q
     <div className="flex gap-4">
       <AlertDialog.Action onClick={onConfirm}>
         <Button mode="primary">Confirm</Button>

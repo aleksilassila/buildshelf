@@ -1,15 +1,15 @@
-import {Build} from "../interfaces/ApiResponses";
+import { Build } from "../interfaces/ApiResponses";
 import ImageCollection from "./ImageCollection";
 import Separator from "./utils/Separator";
 import * as MultipleButton from "./ui/MultipleButton";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Auth from "../utils/auth";
 import Heart from "./icons/Heart";
 import Button from "./ui/Button";
 import Link from "next/link";
 import Loading from "./statuses/Loading";
 import NetworkError from "./statuses/NetworkError";
-import {apiRequest, useApi} from "../utils/api";
+import { apiRequest, useApi } from "../utils/api";
 import theme from "../constants/theme";
 import minecraftDataVersions from "../constants/minecraftDataVersions";
 import Markdown from "./Markdown";
@@ -94,12 +94,17 @@ const BuildPage = ({ buildId }: Props) => {
       <div className="flex flex-row justify-between">
         <BuildTitle build={build} />
 
-        <div className="build-actions">
+        <div className="flex flex-row gap-2 self-end">
+          <Link
+            href={
+              process.env.BACKEND_ENDPOINT + "/builds/" + build.id + "/download"
+            }
+          >
+            <Button>Download</Button>
+          </Link>
           {userObject?.uuid === build.creator.uuid ? (
             <Link href={"/builds/" + build.id + "/edit"}>
-              <Button onClick={() => {}} mode="primary">
-                Edit Build
-              </Button>
+              <Button mode="primary">Edit Build</Button>
             </Link>
           ) : userObject ? (
             <SaveButton
