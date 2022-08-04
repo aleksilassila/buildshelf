@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import { User } from "../models";
-import { errors } from "../client-error";
+import { ClientError, errors } from "../client-error";
 import { NextFunction, Response } from "express";
 import { OptionalAuthReq } from "../../types";
 
@@ -42,66 +42,62 @@ const optionalAuth = async function (
     return;
   }
 
-  const decoded = verifyToken(token);
+  const [user, decodeError] = await User.getUserWithToken(token.toString());
 
-  if (decoded) {
-    const user = await User.findOne({
-      where: {
-        uuid: decoded.uuid,
-      },
-    });
-
+  if (!decodeError) {
     if (user) {
       req.user = user;
-      next();
-    } else {
-      res.status(404).send("User not found.");
     }
-  } else {
     next();
-  }
-};
-
-const loginMojang = async function (req, res) {
-  const { username, password, clientToken } = req.body;
-
-  if (!username || !password) {
-    res
-      .status(400)
-      .send(
-        "Bad request | You need to provide username, password and client token."
-      );
-    return;
-  }
-
-  const payload: any = {
-    agent: {
-      name: "Minecraft",
-      version: 1,
-    },
-    username,
-    password,
-    requestUser: true,
-  };
-
-  if (clientToken) {
-    payload.clientToken = clientToken;
-  }
-
-  const response = await axios
-    .post("https://authserver.mojang.com/authenticate", payload)
-    .catch((err) => err.response);
-  const user = response?.data?.user;
-  const profile = response?.data?.selectedProfile;
-
-  if (response?.status === 200 && user && profile) {
-    const [localUser] = await getDBUser(profile.id, profile.name, user.id);
-
-    res.send(signToken(localUser.username, localUser.uuid));
   } else {
-    res.status(403).send("Invalid credentials");
+    res.status(404).send("User not found.");
   }
 };
+
+// const loginMojang = async function (req, res) {
+//   const { username, password, clientToken } = req.body;
+//
+//   if (!username || !password) {
+//     res
+//       .status(400)
+//       .send(
+//         "Bad request | You need to provide username, password and client token."
+//       );
+//     return;
+//   }
+//
+//   const payload: any = {
+//     agent: {
+//       name: "Minecraft",
+//       version: 1,
+//     },
+//     username,
+//     password,
+//     requestUser: true,
+//   };
+//
+//   if (clientToken) {
+//     payload.clientToken = clientToken;
+//   }
+//
+//   const response = await axios
+//     .post("https://authserver.mojang.com/authenticate", payload)
+//     .catch((err) => err.response);
+//   const user = response?.data?.user;
+//   const profile = response?.data?.selectedProfile;
+//
+//   if (response?.status === 200 && user && profile) {
+//     const localUser = await User.findOrCreateUser(
+//       profile.id,
+//       user.id,
+//       profile.name
+//     );
+//
+//     res.send(localUser.getSignedToken());
+//   } else {
+//     res.status(403).send("Invalid credentials");
+//   }
+// };
 
 const loginMicrosoft = async (req, res) => {
   const { code } = req.body;
@@ -125,7 +121,7 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (msResponse?.status !== 200) {
-    res.status(500).send("Error occurred during Microsoft authentication.");
+    ClientError.sendInternalError(new Error(JSON.stringify(msResponse)), res);
     return;
   }
 
@@ -134,7 +130,7 @@ const loginMicrosoft = async (req, res) => {
     refresh_token: msRefreshToken,
     expires_in: msExpiresIn,
   } = msResponse.data;
-  console.log("MS response", msResponse.data);
+  // console.log("MS response", msResponse.data);
 
   const xblResponse = await axios
     .post(
@@ -158,13 +154,13 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (xblResponse?.status !== 200) {
-    res.status(500).send("Error occurred during Xbox Live authentication.");
+    ClientError.sendInternalError(new Error(JSON.stringify(xblResponse)), res);
     return;
   }
 
   const { Token: xblAccessToken } = xblResponse.data;
   const xblUserHash = xblResponse.data?.DisplayClaims?.xui[0]?.uhs;
-  console.log("XBL response", xblResponse.data);
+  // console.log("XBL response", xblResponse.data);
 
   const xstsResponse = await axios
     .post(
@@ -187,13 +183,13 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (xstsResponse?.status !== 200) {
-    res.status(500).send("Error occurred during Xbox Live authentication.");
+    ClientError.sendInternalError(new Error(JSON.stringify(xstsResponse)), res);
     return;
   }
 
   const { Token: xstsAccessToken } = xstsResponse.data;
   const xstsUserHash = xstsResponse.data?.DisplayClaims?.xui[0]?.uhs;
-  console.log("XSTS response", xstsResponse.data);
+  // console.log("XSTS response", xstsResponse.data);
 
   const minecraftApiResponse = await axios
     .post(
@@ -206,12 +202,14 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (minecraftApiResponse?.status !== 200) {
-    res.status(500).send("Error occurred during Minecraft authentication.");
+    ClientError.sendInternalError(
+      new Error(JSON.stringify(minecraftApiResponse)),
+      res
+    );
     return;
   }
 
   const { access_token: minecraftAccessToken } = minecraftApiResponse.data;
-  console.log("Minecraft API response", minecraftApiResponse.data);
 
   const minecraftProfileResponse = await axios
     .get("https://api.minecraftservices.com/minecraft/profile", {
@@ -222,20 +220,20 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (minecraftProfileResponse?.status !== 200) {
-    res.status(500).send("Could not get Minecraft profile.");
+    ClientError.sendInternalError(
+      new Error(JSON.stringify(minecraftProfileResponse)),
+      res
+    );
     return;
   }
 
-  const {
-    name: username,
-    id: uuid,
-    id: remoteId,
-  } = minecraftProfileResponse.data;
+  const { name: username, id: uuid } = minecraftProfileResponse.data;
 
-  const localUser = await getDBUser(uuid, username, remoteId);
+  console.log("Minecraft profile", uuid, minecraftAccessToken);
+  const localUser = await User.findOrCreateUser(uuid, uuid, username);
 
   if (localUser) {
-    res.send(signToken(localUser.username, localUser.uuid));
+    res.send(localUser.getSignedToken());
   } else {
     res.status(403).send("Invalid credentials");
   }
@@ -258,45 +256,13 @@ const loginClient = async (req, res) => {
     return;
   }
 
-  const [localUser] = await User.findOrCreate({
-    where: { uuid: response.data.id },
-    defaults: {
-      username: response.data.name,
-      uuid: response.data.id,
-    },
-  });
+  const localUser = await User.findOrCreateUser(
+    response.data.id,
+    response.data.id,
+    response.data.name
+  );
 
-  res.send(signToken(localUser.username, localUser.uuid));
+  res.send(localUser.getSignedToken());
 };
 
-const getDBUser = async (uuid, defaultUsername, defaultRemoteId) => {
-  const [localUser] = await User.findOrCreate({
-    where: { uuid },
-    defaults: {
-      username: defaultUsername,
-      remoteId: defaultRemoteId,
-      uuid,
-    },
-  }).catch((err) => [undefined]);
-
-  return localUser;
-};
-
-const signToken = function (username, uuid) {
-  return jwt.sign({ username, uuid }, "secret");
-};
-
-const verifyToken = function (token) {
-  return jwt.verify(token, "secret", function (err, decoded) {
-    return err ? false : decoded;
-  });
-};
-
-export {
-  moderatorAuth,
-  auth,
-  optionalAuth,
-  loginMojang,
-  loginMicrosoft,
-  loginClient,
-};
+export { moderatorAuth, auth, optionalAuth, loginMicrosoft, loginClient };

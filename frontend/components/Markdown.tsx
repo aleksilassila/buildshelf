@@ -1,4 +1,4 @@
-import ReactMarkdown, {Components} from "react-markdown";
+import ReactMarkdown, { Components } from "react-markdown";
 
 const components: Components = {
   h1: ({ children }) => <h1 className="text-xl font-extrabold">{children}</h1>,
@@ -13,6 +13,11 @@ const components: Components = {
     <code className="font-body bg-stone-200 rounded px-1 py-0.5 font-monospace">
       {children}
     </code>
+  ),
+  a: ({ children, ...rest }) => (
+    <a {...rest} className="underline text-green-600">
+      {children}
+    </a>
   ),
 };
 

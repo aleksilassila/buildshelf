@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import Button from "../components/ui/Button";
@@ -7,12 +7,12 @@ import theme from "../constants/theme";
 import Loading from "../components/statuses/Loading";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
   const router = useRouter();
   const { code } = router.query;
+
+  useEffect(() => console.log(error), [error]);
 
   const handleUserJWT = (token, setError) => {
     const userObject = jwt.decode(token);

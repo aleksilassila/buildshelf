@@ -7,7 +7,6 @@ import tagsController from "./src/controllers/tagsController";
 import categoriesController from "./src/controllers/categoriesController";
 import {
   optionalAuth,
-  loginMojang,
   loginClient,
   loginMicrosoft,
 } from "./src/controllers/auth";
@@ -63,7 +62,6 @@ api.use(optionalAuth);
 
 api.get("/tags", tagsController.getTags);
 api.get("/categories", categoriesController.getCategories);
-api.post("/login/mojang", loginMojang);
 api.post("/login/microsoft", loginMicrosoft);
 api.post("/login/token", loginClient);
 

@@ -106,7 +106,7 @@ const BuildPage = ({ buildId }: Props) => {
             <Link href={"/builds/" + build.id + "/edit"}>
               <Button mode="primary">Edit Build</Button>
             </Link>
-          ) : userObject ? (
+          ) : userObject.isLoggedIn() ? (
             <SaveButton
               buildId={buildId}
               sbData={SBData}

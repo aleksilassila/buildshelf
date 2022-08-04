@@ -31,8 +31,8 @@ const CardsGridView = ({ builds, loading, error, children = null }: Props) => {
       <div className="grid grid-flow-row grid-cols-1 md:grid-cols-2 gap-2 2xl:grid-cols-3">
         {builds.map((build: Build, key) => {
           return (
-            <div className="h-64">
-              <BuildCard key={key} build={build} openBuild={setBuildId} />
+            <div className="h-64" key={key}>
+              <BuildCard build={build} openBuild={setBuildId} />
             </div>
           );
         })}

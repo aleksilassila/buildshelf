@@ -15,6 +15,7 @@ import fs from "fs";
 import Build, { BuildJSON } from "./Build";
 import Image from "./Image";
 import Collection from "./Collection";
+import jwt from "jsonwebtoken";
 
 export interface UserJSON {
   saves: BuildJSON[] | undefined;
@@ -79,6 +80,44 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   >;
   hasFavoriteCollection: BelongsToManyHasAssociationMixin<User, Collection>;
   getFavoriteCollections: BelongsToManyGetAssociationsMixin<Collection>;
+
+  static async findOrCreateUser(
+    uuid: string,
+    remoteId: string,
+    username: string
+  ): Promise<User | undefined> {
+    const [user, created] = await User.findOrCreate({
+      where: { uuid },
+      defaults: {
+        username,
+        remoteId,
+        uuid,
+      },
+    }).catch((err) => [undefined]);
+
+    return user;
+  }
+
+  getSignedToken() {
+    return jwt.sign(
+      { username: this.username, uuid: this.uuid },
+      "tbTybk6KnhcD"
+    );
+  }
+
+  static async getUserWithToken(
+    token: string
+  ): Promise<[user: User | undefined, decodeError: boolean]> {
+    const decoded = jwt.verify(token, "tbTybk6KnhcD", function (err, decoded) {
+      return err ? undefined : decoded;
+    });
+
+    if (decoded) {
+      return [await User.findByPk(decoded.uuid).catch(() => undefined), false];
+    } else {
+      return [undefined, true];
+    }
+  }
 }
 
 User.init(
@@ -95,7 +134,7 @@ User.init(
     remoteId: DataTypes.UUID,
     moderator: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true, // FIXME prod
+      defaultValue: false,
       allowNull: false,
     },
   },
