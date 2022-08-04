@@ -11,7 +11,7 @@ import Styled from "../Styled";
 import SecondaryNavbar from "./SecondaryNavbar";
 import { NavLink, NavLinkContext } from "./NavLink";
 
-const Navbar = ({ active = null }: { active: string }) => {
+const Navbar = ({ active = null }: { active?: string }) => {
   const [showProfileBar, setShowProfileBar] = useState(false);
   const userObject = Auth.getUser();
 
@@ -28,7 +28,7 @@ const Navbar = ({ active = null }: { active: string }) => {
   );
 
   return (
-    <NavLinkContext.Provider value={active}>
+    <NavLinkContext.Provider value={active || ""}>
       <div className="font-medium">
         <div className="flex flex-row justify-between h-14 items-center px-6">
           <Link href="/frontend/pages">
