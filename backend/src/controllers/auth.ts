@@ -121,7 +121,8 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (msResponse?.status !== 200) {
-    ClientError.sendInternalError(new Error(JSON.stringify(msResponse)), res);
+    // ClientError.sendInternalError(new Error(JSON.stringify(msResponse)), res);
+    errors.SERVER_ERROR.send(res);
     return;
   }
 
@@ -154,7 +155,8 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (xblResponse?.status !== 200) {
-    ClientError.sendInternalError(new Error(JSON.stringify(xblResponse)), res);
+    // ClientError.sendInternalError(new Error(JSON.stringify(xblResponse)), res);
+    errors.SERVER_ERROR.send(res);
     return;
   }
 
@@ -183,7 +185,8 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (xstsResponse?.status !== 200) {
-    ClientError.sendInternalError(new Error(JSON.stringify(xstsResponse)), res);
+    // ClientError.sendInternalError(new Error(JSON.stringify(xstsResponse)), res);
+    errors.SERVER_ERROR.send(res);
     return;
   }
 
@@ -202,10 +205,11 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (minecraftApiResponse?.status !== 200) {
-    ClientError.sendInternalError(
-      new Error(JSON.stringify(minecraftApiResponse)),
-      res
-    );
+    // ClientError.sendInternalError(
+    //   new Error(JSON.stringify(minecraftApiResponse)),
+    //   res
+    // );
+    errors.SERVER_ERROR.send(res);
     return;
   }
 
@@ -220,10 +224,11 @@ const loginMicrosoft = async (req, res) => {
     .catch((err) => err.response);
 
   if (minecraftProfileResponse?.status !== 200) {
-    ClientError.sendInternalError(
-      new Error(JSON.stringify(minecraftProfileResponse)),
-      res
-    );
+    // ClientError.sendInternalError(
+    //   new Error(JSON.stringify(minecraftProfileResponse)),
+    //   res
+    // );
+    errors.SERVER_ERROR.send(res);
     return;
   }
 
