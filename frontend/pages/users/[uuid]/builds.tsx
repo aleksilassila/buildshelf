@@ -1,4 +1,4 @@
-import ProfilePage from "../../../components/profile/ProfilePage";
+import Profile from "../../../components/profile/Profile";
 import CardsGridView from "../../../containers/CardsGridView";
 import { Build } from "../../../interfaces/ApiResponses";
 import { useRouter } from "next/router";
@@ -32,7 +32,7 @@ const Builds = () => {
   );
 
   return (
-    <ProfilePage count={builds?.length}>
+    <Profile activeHref={"/users/" + userObject?.uuid} count={builds?.length}>
       {builds?.length === 0 && userObject.isLoggedIn(creatorUuid) ? (
         <div className="flex">
           <CreateBuild />
@@ -40,7 +40,7 @@ const Builds = () => {
       ) : (
         <CardsGridView builds={builds || []} error={error} loading={loading} />
       )}
-    </ProfilePage>
+    </Profile>
   );
 };
 

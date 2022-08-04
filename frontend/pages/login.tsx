@@ -2,8 +2,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import jwt from "jsonwebtoken";
-import Button from "../components/ui/Button";
-import theme from "../constants/theme";
 import Loading from "../components/statuses/Loading";
 
 const Login = () => {

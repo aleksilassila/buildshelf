@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import ChevronRight from "../icons/ChevronRight";
 import ChevronLeft from "../icons/ChevronLeft";
 

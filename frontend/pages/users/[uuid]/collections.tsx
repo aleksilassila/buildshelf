@@ -1,4 +1,4 @@
-import ProfilePage from "../../../components/profile/ProfilePage";
+import Profile from "../../../components/profile/Profile";
 import { Collection } from "../../../interfaces/ApiResponses";
 import { useRouter } from "next/router";
 import ListView from "../../../containers/ListView";
@@ -16,13 +16,13 @@ const Collections = () => {
   );
 
   return (
-    <ProfilePage tabName="user-collections" count={collections?.length}>
+    <Profile activeHref="user-collections" count={collections?.length}>
       <ListView loading={loading} error={error}>
         {(collections || []).map((item, index) => (
           <CollectionCard key={index} collection={item} />
         ))}
       </ListView>
-    </ProfilePage>
+    </Profile>
   );
 };
 

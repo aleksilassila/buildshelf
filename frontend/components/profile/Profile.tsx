@@ -1,14 +1,13 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
-import TitleBar, { ActiveSub } from "../bars/TitleBar";
+import Navbar from "../navbar/Navbar";
 import Auth from "../../utils/auth";
 import { useState } from "react";
 import { User } from "../../interfaces/ApiResponses";
-import theme from "../../constants/theme";
 import Button from "../ui/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
 import { apiRequest, useApi } from "../../utils/api";
+import ProfileNavBar from "./ProfileNavBar";
 
 /*
 when joined?
@@ -24,13 +23,13 @@ received favorites count
 •
  */
 
-const ProfilePage = ({
-  tabName = "profile",
+const Profile = ({
+  activeHref = null,
   count,
   bannerUrl = null,
   children,
 }: {
-  tabName?: ActiveSub;
+  activeHref: string;
   count?: number;
   bannerUrl?: string;
   children?: JSX.Element;
@@ -43,7 +42,7 @@ const ProfilePage = ({
   const [followed, setFollowed] = useState(false);
 
   const userObject = Auth.getUser();
-  const isOwnProfile = userObject?.uuid === uuid;
+  const isOwnProfile = userObject.isLoggedIn(uuid?.toString());
 
   const follow = () => {
     apiRequest({
@@ -70,7 +69,7 @@ const ProfilePage = ({
 
   return (
     <div className="flex flex-col">
-      <TitleBar active={isOwnProfile ? tabName : null} />
+      <Navbar active={activeHref} />
       <div
         style={{
           background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
@@ -103,10 +102,10 @@ const ProfilePage = ({
           ) : null}
         </div>
       </div>
-      <div className="border-t-2 border-t-stone-300 py-6 px-4 md:px-8 lg:px-16">
+      <div className="border-t-2 border-t-stone-300 py-6 px-4 md:px-8 lg:px-16 flex flex-col gap-4">
         <ProfileNavBar
           user={user}
-          tabName={tabName}
+          activeHref={activeHref}
           isOwnProfile={isOwnProfile}
           count={count}
         />
@@ -116,72 +115,4 @@ const ProfilePage = ({
   );
 };
 
-interface ProfileNavBarProps {
-  user: User;
-  isOwnProfile: boolean;
-  tabName?: ActiveSub;
-  count: number;
-}
-
-const ProfileNavBar = ({
-  user,
-  isOwnProfile,
-  count = null,
-  tabName = "profile",
-}: ProfileNavBarProps) => {
-  const getCount = (t) => (tabName === t && count !== null ? `(${count})` : "");
-
-  return (
-    <div className="profile-bar">
-      <Link href={"/users/" + user.uuid}>
-        <div className={`${tabName === "profile" && "active"} item`}>
-          Builds {getCount("profile")}
-        </div>
-      </Link>
-      <Link href={"/users/" + user.uuid + "/collections"}>
-        <div className={`${tabName === "user-collections" && "active"} item`}>
-          Collections {getCount("collections")}
-        </div>
-      </Link>
-      <Link href={"/users/" + user.uuid + "/saves"}>
-        <div className={`${tabName === "saves" && "active"} item`}>
-          Saves {getCount("saves")}
-        </div>
-      </Link>
-      {isOwnProfile ? (
-        <Link href={"/users/" + user.uuid + "/bookmarks"}>
-          <div className={`${tabName === "bookmarks" && "active"} item`}>
-            Bookmarks {getCount("bookmarks")}
-          </div>
-        </Link>
-      ) : null}
-      <style jsx>
-        {`
-          .profile-bar {
-            display: flex;
-            //margin: 0 -0.5em;
-            //padding: 0 0 0.5em 0;
-            align-items: stretch;
-            height: 2em;
-            border-bottom: 2px solid ${theme.lightLowContrast};
-            margin-bottom: 1em;
-          }
-
-          .item {
-            font-weight: 600;
-            padding: 0 0.5em;
-            cursor: pointer;
-            margin-bottom: -2px;
-          }
-
-          .active {
-            color: ${theme.layoutDark};
-            border-bottom: 2px solid ${theme.layoutDark};
-          }
-        `}
-      </style>
-    </div>
-  );
-};
-
-export default ProfilePage;
+export default Profile;

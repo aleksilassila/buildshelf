@@ -1,4 +1,4 @@
-import TitleBar from "../../../components/bars/TitleBar";
+import Navbar from "../../../components/navbar/Navbar";
 import { useRouter } from "next/router";
 import { apiRequest, useApi } from "../../../utils/api";
 import { Build, Image } from "../../../interfaces/ApiResponses";
@@ -58,7 +58,7 @@ const Edit = () => {
       url: "/builds/" + buildId,
       data: {
         description: formData.description,
-        imageIds: formData.images.map((image) => image.id.toString()),
+        imageIds: formData.images.map((image) => image.id?.toString()),
       },
     }).then((res) => {
       if (res.status === 200) {
@@ -73,7 +73,7 @@ const Edit = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <TitleBar />
+      <Navbar />
       <Form.Root>
         <Form.Section className="flex flex-row justify-between items-end">
           <h2 className={theme.text.bold}>Edit build {build.name}</h2>

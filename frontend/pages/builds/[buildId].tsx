@@ -1,5 +1,4 @@
-import { useRouter } from "next/router";
-import TitleBar from "../../components/bars/TitleBar";
+import Navbar from "../../components/navbar/Navbar";
 import * as BuildPage from "../../components/BuildPage";
 import { getSingleParams } from "../../utils/utils";
 
@@ -8,7 +7,7 @@ const Build = ({}) => {
 
   return (
     <div>
-      <TitleBar />
+      <Navbar />
       <BuildPage.Static buildId={buildId} />
     </div>
   );

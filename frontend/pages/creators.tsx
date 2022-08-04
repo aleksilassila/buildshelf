@@ -1,12 +1,12 @@
-import TitleBar from "../components/bars/TitleBar";
+import Navbar from "../components/navbar/Navbar";
 
 const Collections = () => {
-  return <div className="container">
-    <TitleBar active="creators" />
-    <div className="content">
-
+  return (
+    <div className="container">
+      <Navbar active="/creators" />
+      <div className="content"></div>
     </div>
-  </div>
-}
+  );
+};
 
 export default Collections;

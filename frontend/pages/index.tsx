@@ -1,5 +1,5 @@
 import Link from "next/link";
-import TitleBar from "../components/bars/TitleBar";
+import Navbar from "../components/navbar/Navbar";
 import CardsRowView from "../containers/CardsRowView";
 import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
@@ -82,7 +82,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <TitleBar active="home" />
+      <Navbar active="/" />
       <Banner uri={popularData?.[0]?.images?.[0]?.filename}>
         <h2 className={theme.text.bold + " text-stone-100"}>
           The open source community for Minecraft builds
@@ -119,7 +119,7 @@ const Home = () => {
             >
               Litematica extension
             </a>{" "}
-            for Litematica to automatically sync your builds
+            (fabric mod) to automatically sync your builds
           </li>
           <li>
             <span className={"text-green-600 font-bold"}>3.</span> Browse and

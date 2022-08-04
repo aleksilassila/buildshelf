@@ -1,4 +1,4 @@
-import TitleBar from "../../components/bars/TitleBar";
+import Navbar from "../../components/navbar/Navbar";
 import { apiRequest, useApi } from "../../utils/api";
 import { Collection } from "../../interfaces/ApiResponses";
 import { useRouter } from "next/router";
@@ -98,7 +98,7 @@ const CollectionPage = () => {
 
 export default () => (
   <div className="flex flex-col min-h-screen">
-    <TitleBar />
+    <Navbar />
     <CollectionPage />
   </div>
 );

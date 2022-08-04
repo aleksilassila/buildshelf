@@ -1,16 +1,14 @@
-import React from "react";
+import React, { FunctionComponent, HTMLAttributes } from "react";
 
-const Styled =
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  children: any;
+  className?: string;
+  rest?: any;
+}
+
+const Styled: (className: string) => FunctionComponent<Props> =
   (className) =>
-  ({
-    children,
-    className: _className,
-    ...rest
-  }: {
-    children: any;
-    className?: string;
-    rest?: any;
-  }) =>
+  ({ children, className: _className, ...rest }) =>
     (
       <div className={className + " " + _className} {...rest}>
         {children}

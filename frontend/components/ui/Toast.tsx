@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import theme from "../../constants/theme";
 
 type ToastMode = "primary" | "danger" | "default";

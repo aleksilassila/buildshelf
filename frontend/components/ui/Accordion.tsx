@@ -1,5 +1,5 @@
 import * as Accordion from "@radix-ui/react-accordion";
-import {CSSProperties, ReactNode} from "react";
+import { CSSProperties, ReactNode } from "react";
 import theme from "../../constants/theme";
 import ChevronDown from "../icons/ChevronDown";
 

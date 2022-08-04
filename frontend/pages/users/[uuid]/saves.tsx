@@ -1,8 +1,9 @@
-import ProfilePage from "../../../components/profile/ProfilePage";
+import Profile from "../../../components/profile/Profile";
 import CardsGridView from "../../../containers/CardsGridView";
-import {Build} from "../../../interfaces/ApiResponses";
-import {useRouter} from "next/router";
-import {useApi} from "../../../utils/api";
+import { Build } from "../../../interfaces/ApiResponses";
+import { useRouter } from "next/router";
+import { useApi } from "../../../utils/api";
+import Auth from "../../../utils/auth";
 
 const Saves = () => {
   const router = useRouter();
@@ -15,9 +16,12 @@ const Saves = () => {
   );
 
   return (
-    <ProfilePage tabName="saves" count={builds?.length}>
+    <Profile
+      activeHref={"/users/" + Auth.getUser()?.uuid + "/saves"}
+      count={builds?.length}
+    >
       <CardsGridView builds={builds || []} error={error} loading={loading} />
-    </ProfilePage>
+    </Profile>
   );
 };
 

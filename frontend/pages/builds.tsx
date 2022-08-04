@@ -1,4 +1,4 @@
-import TitleBar from "../components/bars/TitleBar";
+import Navbar from "../components/navbar/Navbar";
 import CardsGridView from "../containers/CardsGridView";
 import { useState } from "react";
 import Separator from "../components/utils/Separator";
@@ -58,7 +58,7 @@ const Builds = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <TitleBar active="builds" />
+      <Navbar active="/builds" />
       <Banner url="/mockImages/potatoes-2.jpg">
         <BannerTitle>Builds</BannerTitle>
         <BannerSubtitle>Browse popular builds</BannerSubtitle>

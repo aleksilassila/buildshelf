@@ -1,6 +1,6 @@
 import * as Dropdown from "../../ui/Dropdown";
-import {useApi} from "../../../utils/api";
-import {Category} from "../../../interfaces/ApiResponses";
+import { useApi } from "../../../utils/api";
+import { Category } from "../../../interfaces/ApiResponses";
 
 const CategoriesDropdown = ({ doSearch }) => {
   const [categories, loading, error] = useApi<Category[]>(

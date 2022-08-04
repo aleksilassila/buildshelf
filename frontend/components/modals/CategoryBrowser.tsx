@@ -1,4 +1,4 @@
-import {useApi} from "../../utils/api";
+import { useApi } from "../../utils/api";
 import * as AlertDialog from "../ui/AlertDialog";
 
 const CategoryBrowser = ({ show, setShow, setCategory }) => {

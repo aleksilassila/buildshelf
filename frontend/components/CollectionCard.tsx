@@ -1,4 +1,4 @@
-import {Collection} from "../interfaces/ApiResponses";
+import { Collection } from "../interfaces/ApiResponses";
 import Heart from "./icons/Heart";
 import Link from "next/link";
 import * as Slides from "./containers/Slides";

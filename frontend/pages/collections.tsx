@@ -1,8 +1,7 @@
-import TitleBar from "../components/bars/TitleBar";
+import Navbar from "../components/navbar/Navbar";
 import ListView from "../containers/ListView";
 import { useState } from "react";
 import CollectionCard from "../components/CollectionCard";
-import theme from "../constants/theme";
 import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
 import { useApiFeed } from "../utils/api";
@@ -60,7 +59,7 @@ const Collections = () => {
 
   return (
     <div className="collections">
-      <TitleBar active="collections" />
+      <Navbar active="collections" />
       <Banner url="/mockImages/village.jpg">
         <BannerTitle>Collections</BannerTitle>
         <BannerSubtitle>Browse popular build collections</BannerSubtitle>

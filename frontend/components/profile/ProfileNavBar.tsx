@@ -1,85 +1,89 @@
-import Link from "next/link";
+import { NavLinkContext, useIsHrefActive } from "../navbar/NavLink";
 import theme from "../../constants/theme";
-import {User} from "../../interfaces/ApiResponses";
+import { FunctionComponent } from "react";
+import Link from "next/link";
+import { User } from "../../interfaces/ApiResponses";
 
-interface Props {
+interface ProfileNavBarProps {
   user: User;
   isOwnProfile: boolean;
+  activeHref?: string;
+  count: number;
 }
 
-const ProfileNavBar = ({ user, isOwnProfile }: Props) => {
+const ProfileNavLink: FunctionComponent<{ href: string }> = ({
+  href,
+  children,
+}) => {
+  const active = useIsHrefActive(href);
+
   return (
-    <div className="profile-nav-bar">
-      <div className="user-info">
-        <div className="avatar" />
-        <h2 className="username">{user.username}</h2>
-      </div>
-      <div className="list">
-        <Link href={"/users/" + user.uuid}>
-          <a>Profile</a>
-        </Link>
-        <Link href={"/users/" + user.uuid + "/builds"}>
-          <a>{isOwnProfile ? "Your Builds" : "Builds"}</a>
-        </Link>
-        <Link href={"/users/" + user.uuid + "/saves"}>
-          <a>Saved Builds</a>
-        </Link>
-        {isOwnProfile && (
-          <Link href={"/users/" + user.uuid + "/bookmarks"}>
-            <a>Bookmarks</a>
-          </Link>
-        )}
-      </div>
-      <style jsx>
-        {`
-          .profile-nav-bar {
-            color: ${theme.darkHighContrast};
-            display: flex;
-            justify-content: space-between;
-            padding: 1em;
-            margin: 2em;
-            border-bottom: 1px solid ${theme.lightLowContrast};
-          }
+    <Link href={href}>
+      <span
+        className={`font-semibold cursor-pointer py-1 -mb-0.5 border-b-green-500 ${
+          active && "border-b-2 text-green-500"
+        }`}
+      >
+        {children}
+      </span>
+    </Link>
+  );
+};
 
-          .user-info {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-          }
+const ProfileNavBar = ({
+  user,
+  isOwnProfile,
+  count = null,
+  activeHref,
+}: ProfileNavBarProps) => {
+  const getCount = (t) =>
+    activeHref === t && count !== null ? `(${count})` : "";
 
-          .avatar {
-            background: url("https://crafatar.com/avatars/${user.uuid}");
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            width: 2.5em;
-            height: 2.5em;
-            display: inline-block;
-            margin-right: 0.5em;
-          }
+  return (
+    <NavLinkContext.Provider value={activeHref}>
+      <div className="flex gap-4 border-b-2 border-stone-300">
+        <ProfileNavLink href={"/users/" + user.uuid}>
+          Builds {getCount("profile")}
+        </ProfileNavLink>
+        {/*<ProfileNavLink href={"/users/" + user.uuid + "/collections"}>*/}
+        {/*  Collections {getCount("collections")}*/}
+        {/*</ProfileNavLink>*/}
+        <ProfileNavLink href={"/users/" + user.uuid + "/saves"}>
+          Saves {getCount("saves")}
+        </ProfileNavLink>
+        {isOwnProfile
+          ? null
+          : // <ProfileNavLink href={"/users/" + user.uuid + "/bookmarks"}>
+            //   Bookmarks {getCount("bookmarks")}
+            // </ProfileNavLink>
+            null}
+        <style jsx>
+          {`
+            .profile-bar {
+              display: flex;
+              //margin: 0 -0.5em;
+              //padding: 0 0 0.5em 0;
+              align-items: stretch;
+              height: 2em;
+              border-bottom: 2px solid ${theme.lightLowContrast};
+              margin-bottom: 1em;
+            }
 
-          .list {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            margin: 0 -0.5em;
-          }
+            .item {
+              font-weight: 600;
+              padding: 0 0.5em;
+              cursor: pointer;
+              margin-bottom: -2px;
+            }
 
-          .list a,
-          .list span {
-            color: inherit;
-            margin: 0 0.5em;
-            text-decoration: none;
-            font-weight: 500;
-          }
-
-          .list a:hover {
-            cursor: pointer;
-            text-decoration: underline;
-          }
-        `}
-      </style>
-    </div>
+            .active {
+              color: ${theme.layoutDark};
+              border-bottom: 2px solid ${theme.layoutDark};
+            }
+          `}
+        </style>
+      </div>{" "}
+    </NavLinkContext.Provider>
   );
 };
 

@@ -1,4 +1,4 @@
-import TitleBar from "../components/bars/TitleBar";
+import Navbar from "../components/navbar/Navbar";
 import { useApiFeed } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
 import InfinityScroll from "../containers/InfinityScroll";
@@ -17,7 +17,7 @@ const Moderate = () => {
 
   return (
     <div className="moderate flex">
-      <TitleBar />
+      <Navbar />
       <div className="page-container flex">
         <div className="content flex">
           <InfinityScroll fetchMore={fetchMore}>

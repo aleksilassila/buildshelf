@@ -42,7 +42,7 @@ const optionalAuth = async function (
     return;
   }
 
-  const [user, decodeError] = await User.getUserWithToken(token.toString());
+  const [user, decodeError] = await User.getUserWithToken(token?.toString());
 
   if (!decodeError) {
     if (user) {

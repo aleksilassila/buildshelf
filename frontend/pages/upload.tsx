@@ -1,5 +1,5 @@
 import Auth from "../utils/auth";
-import TitleBar from "../components/bars/TitleBar";
+import Navbar from "../components/navbar/Navbar";
 import { AxiosResponse } from "axios";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
@@ -192,7 +192,7 @@ const Upload = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <TitleBar active="upload" />
+      <Navbar active="/upload" />
       <Form.Root>
         <Form.Section>
           <h2 className={theme.text.bold}>Upload a build</h2>

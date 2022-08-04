@@ -1,5 +1,5 @@
 import CloseIcon from "./icons/CloseIcon";
-import {Image} from "../interfaces/ApiResponses";
+import { Image } from "../interfaces/ApiResponses";
 
 const ImageCollection: ({
   images,
