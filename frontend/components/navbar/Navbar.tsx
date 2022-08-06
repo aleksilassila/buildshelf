@@ -10,6 +10,54 @@ import Button from "../ui/Button";
 import Styled from "../Styled";
 import SecondaryNavbar from "./SecondaryNavbar";
 import { NavLink, NavLinkContext } from "./NavLink";
+import NavLinks from "./NavLinks";
+import NavLinksMobile, { SecondaryMobileMenu } from "./NavLinksMobile";
+
+const MainItems = ({ userObject }) => (
+  <>
+    <NavLink href="/">Home</NavLink>
+    <NavLink href="/builds">Builds</NavLink>
+    {/*<NavLink name="collections" href="/collections">*/}
+    {/*  Collections*/}
+    {/*</NavLink>*/}
+    {userObject.isLoggedIn() ? (
+      <>
+        <NavLink href="/upload">Upload</NavLink>
+      </>
+    ) : (
+      <LoginButton />
+    )}
+  </>
+);
+
+const SecondaryItems = ({ uuid, logOut }) => (
+  <>
+    <NavLink href={"/users/" + uuid}>Builds</NavLink>
+    {/*<NavLink href={"/users/" + uuid + "/collections"}>*/}
+    {/*  Collections*/}
+    {/*</NavLink>*/}
+    <NavLink href={"/users/" + uuid + "/saves"}>Saves</NavLink>
+    {/*<NavLink href={"/users/" + uuid + "/bookmarks"}>*/}
+    {/*  Bookmarks*/}
+    {/*</NavLink>*/}
+    <div onClick={logOut} className="cursor-pointer">
+      Log out
+    </div>
+  </>
+);
+
+const ProfileNavButton = ({ showNav, setShowNav, username }) => (
+  <div
+    className={`cursor-pointer ${
+      showNav ? "bg-green-400 text-slate-50" : "bg-none"
+    } rounded-md px-2.5 py-1.5 md:block hidden`}
+    onClick={() => setShowNav((p) => !p)}
+  >
+    {username}
+    {NBSP}
+    <ChevronDown style={{ height: "0.8em" }} />
+  </div>
+);
 
 const Navbar = ({ active = null }: { active?: string }) => {
   const [showProfileBar, setShowProfileBar] = useState(false);
@@ -30,37 +78,30 @@ const Navbar = ({ active = null }: { active?: string }) => {
   return (
     <NavLinkContext.Provider value={active || ""}>
       <div className="font-medium">
-        <div className="flex flex-row justify-between h-14 items-center px-6">
-          <Link href="/frontend/pages">
+        <div className="flex flex-row justify-between h-14 items-center px-6 border-b-2 border-b-stone-200">
+          <Link href="/">
             <PageName>Buildshelf</PageName>
           </Link>
-          <ul className="flex flex-row items-center">
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="/builds">Builds</NavLink>
-            {/*<NavLink name="collections" href="/collections">*/}
-            {/*  Collections*/}
-            {/*</NavLink>*/}
-            {userObject.isLoggedIn() ? (
-              <>
-                <NavLink href="/upload">Upload</NavLink>
-                <div
-                  className={`cursor-pointer ${
-                    showProfileBar ? "bg-green-400 text-slate-50" : "bg-none"
-                  } rounded-md px-2.5 py-1.5`}
-                  onClick={() => setShowProfileBar((p) => !p)}
-                >
-                  {userObject.username}
-                  {NBSP}
-                  <ChevronDown style={{ height: "0.8em" }} />
-                </div>
-              </>
-            ) : (
-              <LoginButton />
-            )}
-          </ul>
+          <NavLinks>
+            <MainItems userObject={userObject} />
+            <ProfileNavButton
+              setShowNav={setShowProfileBar}
+              showNav={showProfileBar}
+              username={userObject?.username}
+            />
+          </NavLinks>
+          <NavLinksMobile>
+            <MainItems userObject={userObject} />
+            <SecondaryMobileMenu
+              setShowSecondary={setShowProfileBar}
+              showSecondary={showProfileBar}
+            >
+              <SecondaryItems uuid={userObject?.uuid} logOut={logOut} />
+            </SecondaryMobileMenu>
+          </NavLinksMobile>
         </div>
         <SecondaryNavbar show={showProfileBar} logOut={logOut} />
-        <div className="background" onClick={() => setShowProfileBar(false)} />
+        {/*<div className="background" onClick={() => setShowProfileBar(false)} />*/}
       </div>
     </NavLinkContext.Provider>
   );

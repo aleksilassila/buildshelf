@@ -1,15 +1,11 @@
 import Navbar from "../components/navbar/Navbar";
 import CardsGridView from "../containers/CardsGridView";
 import { useState } from "react";
-import Separator from "../components/utils/Separator";
+import Separator, { SeparatorTag } from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
 import { useApiFeed } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
-import {
-  SortingBar,
-  SortingBarLeft,
-  SortingBarRight,
-} from "../components/bars/SortingBar";
+import { SortingBar, SortingBarHalf } from "../components/bars/SortingBar";
 import * as Dropdown from "../components/ui/Dropdown";
 import SearchInput from "../components/bars/sortingBar/SearchInput";
 import CategoriesDropdown from "../components/bars/sortingBar/CategoriesDropdown";
@@ -65,7 +61,7 @@ const Builds = () => {
       </Banner>
       <div className="page-container">
         <SortingBar>
-          <SortingBarLeft>
+          <SortingBarHalf>
             <Dropdown.Root
               onValueChange={(sort) => doSearch({ sort })}
               defaultValue={params.sort}
@@ -81,14 +77,14 @@ const Builds = () => {
               doSearch={(name) => doSearch({ name })}
               placeholder="Search builds by name"
             />
-          </SortingBarLeft>
-          <SortingBarRight>
+          </SortingBarHalf>
+          <SortingBarHalf className="hidden md:block">
             <CategoriesDropdown
               doSearch={(categoryName) => doSearch({ categoryName })}
             />
-          </SortingBarRight>
+          </SortingBarHalf>
         </SortingBar>
-        {Separator}
+        <SeparatorTag />
         <div className="content">
           <InfinityScroll fetchMore={fetchMore}>
             <CardsGridView

@@ -6,11 +6,7 @@ import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
 import { useApiFeed } from "../utils/api";
 import { Collection } from "../interfaces/ApiResponses";
-import {
-  SortingBar,
-  SortingBarLeft,
-  SortingBarRight,
-} from "../components/bars/SortingBar";
+import { SortingBar, SortingBarHalf } from "../components/bars/SortingBar";
 import * as Dropdown from "../components/ui/Dropdown";
 import SearchInput from "../components/bars/sortingBar/SearchInput";
 import CategoriesDropdown from "../components/bars/sortingBar/CategoriesDropdown";
@@ -66,7 +62,7 @@ const Collections = () => {
       </Banner>
       <div className="page-container">
         <SortingBar>
-          <SortingBarLeft>
+          <SortingBarHalf>
             <Dropdown.Root
               onValueChange={(sort) =>
                 doSearch({ sort: sort === "popular" ? "top" : sort })
@@ -84,12 +80,12 @@ const Collections = () => {
               doSearch={(name) => doSearch({ name })}
               placeholder="Search collections"
             />
-          </SortingBarLeft>
-          <SortingBarRight>
+          </SortingBarHalf>
+          <SortingBarHalf>
             <CategoriesDropdown
               doSearch={(categoryName) => doSearch({ categoryName })}
             />
-          </SortingBarRight>
+          </SortingBarHalf>
         </SortingBar>
         {Separator}
         <div className="content">

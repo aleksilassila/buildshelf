@@ -18,7 +18,7 @@ const Banner = ({ children, uri }) => (
       backgroundSize: "cover",
     }}
   >
-    <div className="m-auto w-3/4 max-w-5xl text-center bg-stone-800 text-stone-300 p-8 px-16">
+    <div className="m-auto md:w-3/4 w-5/6 max-w-5xl text-center bg-stone-800 text-stone-300 p-8 md:px-16">
       {children}
     </div>
   </div>
@@ -84,10 +84,10 @@ const Home = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar active="/" />
       <Banner uri={popularData?.[0]?.images?.[0]?.filename}>
-        <h2 className={theme.text.bold + " text-stone-100"}>
+        <h2 className={"md:text-2xl text-xl font-bold mb-2 text-stone-100"}>
           The open source community for Minecraft builds
         </h2>
-        <p className="tracking-wide text-lg">
+        <p className="tracking-wide md:text-lg">
           Buildshelf is a place to find, store and share all kinds of Minecraft
           builds and projects. This project utilises a Minecraft blueprinting
           mod called Litematica. You can download Litematica{" "}

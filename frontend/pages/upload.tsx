@@ -246,6 +246,10 @@ const Upload = () => {
               }
             }}
           />
+          <Form.Tip>
+            Upload max 5 images. It is good practice to use shaders and low FOV
+            of less than 60 when taking the screenshots.
+          </Form.Tip>
           <Form.Tip>Supported extensions: .png, .jpg</Form.Tip>
         </Form.Section>
         <Form.Section>
@@ -298,7 +302,6 @@ const Upload = () => {
               ))}
             </Dropdown.Group>
           </Dropdown.Root>
-          <Form.Tip>A noun defining the type of the build.</Form.Tip>
         </Form.Section>
         {/*<Form.Section>*/}
         {/*  <Form.LabelText>Add to a Build Collection</Form.LabelText>*/}

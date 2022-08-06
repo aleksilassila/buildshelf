@@ -16,9 +16,9 @@ const SecondaryNavbar: FunctionComponent<Props> = ({ show, logOut }) => {
 
   return (
     <ul
-      className={`z-10 relative flex items-center justify-end overflow-hidden ${
+      className={`z-10 relative hidden md:flex items-center justify-end overflow-hidden ${
         show ? "h-12" : "h-0"
-      } bg-stone-100 px-6 border-t-2 border-t-stone-200 transition-all duration-100 ease-linear`}
+      } bg-stone-100 px-6 transition-all duration-100 ease-linear`}
     >
       <NavLink href={"/users/" + userObject?.uuid}>Builds</NavLink>
       {/*<NavLink href={"/users/" + userObject?.uuid + "/collections"}>*/}

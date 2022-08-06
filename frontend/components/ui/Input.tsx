@@ -45,9 +45,9 @@ const Input = ({
     <div
       className={`input ${theme.ui.outline} ${
         theme.ui.borders
-      } flex items-center px-4 h-10 w-full ${
+      } flex items-center h-10 w-full ${
         textArea && "h-min"
-      } p-4 py-0 cursor-text bg-white ${className}`}
+      } cursor-text bg-white ${className}`}
       onClick={() => focusRef.current.focus()}
       {...rest}
     >
@@ -61,7 +61,7 @@ const Input = ({
           placeholder={placeholder}
           onBlur={onBlur}
           ref={focusRef}
-          className="min-h-[2.5rem] outline-none border-none bg-transparent font-[inherit] resize-y flex-auto text-stone-700 py-2"
+          className="min-h-[2.5rem] outline-none border-none bg-transparent font-[inherit] resize-y flex-auto text-stone-700 py-2 px-4"
           style={{ height }}
         />
       ) : (
@@ -73,23 +73,16 @@ const Input = ({
           type={type}
           onKeyDown={handleEnterKeyDown}
           onBlur={onBlur}
-          className={`outline-none border-none bg-transparent font-[inherit] resize-y flex-auto text-stone-700`}
+          className={`outline-none border-none bg-transparent font-[inherit] resize-y flex-auto text-stone-700 px-4`}
           ref={focusRef}
         />
       )}
-      <style jsx>
-        {`
-          .input,
-          .input > :global(*) {
-          }
-
-          .input > :global(*):not(:last-child) {
-            margin-right: 0.5rem;
-          }
-        `}
-      </style>
     </div>
   );
 };
+
+export const InputIcon = ({ children }) => (
+  <div className="pl-4 -mr-2">{children}</div>
+);
 
 export default Input;

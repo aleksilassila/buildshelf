@@ -1,7 +1,11 @@
 import theme from "../../constants/theme";
+import { ComponentProps, FunctionComponent, HTMLAttributes } from "react";
 
-const Separator = (
-  <div className="separator">
+export const SeparatorTag = (props: HTMLAttributes<HTMLDivElement>) => (
+  <div
+    {...props}
+    className={`bg-stone-200 h-[2px] my-4 rounded-2xl w-auto flex-shrink-0 ${props.className}`}
+  >
     <style jsx>
       {`
         .separator {
@@ -17,4 +21,4 @@ const Separator = (
   </div>
 );
 
-export default Separator;
+export default <SeparatorTag />;

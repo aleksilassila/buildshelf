@@ -1,9 +1,14 @@
-import Input from "../../ui/Input";
-import { useState } from "react";
-import SearchIcon from "../../icons/SearchIcon";
+import Input, { InputIcon } from "../../ui/Input";
+import { HTMLAttributes, useState } from "react";
 import { useRouter } from "next/router";
+import AwesomeIcon from "../../icons/AwesomeIcon";
 
-const SearchInput = ({ doSearch, placeholder }) => {
+interface Props extends HTMLAttributes<HTMLInputElement> {
+  placeholder: string;
+  doSearch: (value: string) => void;
+}
+
+const SearchInput = (props: Props) => {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
 
@@ -11,11 +16,14 @@ const SearchInput = ({ doSearch, placeholder }) => {
     <Input
       value={searchValue}
       setValue={setSearchValue}
-      placeholder={placeholder}
-      onEnter={() => doSearch(searchValue)}
-      onBlur={() => doSearch(searchValue)}
+      placeholder={props.placeholder}
+      onEnter={() => props.doSearch(searchValue)}
+      onBlur={() => props.doSearch(searchValue)}
+      className={`${props.className}`}
     >
-      <SearchIcon />
+      <InputIcon>
+        <AwesomeIcon icon="faSearch" className="text-sm" />
+      </InputIcon>
     </Input>
   );
 };
