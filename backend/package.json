@@ -1,11 +1,11 @@
 {
     "name": "backend",
     "version": "1.0.0",
-    "main": "app.ts",
+    "main": "src/app.ts",
     "author": "Aleksi Lassila",
     "license": "",
     "scripts": {
-        "start": "nodemon app.ts",
+        "start": "nodemon src/app.ts",
         "seed": "npx sequelize-cli db:seed:all --debug",
         "undo-seed": "npx sequelize-cli db:seed:undo:all --debug"
     },

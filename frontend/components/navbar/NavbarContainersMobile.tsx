@@ -2,7 +2,7 @@ import AwesomeIcon from "../icons/AwesomeIcon";
 import Auth from "../../utils/auth";
 import { MouseEventHandler, useState } from "react";
 
-const NavLinksMobile = ({ children }) => {
+export const PrimaryNavbarMobile = ({ children }) => {
   const [showPrimary, setShowPrimary] = useState(false);
 
   const userObject = Auth.getUser();
@@ -25,7 +25,7 @@ const NavLinksMobile = ({ children }) => {
   );
 };
 
-export const SecondaryMobileMenu = ({
+export const SecondaryNavbarMobile = ({
   children,
   setShowSecondary,
   showSecondary,
@@ -42,9 +42,6 @@ export const SecondaryMobileMenu = ({
       className={`md:hidden flex flex-col gap-2 self-stretch`}
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="text-center" onClick={toggleSecondary}>
-        {userObject?.username}
-      </div>
       <ul
         className={`overflow-hidden flex flex-col gap-2 items-center bg-stone-100 transition-all duration-200 ease-linear ${
           showSecondary ? "max-h-96" : "max-h-0"
@@ -55,5 +52,3 @@ export const SecondaryMobileMenu = ({
     </div>
   );
 };
-
-export default NavLinksMobile;

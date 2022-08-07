@@ -5,8 +5,12 @@
 @layer base {
   html, body {
     @apply font-body;
+    @apply text-sm md:text-base;
     padding: 0 !important;
     min-height: 100vh;
+  }
+  div[type=button] {
+    -webkit-appearance: none;
   }
 }
 

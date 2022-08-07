@@ -3,21 +3,17 @@ import cors from "cors";
 require("dotenv").config();
 import cron from "node-cron";
 
-import tagsController from "./src/controllers/tagsController";
-import categoriesController from "./src/controllers/categoriesController";
-import {
-  optionalAuth,
-  loginClient,
-  loginMicrosoft,
-} from "./src/controllers/auth";
+import tagsController from "./controllers/tagsController";
+import categoriesController from "./controllers/categoriesController";
+import { optionalAuth, loginClient, loginMicrosoft } from "./controllers/auth";
 
-import sequelize from "./src/database";
-import { errors, middleware as errorMiddleware } from "./src/client-error";
-import buildRoutes from "./src/routes/buildRoutes";
-import userRoutes from "./src/routes/userRoutes";
-import collections from "./src/routes/collectionRoutes";
-import client from "./src/routes/clientRoutes";
-import Build from "./src/models/Build";
+import sequelize from "./database";
+import { errors, middleware as errorMiddleware } from "./client-error";
+import buildRoutes from "./routes/buildRoutes";
+import userRoutes from "./routes/userRoutes";
+import collections from "./routes/collectionRoutes";
+import client from "./routes/clientRoutes";
+import Build from "./models/Build";
 import { Op } from "sequelize";
 
 cron.schedule("*/15 * * * *", async () => {

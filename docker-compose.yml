@@ -16,7 +16,7 @@ services:
     build: backend
     volumes:
       # - ./backend/uploads:/usr/src/app/uploads
-      - ./backend:/usr/src/app
+      - ./backend/src:/usr/src/app/src
     ports:
       - 9000:9000
     environment:

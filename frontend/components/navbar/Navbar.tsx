@@ -8,12 +8,15 @@ import { useRouter } from "next/router";
 import * as AlertDialog from "../ui/AlertDialog";
 import Button from "../ui/Button";
 import Styled from "../Styled";
-import SecondaryNavbar from "./SecondaryNavbar";
 import { NavLink, NavLinkContext } from "./NavLink";
-import NavLinks from "./NavLinks";
-import NavLinksMobile, { SecondaryMobileMenu } from "./NavLinksMobile";
+import {
+  PrimaryNavbarMobile,
+  SecondaryNavbarMobile,
+} from "./NavbarContainersMobile";
+import { PrimaryNavbar, SecondaryNavbar } from "./NavbarContainers";
+import { NavLoginButton } from "./NavLoginButton";
 
-const MainItems = ({ userObject }) => (
+const MainItems = ({ userObject, showSecondary, setShowSecondary }) => (
   <>
     <NavLink href="/">Home</NavLink>
     <NavLink href="/builds">Builds</NavLink>
@@ -23,9 +26,14 @@ const MainItems = ({ userObject }) => (
     {userObject.isLoggedIn() ? (
       <>
         <NavLink href="/upload">Upload</NavLink>
+        <ProfileNavButton
+          setShowNav={setShowSecondary}
+          showNav={showSecondary}
+          username={userObject?.username}
+        />
       </>
     ) : (
-      <LoginButton />
+      <NavLoginButton />
     )}
   </>
 );
@@ -47,16 +55,27 @@ const SecondaryItems = ({ uuid, logOut }) => (
 );
 
 const ProfileNavButton = ({ showNav, setShowNav, username }) => (
-  <div
-    className={`cursor-pointer ${
-      showNav ? "bg-green-400 text-slate-50" : "bg-none"
-    } rounded-md px-2.5 py-1.5 md:block hidden`}
-    onClick={() => setShowNav((p) => !p)}
-  >
-    {username}
-    {NBSP}
-    <ChevronDown style={{ height: "0.8em" }} />
-  </div>
+  <>
+    <div
+      className="text-center md:hidden"
+      onClick={(e) => {
+        e.stopPropagation();
+        setShowNav((p) => !p);
+      }}
+    >
+      {username}
+    </div>
+    <div
+      className={`cursor-pointer ${
+        showNav ? "bg-green-400 text-slate-50" : "bg-none"
+      } rounded-md px-2.5 py-1.5 md:block hidden`}
+      onClick={() => setShowNav((p) => !p)}
+    >
+      {username}
+      {NBSP}
+      <ChevronDown style={{ height: "0.8em" }} />
+    </div>
+  </>
 );
 
 const Navbar = ({ active = null }: { active?: string }) => {
@@ -82,57 +101,34 @@ const Navbar = ({ active = null }: { active?: string }) => {
           <Link href="/">
             <PageName>Buildshelf</PageName>
           </Link>
-          <NavLinks>
-            <MainItems userObject={userObject} />
-            <ProfileNavButton
-              setShowNav={setShowProfileBar}
-              showNav={showProfileBar}
-              username={userObject?.username}
+          <PrimaryNavbar>
+            <MainItems
+              userObject={userObject}
+              showSecondary={showProfileBar}
+              setShowSecondary={setShowProfileBar}
             />
-          </NavLinks>
-          <NavLinksMobile>
-            <MainItems userObject={userObject} />
-            <SecondaryMobileMenu
+          </PrimaryNavbar>
+          <PrimaryNavbarMobile>
+            <MainItems
+              userObject={userObject}
+              showSecondary={showProfileBar}
+              setShowSecondary={setShowProfileBar}
+            />
+            <SecondaryNavbarMobile
               setShowSecondary={setShowProfileBar}
               showSecondary={showProfileBar}
             >
               <SecondaryItems uuid={userObject?.uuid} logOut={logOut} />
-            </SecondaryMobileMenu>
-          </NavLinksMobile>
+            </SecondaryNavbarMobile>
+          </PrimaryNavbarMobile>
         </div>
-        <SecondaryNavbar show={showProfileBar} logOut={logOut} />
+        <SecondaryNavbar show={showProfileBar} logOut={logOut}>
+          <SecondaryItems uuid={userObject?.uuid} logOut={logOut} />
+        </SecondaryNavbar>
         {/*<div className="background" onClick={() => setShowProfileBar(false)} />*/}
       </div>
     </NavLinkContext.Provider>
   );
 };
-
-const LoginButton = () => (
-  <AlertDialog.Root>
-    <AlertDialog.Trigger>
-      <div className="mx-2.5 cursor-pointer">Log In</div>
-    </AlertDialog.Trigger>
-    <AlertDialog.Content className="flex flex-col gap-6">
-      <div>
-        <h2 className={theme.text.display}>Log in</h2>
-        <p className={theme.text.body}>Log in with a Minecraft account</p>
-      </div>
-      <div className="flex justify-between">
-        <AlertDialog.Action>
-          <a
-            href={`https://login.live.com/oauth20_authorize.srf?client_id=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f&scope=XboxLive.signin%20offline_access&redirect_uri=${process.env.FRONTEND_ENDPOINT}/login&response_type=code`}
-          >
-            <Button mode="primary" className="w-min">
-              Log in via Microsoft
-            </Button>
-          </a>
-        </AlertDialog.Action>
-        <AlertDialog.Cancel>
-          <Button>Cancel</Button>
-        </AlertDialog.Cancel>
-      </div>
-    </AlertDialog.Content>
-  </AlertDialog.Root>
-);
 
 export default Navbar;
