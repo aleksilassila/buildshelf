@@ -96,7 +96,7 @@ buildRoutes.post(
   validateBody({
     type: "object",
     properties: {
-      name: { type: "string", maxLength: 255 },
+      name: { type: "string", maxLength: 255, minLength: 1 },
       description: { type: "string" },
       categoryName: { type: "string" },
       collectionId: { type: "number" },

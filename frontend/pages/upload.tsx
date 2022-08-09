@@ -1,4 +1,3 @@
-import Auth from "../utils/auth";
 import Navbar from "../components/navbar/Navbar";
 import { AxiosResponse } from "axios";
 import Input from "../components/ui/Input";
@@ -15,6 +14,7 @@ import * as AlertDialog from "../components/ui/AlertDialog";
 import { useRouter } from "next/router";
 import * as Dropdown from "../components/ui/Dropdown";
 import { apiRequest, useApi } from "../utils/api";
+import { useLocalUser } from "../utils/auth";
 
 interface FormData {
   name: string;
@@ -62,7 +62,7 @@ const Clear = ({ setFormData }) => (
 );
 
 const Upload = () => {
-  const userObject = Auth.getUser();
+  const localUser = useLocalUser();
   const router = useRouter();
   const [formData, setFormData, changeField] = Form.useFormData<FormData>(
     initialFormData,
@@ -81,7 +81,7 @@ const Upload = () => {
     "/collections/search",
     {
       params: {
-        uuid: userObject?.uuid,
+        uuid: localUser?.uuid,
       },
     },
     []
@@ -180,9 +180,9 @@ const Upload = () => {
     });
   };
 
-  if (userObject === undefined) return;
+  if (localUser === undefined) return;
 
-  if (userObject === null) {
+  if (localUser === null) {
     return (
       <div className="login-error">
         <span>You must be logged in to upload.</span>

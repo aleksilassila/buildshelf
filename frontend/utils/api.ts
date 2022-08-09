@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Auth from "./auth";
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import Router from "next/router";
+import { getLocalUser, storeLocalUser, useLocalUser } from "./auth";
 
 const useApi = <S>(
   uri: string,
@@ -20,10 +20,10 @@ const useApi = <S>(
     error: null,
   });
 
-  const userObject = Auth.getUser();
+  const localUser = useLocalUser();
 
   const fetch = useCallback((_config = config) => {
-    if (values.loading || (!userObject.isLoggedIn() && requiresAuth)) return;
+    if (values.loading || (!localUser.isLoggedIn() && requiresAuth)) return;
 
     setValues({ ...values, loading: true });
 
@@ -33,11 +33,11 @@ const useApi = <S>(
     })
       .then((res) => setValues({ ...values, data: res.data, loading: false }))
       .catch((error) => setValues({ ...values, loading: false, error }));
-  }, [uri, userObject].concat(deps));
+  }, [uri, localUser].concat(deps));
 
   useEffect(() => {
     if (
-      userObject === undefined ||
+      localUser === undefined ||
       values.error !== null ||
       deps.indexOf(undefined) !== -1 ||
       values.loading === true
@@ -78,7 +78,7 @@ const useApiFeed = <S>(
 
   const [page, setPage] = useState(0);
 
-  const userObject = Auth.getUser();
+  const localUser = useLocalUser();
 
   const refetch = (config, page = 0) => {
     setValues({ ...values, loading: true });
@@ -118,7 +118,7 @@ const useApiFeed = <S>(
 
   useEffect(() => {
     if (
-      userObject === undefined ||
+      localUser === undefined ||
       values.error !== null ||
       values.loading === true
     )
@@ -142,14 +142,14 @@ const apiRequest = async <P = any>(config): Promise<AxiosResponse<P>> => {
     url: process.env.BACKEND_ENDPOINT + config.url,
     params: {
       ...config.params,
-      token: Auth.getUser()?.token,
+      token: getLocalUser()?.token,
     },
-  }).catch((error: AxiosError) => {
+  }).catch((error: AxiosError<any>) => {
     if (
       error?.response?.status === 401 &&
       error?.response?.data?.error?.code === "INVALID_TOKEN"
     ) {
-      Auth.setUser(null);
+      storeLocalUser(null);
       try {
         Router.replace(process.env.MICROSOFT_REDIRECT_URL);
       } catch (ignored) {}

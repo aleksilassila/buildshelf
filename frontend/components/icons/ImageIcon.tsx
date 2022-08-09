@@ -1,4 +1,4 @@
-import { FunctionComponent, HTMLAttributes } from "react";
+import { HTMLAttributes } from "react";
 
 type Props = {
   src: string;

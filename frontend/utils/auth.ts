@@ -1,35 +1,61 @@
-export interface UserObject {
-  username: string;
-  token: string;
-  uuid: string;
-  iat: number;
+import { useEffect, useState } from "react";
+
+interface StoredUserData {
+  username?: string;
+  token?: string;
+  uuid?: string;
+  iat?: number;
+}
+
+export interface LocalUser extends StoredUserData {
   isLoggedIn: (uuid?: string) => boolean;
 }
 
-class Auth {
-  /**
-   * Get user object if logged in.
-   * @return UserObject or null
-   */
-  static getUser = function (): UserObject {
-    let userObject;
+export const getLocalUser = (): StoredUserData => {
+  let userObject;
 
+  try {
+    userObject = JSON.parse(window.localStorage.getItem("user")) || {};
+  } catch {
+    userObject = {};
+  }
+
+  return userObject;
+};
+
+export const useLocalUser = (): LocalUser => {
+  const [userObject, setUserObject] = useState({
+    isLoggedIn: function (uuid = undefined) {
+      return !!this?.token && (!uuid || this.uuid === uuid);
+    },
+  });
+
+  useEffect(() => {
     try {
-      userObject = JSON.parse(window.localStorage.getItem("user")) || {};
-    } catch {
-      userObject = {};
-    }
+      const storedUser = JSON.parse(window.localStorage.getItem("user")) || {};
 
-    userObject.isLoggedIn = (uuid = undefined) => {
-      return !!userObject?.token && (!uuid || userObject.uuid === uuid);
-    };
+      setUserObject({
+        ...userObject,
+        ...storedUser,
+      });
+    } catch (ignored) {}
+  }, []);
 
-    return userObject;
-  };
+  return userObject;
+};
 
-  static setUser = function (userObject: UserObject) {
-    window.localStorage.setItem("user", JSON.stringify(userObject));
-  };
-}
-
-export default Auth;
+export const storeLocalUser = function (userObject: LocalUser) {
+  window.localStorage.setItem(
+    "user",
+    JSON.stringify(
+      userObject === null
+        ? null
+        : {
+            username: userObject.username,
+            token: userObject.token,
+            uuid: userObject.uuid,
+            iat: userObject.iat,
+          }
+    )
+  );
+};

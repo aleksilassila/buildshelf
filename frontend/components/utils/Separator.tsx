@@ -1,5 +1,5 @@
 import theme from "../../constants/theme";
-import { ComponentProps, FunctionComponent, HTMLAttributes } from "react";
+import { HTMLAttributes } from "react";
 
 export const SeparatorTag = (props: HTMLAttributes<HTMLDivElement>) => (
   <div

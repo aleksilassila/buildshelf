@@ -1,6 +1,4 @@
-import { FunctionComponent } from "react";
-import Auth from "../../utils/auth";
-import { NavLink } from "./NavLink";
+import { FunctionComponent, HTMLAttributes } from "react";
 
 export const PrimaryNavbar = ({ children }) => (
   <ul className="flex flex-row items-center hidden md:flex">{children}</ul>
@@ -8,14 +6,11 @@ export const PrimaryNavbar = ({ children }) => (
 
 type Props = {
   show: boolean;
-  logOut: () => void;
 };
 
-export const SecondaryNavbar: FunctionComponent<Props> = ({
-  show,
-  logOut,
-  children,
-}) => {
+export const SecondaryNavbar: FunctionComponent<
+  Props & HTMLAttributes<HTMLDivElement>
+> = ({ show, children }) => {
   return (
     <ul
       className={`z-10 relative hidden md:flex items-center justify-end overflow-hidden ${

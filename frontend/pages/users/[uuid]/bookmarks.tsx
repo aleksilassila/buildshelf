@@ -3,7 +3,6 @@ import CardsGridView from "../../../containers/CardsGridView";
 import { useApi } from "../../../utils/api";
 import { Build } from "../../../interfaces/ApiResponses";
 import { useRouter } from "next/router";
-import Auth from "../../../utils/auth";
 
 const Saves = () => {
   const router = useRouter();
@@ -18,7 +17,7 @@ const Saves = () => {
 
   return (
     <Profile
-      activeHref={"/users/" + Auth.getUser()?.uuid + "/bookmarks"}
+      activeHref={"/users/" + uuid + "/bookmarks"}
       count={builds?.length}
     >
       <CardsGridView builds={builds || []} error={error} loading={loading} />

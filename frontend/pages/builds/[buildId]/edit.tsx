@@ -11,8 +11,8 @@ import { useEffect } from "react";
 import { Toast, useToast } from "../../../components/ui/Toast";
 import ImageUpload from "../../../components/form/ImageUpload";
 import * as AlertDialog from "../../../components/ui/AlertDialog";
-import Auth from "../../../utils/auth";
 import theme from "../../../constants/theme";
+import { useLocalUser } from "../../../utils/auth";
 
 interface FormData {
   description: string;
@@ -22,7 +22,7 @@ interface FormData {
 const Edit = () => {
   const router = useRouter();
   const { buildId } = router.query;
-  const user = Auth.getUser();
+  const localUser = useLocalUser();
 
   const [toast, toastProps] = useToast();
   const [formData, setFormData, changeField] = Form.useFormData<FormData>({
@@ -132,7 +132,11 @@ const Edit = () => {
                         "primary",
                         () => {
                           router
-                            .push(user?.uuid ? "/users/" + user?.uuid : "/")
+                            .push(
+                              localUser?.uuid
+                                ? "/users/" + localUser?.uuid
+                                : "/"
+                            )
                             .then();
                         }
                       );

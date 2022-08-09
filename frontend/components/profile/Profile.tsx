@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import Navbar from "../navbar/Navbar";
-import Auth from "../../utils/auth";
 import { useState } from "react";
 import { User } from "../../interfaces/ApiResponses";
 import Button from "../ui/Button";
@@ -8,6 +7,7 @@ import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
 import { apiRequest, useApi } from "../../utils/api";
 import ProfileNavBar from "./ProfileNavBar";
+import { useLocalUser } from "../../utils/auth";
 
 /*
 when joined?
@@ -34,6 +34,7 @@ const Profile = ({
   bannerUrl?: string;
   children?: JSX.Element;
 }) => {
+  const localUser = useLocalUser();
   const router = useRouter();
   const { uuid } = router.query;
 
@@ -41,8 +42,7 @@ const Profile = ({
 
   const [followed, setFollowed] = useState(false);
 
-  const userObject = Auth.getUser();
-  const isOwnProfile = userObject.isLoggedIn(uuid?.toString());
+  const isOwnProfile = localUser.isLoggedIn(uuid?.toString());
 
   const follow = () => {
     apiRequest({
@@ -91,7 +91,7 @@ const Profile = ({
               </h2>
             </div>
           </div>
-          {userObject.isLoggedIn() && userObject.uuid !== uuid ? (
+          {localUser.isLoggedIn() && localUser.uuid !== uuid ? (
             <div className="row-start-2 col-start-2 flex items-end justify-end">
               <Button onClick={follow} mode={!followed ? "primary" : "default"}>
                 <Heart style={{ height: "0.8em" }} />

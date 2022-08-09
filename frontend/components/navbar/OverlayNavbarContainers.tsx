@@ -1,11 +1,8 @@
 import AwesomeIcon from "../icons/AwesomeIcon";
-import Auth from "../../utils/auth";
-import { MouseEventHandler, useState } from "react";
+import { useState } from "react";
 
 export const OverlayNavbar = ({ children }) => {
   const [showPrimary, setShowPrimary] = useState(false);
-
-  const userObject = Auth.getUser();
 
   return (
     <div
@@ -25,18 +22,7 @@ export const OverlayNavbar = ({ children }) => {
   );
 };
 
-export const OverlayNavbarSecondary = ({
-  children,
-  setShowSecondary,
-  showSecondary,
-}) => {
-  const userObject = Auth.getUser();
-
-  const toggleSecondary: MouseEventHandler = (e) => {
-    e.stopPropagation();
-    setShowSecondary((p) => !p);
-  };
-
+export const OverlayNavbarSecondary = ({ children, showSecondary }) => {
   return (
     <div
       className={`md:hidden flex flex-col gap-2 self-stretch`}

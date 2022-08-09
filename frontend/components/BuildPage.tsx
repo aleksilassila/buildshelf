@@ -3,7 +3,6 @@ import ImageCollection from "./ImageCollection";
 import Separator from "./utils/Separator";
 import * as MultipleButton from "./ui/MultipleButton";
 import { useEffect, useState } from "react";
-import Auth from "../utils/auth";
 import Heart from "./icons/Heart";
 import Button from "./ui/Button";
 import Link from "next/link";
@@ -16,6 +15,7 @@ import Markdown from "./Markdown";
 import ExternalLink from "./icons/ExternalLink";
 import CloseIcon from "./icons/CloseIcon";
 import BuildTitle from "./buildPage/BuildTitle";
+import { useLocalUser } from "../utils/auth";
 
 interface Props {
   buildId: number | string;
@@ -57,6 +57,7 @@ const Floating = ({ buildId, setBuildPage, ...rest }: FloatingProps) => (
 const BuildPage = ({ buildId }: Props) => {
   if (buildId === undefined) return null;
 
+  const localUser = useLocalUser();
   const [build, loading, error] = useApi<Build>("/builds/" + buildId, {}, [
     buildId,
   ]);
@@ -75,8 +76,6 @@ const BuildPage = ({ buildId }: Props) => {
       isBuildSaved: build.isSaved,
     });
   }, [build]);
-
-  const userObject = Auth.getUser();
 
   if (loading) {
     return <Loading />;
@@ -102,11 +101,11 @@ const BuildPage = ({ buildId }: Props) => {
           >
             <Button>Download</Button>
           </Link>
-          {userObject?.uuid === build.creator.uuid ? (
+          {localUser?.uuid === build.creator.uuid ? (
             <Link href={"/builds/" + build.id + "/edit"}>
               <Button mode="primary">Edit Build</Button>
             </Link>
-          ) : userObject.isLoggedIn() ? (
+          ) : localUser.isLoggedIn() ? (
             <SaveButton
               buildId={buildId}
               sbData={SBData}

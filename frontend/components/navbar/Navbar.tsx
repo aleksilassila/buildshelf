@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Auth from "../../utils/auth";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Styled from "../Styled";
@@ -11,6 +10,7 @@ import {
 import { PrimaryNavbar, SecondaryNavbar } from "./NavbarContainers";
 import { NavLoginButton } from "./NavLoginButton";
 import { ProfileNavButton } from "./ProfileNavButton";
+import { storeLocalUser, useLocalUser } from "../../utils/auth";
 
 const MainItems = ({ userObject, showSecondary, setShowSecondary }) => (
   <>
@@ -52,12 +52,12 @@ const SecondaryItems = ({ uuid, logOut }) => (
 
 const Navbar = ({ active = null }: { active?: string }) => {
   const [showProfileBar, setShowProfileBar] = useState(false);
-  const userObject = Auth.getUser();
+  const localUser = useLocalUser();
 
   const router = useRouter();
 
   const logOut = () => {
-    Auth.setUser(undefined);
+    storeLocalUser(null);
     setShowProfileBar(false);
     router.push("/").then();
   };
@@ -75,27 +75,24 @@ const Navbar = ({ active = null }: { active?: string }) => {
           </Link>
           <PrimaryNavbar>
             <MainItems
-              userObject={userObject}
+              userObject={localUser}
               showSecondary={showProfileBar}
               setShowSecondary={setShowProfileBar}
             />
           </PrimaryNavbar>
           <OverlayNavbar>
             <MainItems
-              userObject={userObject}
+              userObject={localUser}
               showSecondary={showProfileBar}
               setShowSecondary={setShowProfileBar}
             />
-            <OverlayNavbarSecondary
-              setShowSecondary={setShowProfileBar}
-              showSecondary={showProfileBar}
-            >
-              <SecondaryItems uuid={userObject?.uuid} logOut={logOut} />
+            <OverlayNavbarSecondary showSecondary={showProfileBar}>
+              <SecondaryItems uuid={localUser?.uuid} logOut={logOut} />
             </OverlayNavbarSecondary>
           </OverlayNavbar>
         </div>
-        <SecondaryNavbar show={showProfileBar} logOut={logOut}>
-          <SecondaryItems uuid={userObject?.uuid} logOut={logOut} />
+        <SecondaryNavbar show={showProfileBar}>
+          <SecondaryItems uuid={localUser?.uuid} logOut={logOut} />
         </SecondaryNavbar>
         {/*<div className="background" onClick={() => setShowProfileBar(false)} />*/}
       </div>

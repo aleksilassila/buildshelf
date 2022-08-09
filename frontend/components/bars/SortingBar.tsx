@@ -1,4 +1,3 @@
-import Separator from "../utils/Separator";
 import { HTMLAttributes } from "react";
 
 const SortingBar = ({ children }) => {

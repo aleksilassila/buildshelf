@@ -1,7 +1,7 @@
 import Navbar from "../components/navbar/Navbar";
 import CardsGridView from "../containers/CardsGridView";
 import { useState } from "react";
-import Separator, { SeparatorTag } from "../components/utils/Separator";
+import { SeparatorTag } from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
 import { useApiFeed } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";

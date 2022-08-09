@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useApi } from "../../../utils/api";
 import Button from "../../../components/ui/Button";
 import Link from "next/link";
-import Auth from "../../../utils/auth";
+import { useLocalUser } from "../../../utils/auth";
 
 const Builds = () => {
   const router = useRouter();
@@ -13,7 +13,7 @@ const Builds = () => {
     ? router.query[0]
     : router.query;
 
-  const userObject = Auth.getUser();
+  const localUser = useLocalUser();
 
   const [builds, loading, error] = useApi<Build[]>(
     "/builds/search",
@@ -32,8 +32,8 @@ const Builds = () => {
   );
 
   return (
-    <Profile activeHref={"/users/" + userObject?.uuid} count={builds?.length}>
-      {builds?.length === 0 && userObject.isLoggedIn(creatorUuid) ? (
+    <Profile activeHref={"/users/" + creatorUuid} count={builds?.length}>
+      {builds?.length === 0 && localUser.isLoggedIn(creatorUuid) ? (
         <div className="flex">
           <CreateBuild />
         </div>

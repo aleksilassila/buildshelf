@@ -1,6 +1,6 @@
 import { NavLinkContext, useIsHrefActive } from "../navbar/NavLink";
 import theme from "../../constants/theme";
-import { FunctionComponent } from "react";
+import { FunctionComponent, ReactNode } from "react";
 import Link from "next/link";
 import { User } from "../../interfaces/ApiResponses";
 
@@ -11,10 +11,10 @@ interface ProfileNavBarProps {
   count: number;
 }
 
-const ProfileNavLink: FunctionComponent<{ href: string }> = ({
-  href,
-  children,
-}) => {
+const ProfileNavLink: FunctionComponent<{
+  href: string;
+  children: ReactNode | ReactNode[];
+}> = ({ href, children }) => {
   const active = useIsHrefActive(href);
 
   return (

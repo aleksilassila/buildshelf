@@ -9,7 +9,7 @@ import CollectionTitle from "../../components/collectionPage/CollectionTitle";
 import { Banner } from "../../components/Banner";
 import Separator from "../../components/utils/Separator";
 import Button from "../../components/ui/Button";
-import Auth from "../../utils/auth";
+import { useLocalUser } from "../../utils/auth";
 
 const FavoriteButton = ({
   collection,
@@ -36,7 +36,7 @@ const FavoriteButton = ({
 
 const CollectionPage = () => {
   const { collectionId } = useRouter().query;
-  const userObject = Auth.getUser();
+  const localUser = useLocalUser();
 
   const [collection, loading, error, refresh] = useApi<Collection>(
     "/collections/" + collectionId,
@@ -75,11 +75,11 @@ const CollectionPage = () => {
       </Banner>
 
       <div className="page-container">
-        {userObject.isLoggedIn() && (
+        {localUser.isLoggedIn() && (
           <div>
             <div className="flex justify-between">
               <FavoriteButton collection={collection} afterClick={refresh} />
-              {userObject.isLoggedIn(collection.creator.uuid) && (
+              {localUser.isLoggedIn(collection.creator.uuid) && (
                 <Button mode="default">Edit</Button>
               )}
             </div>
