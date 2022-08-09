@@ -25,7 +25,7 @@ export const OverlayNavbar = ({ children }) => {
   );
 };
 
-export const NavbarOverlaySecondary = ({
+export const OverlayNavbarSecondary = ({
   children,
   setShowSecondary,
   showSecondary,

@@ -9,6 +9,7 @@ import {
   User,
 } from "../models";
 import {
+  compressImage,
   parseLitematic,
   parseSimplifiedLitematic,
   writeLitematic,
@@ -21,7 +22,6 @@ import { Express } from "express";
 import { AuthReq, BuildReq, OptionalAuthReq, Res } from "../../types";
 import { Request } from "express/ts4.0";
 import { MulterError } from "multer";
-import path from "path";
 import sharp from "sharp";
 
 const canView = (res, build, user, message = "Build not found.") => {
@@ -361,15 +361,7 @@ const uploadImages = async function (
   try {
     // Compress images
     for (const image of images) {
-      await sharp(image.path)
-        .resize({
-          width: 1920,
-          height: 1080,
-          fit: "inside",
-        })
-        .jpeg({ quality: 50 })
-        .toFile(image.path.substr(0, image.path.lastIndexOf(".")) + ".jpeg");
-      fs.unlinkSync(image.path);
+      await compressImage(image.path);
     }
   } catch (err) {
     ClientError.sendInternalError(err, res);

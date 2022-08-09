@@ -1,20 +1,16 @@
-import theme from "../../constants/theme";
 import Link from "next/link";
 import Auth from "../../utils/auth";
-import NBSP from "../utils/NBSP";
-import ChevronDown from "../icons/ChevronDown";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import * as AlertDialog from "../ui/AlertDialog";
-import Button from "../ui/Button";
 import Styled from "../Styled";
 import { NavLink, NavLinkContext } from "./NavLink";
 import {
   OverlayNavbar,
   OverlayNavbarSecondary,
-} from "./NavbarContainersMobile";
+} from "./OverlayNavbarContainers";
 import { PrimaryNavbar, SecondaryNavbar } from "./NavbarContainers";
 import { NavLoginButton } from "./NavLoginButton";
+import { ProfileNavButton } from "./ProfileNavButton";
 
 const MainItems = ({ userObject, showSecondary, setShowSecondary }) => (
   <>
@@ -50,30 +46,6 @@ const SecondaryItems = ({ uuid, logOut }) => (
     {/*</NavLink>*/}
     <div onClick={logOut} className="cursor-pointer">
       Log out
-    </div>
-  </>
-);
-
-const ProfileNavButton = ({ showNav, setShowNav, username }) => (
-  <>
-    <div
-      className="text-center md:hidden"
-      onClick={(e) => {
-        e.stopPropagation();
-        setShowNav((p) => !p);
-      }}
-    >
-      {username}
-    </div>
-    <div
-      className={`cursor-pointer ${
-        showNav ? "bg-green-400 text-slate-50" : "bg-none"
-      } rounded-md px-2.5 py-1.5 md:block hidden`}
-      onClick={() => setShowNav((p) => !p)}
-    >
-      {username}
-      {NBSP}
-      <ChevronDown style={{ height: "0.8em" }} />
     </div>
   </>
 );

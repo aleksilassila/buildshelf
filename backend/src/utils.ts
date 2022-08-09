@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import { errors } from "./client-error";
 import fs from "fs";
 import { parse, simplify, writeUncompressed } from "prismarine-nbt";
+import sharp from "sharp";
 
 const validator = new Validator();
 
@@ -138,6 +139,22 @@ const writeLitematic = async (filename, nbtData): Promise<void> => {
   });
 };
 
+const compressImage = async (filePath: string) => {
+  const newFilePath = filePath.substr(0, filePath.lastIndexOf(".")) + ".jpeg";
+  const buffer = await sharp(filePath)
+    .resize({
+      width: 1920,
+      height: 1080,
+      fit: "inside",
+    })
+    .jpeg({ quality: 50 })
+    .toBuffer();
+  sharp(buffer).toFile(newFilePath);
+  if (filePath !== newFilePath) {
+    fs.unlinkSync(filePath);
+  }
+};
+
 export {
   searchQueryBuilder,
   validateBody,
@@ -146,4 +163,5 @@ export {
   parseLitematic,
   writeLitematic,
   removeUndefined,
+  compressImage,
 };
