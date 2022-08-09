@@ -2,7 +2,7 @@ import AwesomeIcon from "../icons/AwesomeIcon";
 import Auth from "../../utils/auth";
 import { MouseEventHandler, useState } from "react";
 
-export const PrimaryNavbarMobile = ({ children }) => {
+export const OverlayNavbar = ({ children }) => {
   const [showPrimary, setShowPrimary] = useState(false);
 
   const userObject = Auth.getUser();
@@ -25,7 +25,7 @@ export const PrimaryNavbarMobile = ({ children }) => {
   );
 };
 
-export const SecondaryNavbarMobile = ({
+export const NavbarOverlaySecondary = ({
   children,
   setShowSecondary,
   showSecondary,

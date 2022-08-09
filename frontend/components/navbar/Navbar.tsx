@@ -10,8 +10,8 @@ import Button from "../ui/Button";
 import Styled from "../Styled";
 import { NavLink, NavLinkContext } from "./NavLink";
 import {
-  PrimaryNavbarMobile,
-  SecondaryNavbarMobile,
+  OverlayNavbar,
+  OverlayNavbarSecondary,
 } from "./NavbarContainersMobile";
 import { PrimaryNavbar, SecondaryNavbar } from "./NavbarContainers";
 import { NavLoginButton } from "./NavLoginButton";
@@ -108,19 +108,19 @@ const Navbar = ({ active = null }: { active?: string }) => {
               setShowSecondary={setShowProfileBar}
             />
           </PrimaryNavbar>
-          <PrimaryNavbarMobile>
+          <OverlayNavbar>
             <MainItems
               userObject={userObject}
               showSecondary={showProfileBar}
               setShowSecondary={setShowProfileBar}
             />
-            <SecondaryNavbarMobile
+            <OverlayNavbarSecondary
               setShowSecondary={setShowProfileBar}
               showSecondary={showProfileBar}
             >
               <SecondaryItems uuid={userObject?.uuid} logOut={logOut} />
-            </SecondaryNavbarMobile>
-          </PrimaryNavbarMobile>
+            </OverlayNavbarSecondary>
+          </OverlayNavbar>
         </div>
         <SecondaryNavbar show={showProfileBar} logOut={logOut}>
           <SecondaryItems uuid={userObject?.uuid} logOut={logOut} />
