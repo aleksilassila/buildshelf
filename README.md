@@ -1,4 +1,4 @@
-# litematica-library
+# Buildshelf
 
 Work-in-progress website for sharing and browsing builds
 for a popular block game called Minecraft.
@@ -9,35 +9,30 @@ express and sequelize handles backend logic together with
 PostgreSQL database. Files are stored on filesystem using
 Multer.
 
+Can be found live at [buildshelf.net](https://buildshelf.net).
+
 ## Building
-The project runs inside Docker. Get started with
+The project runs via Docker. Get started with
 `docker-compose up --build`
 
 To seed the database with test data, run
 `npm run seed` inside `backend/`
 
+To deploy the website to production, run
+`docker-compose -f docker-compose-prod.yml up --build`
+
 ## .env
 Create a `.env` file in the root directory of the project.
 Docker will use this file to set environment variables.
+To get Microsoft authentication working, you need to
+create an app registration in
+[Azure Portal](https://portal.azure.com).
 ```
 DB_URL=postgres://post:post@db/post
 BACKEND_ENDPOINT=http://localhost:9000/api
 FRONTEND_ENDPOINT=http://localhost:3000
+JWT_SECRET=yoursecret
 
 MICROSOFT_CLIENT_ID=
 MICROSOFT_CLIENT_SECRET=
 ```
-
-
-## Screenshots
-Landing page
-![Landing Page](screenshot-1.png?raw=true)
-
-Build card
-![Build Card](screenshot-2.png?raw=true)
-
-Build collections page
-![Collections](screenshot-3.png?raw=true)
-
-Profile page
-![Profile](screenshot-4.png?raw=true)

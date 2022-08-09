@@ -7,6 +7,7 @@ import theme from "../constants/theme";
 import { useApi } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
 import styled from "../components/Styled";
+import { ImageIcon } from "../components/icons/ImageIcon";
 
 const Banner = ({ children, uri }) => (
   <div
@@ -152,7 +153,18 @@ const Home = () => {
         ) : null}
       </Padded>
       <Padded className={"text-stone-500 text-sm py-8 text-center"}>
-        Copyright © 2022 Aleksi Lassila. All rights reserved.
+        <div className="flex justify-between">
+          <span>Copyright © 2022 buildshelf.net. All rights reserved.</span>
+          <span>
+            <a
+              className="underline flex items-center"
+              href="https://github.com/aleksilassila/buildshelf"
+            >
+              <ImageIcon src="/github.svg" className="opacity-70" />
+              Source
+            </a>
+          </span>
+        </div>
       </Padded>
     </div>
   );
