@@ -51,6 +51,7 @@ const errors = {
   BAD_REQUEST: new ClientError("BAD_REQUEST", 400),
   FILE_TOO_LARGE: new ClientError("FILE_TOO_LARGE", 413),
   UNAUTHORIZED: new ClientError("UNAUTHORIZED", 401),
+  INVALID_TOKEN: new ClientError("INVALID_TOKEN", 401),
 };
 
 export { ClientError, errors, middleware };

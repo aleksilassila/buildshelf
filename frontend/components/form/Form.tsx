@@ -20,7 +20,6 @@ const useFormData = function <T>(
     if (data === null && typeof window !== "undefined") {
       setData(Localstorage.get(localStorageKey) || initialData);
     } else if (typeof window !== "undefined") {
-      console.log("asd");
       Localstorage.set(localStorageKey, {
         ...data,
         buildFile: null,

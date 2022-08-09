@@ -24,8 +24,7 @@ DB_URL=postgres://post:post@db/post
 BACKEND_ENDPOINT=http://localhost:9000/api
 FRONTEND_ENDPOINT=http://localhost:3000
 
-MICROSOFT_REDIRECT_URI=http://localhost:3000/login
-MICROSOFT_CLIENT_ID=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f
+MICROSOFT_CLIENT_ID=
 MICROSOFT_CLIENT_SECRET=
 ```
 

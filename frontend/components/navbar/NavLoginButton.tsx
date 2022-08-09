@@ -14,9 +14,7 @@ export const NavLoginButton = () => (
       </div>
       <div className="flex justify-between">
         <AlertDialog.Action>
-          <a
-            href={`https://login.live.com/oauth20_authorize.srf?client_id=e74b6ce2-9270-4f94-9bbb-8d7e9afb9a0f&scope=XboxLive.signin%20offline_access&redirect_uri=${process.env.FRONTEND_ENDPOINT}/login&response_type=code`}
-          >
+          <a href={process.env.MICROSOFT_REDIRECT_URL}>
             <Button mode="primary" className="w-min">
               Log in via Microsoft
             </Button>

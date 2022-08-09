@@ -4,7 +4,7 @@ import * as buildsController from "../controllers/buildsController";
 import { Router } from "express";
 import { auth, moderatorAuth } from "../controllers/auth";
 import multer from "multer";
-import config from "../config";
+import { UPLOAD_DIRECTORY } from "../config";
 import { validateBody, validateQuery } from "../utils";
 import path from "path";
 import { errors } from "../client-error";
@@ -16,7 +16,7 @@ const buildRoutes = Router();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, config.UPLOAD_DIRECTORY);
+    cb(null, UPLOAD_DIRECTORY);
   },
   filename: (req, file, cb) => {
     const fileExtension = file.originalname.split(".").pop();

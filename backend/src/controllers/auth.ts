@@ -4,6 +4,11 @@ import { User } from "../models";
 import { ClientError, errors } from "../client-error";
 import { NextFunction, Response } from "express";
 import { OptionalAuthReq } from "../../types";
+import {
+  FRONTEND_ENDPOINT,
+  MICROSOFT_CLIENT_ID,
+  MICROSOFT_CLIENT_SECRET,
+} from "../config";
 
 const moderatorAuth = async function (
   req: OptionalAuthReq,
@@ -50,54 +55,9 @@ const optionalAuth = async function (
     }
     next();
   } else {
-    res.status(404).send("User not found.");
+    errors.INVALID_TOKEN.send(res);
   }
 };
-
-// const loginMojang = async function (req, res) {
-//   const { username, password, clientToken } = req.body;
-//
-//   if (!username || !password) {
-//     res
-//       .status(400)
-//       .send(
-//         "Bad request | You need to provide username, password and client token."
-//       );
-//     return;
-//   }
-//
-//   const payload: any = {
-//     agent: {
-//       name: "Minecraft",
-//       version: 1,
-//     },
-//     username,
-//     password,
-//     requestUser: true,
-//   };
-//
-//   if (clientToken) {
-//     payload.clientToken = clientToken;
-//   }
-//
-//   const response = await axios
-//     .post("https://authserver.mojang.com/authenticate", payload)
-//     .catch((err) => err.response);
-//   const user = response?.data?.user;
-//   const profile = response?.data?.selectedProfile;
-//
-//   if (response?.status === 200 && user && profile) {
-//     const localUser = await User.findOrCreateUser(
-//       profile.id,
-//       user.id,
-//       profile.name
-//     );
-//
-//     res.send(localUser.getSignedToken());
-//   } else {
-//     res.status(403).send("Invalid credentials");
-//   }
-// };
 
 const loginMicrosoft = async (req, res) => {
   const { code } = req.body;
@@ -111,11 +71,11 @@ const loginMicrosoft = async (req, res) => {
     .post(
       "https://login.live.com/oauth20_token.srf",
       new URLSearchParams({
-        client_id: process.env.MICROSOFT_CLIENT_ID,
-        client_secret: process.env.MICROSOFT_CLIENT_SECRET,
+        client_id: MICROSOFT_CLIENT_ID,
+        client_secret: MICROSOFT_CLIENT_SECRET,
         code,
         grant_type: "authorization_code",
-        redirect_uri: process.env.FRONTEND_ENDPOINT + "/login",
+        redirect_uri: FRONTEND_ENDPOINT + "/login",
       })
     )
     .catch((err) => err.response);

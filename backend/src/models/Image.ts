@@ -8,9 +8,9 @@ import {
   NOW,
 } from "sequelize";
 import sequelize from "../database";
-import config from "../config";
 import User, { UserJSON } from "./User";
 import Build from "./Build";
+import { UPLOAD_DIRECTORY } from "../config";
 
 export interface ImageJSON {
   createdAt: string;
@@ -34,7 +34,7 @@ class Image extends Model<
   declare getBuilds: HasManyGetAssociationsMixin<Build>;
 
   getPath(): string {
-    return `${config.UPLOAD_DIRECTORY}/${this.filename}`;
+    return `${UPLOAD_DIRECTORY}/${this.filename}`;
   }
 
   async toJSON(): Promise<ImageJSON> {

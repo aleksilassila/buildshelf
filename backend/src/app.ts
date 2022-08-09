@@ -1,20 +1,19 @@
 import express from "express";
 import cors from "cors";
-require("dotenv").config();
 import cron from "node-cron";
 
 import tagsController from "./controllers/tagsController";
 import categoriesController from "./controllers/categoriesController";
-import { optionalAuth, loginClient, loginMicrosoft } from "./controllers/auth";
+import { loginClient, loginMicrosoft, optionalAuth } from "./controllers/auth";
 
 import sequelize from "./database";
 import { errors, middleware as errorMiddleware } from "./client-error";
 import buildRoutes from "./routes/buildRoutes";
 import userRoutes from "./routes/userRoutes";
-import collections from "./routes/collectionRoutes";
 import client from "./routes/clientRoutes";
 import Build from "./models/Build";
 import { Op } from "sequelize";
+import * as config from "./config";
 
 cron.schedule("*/15 * * * *", async () => {
   // Update popularity score
@@ -74,5 +73,8 @@ app.use((req, res) => {
 
 sequelize.sync({ force: false }).then(() => {
   console.log("App listening on port 9000");
+
+  console.log("Config values", config);
+
   app.listen(9000);
 });

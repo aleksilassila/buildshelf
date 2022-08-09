@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Auth from "./auth";
-import axios, { AxiosRequestConfig } from "axios";
-
-const routes = {};
-
-const responses = {};
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import Router from "next/router";
 
 const useApi = <S>(
   uri: string,
@@ -30,12 +27,9 @@ const useApi = <S>(
 
     setValues({ ...values, loading: true });
 
-    axios(process.env.BACKEND_ENDPOINT + uri, {
+    apiRequest({
+      url: uri,
       ..._config,
-      params: {
-        ..._config?.params,
-        token: userObject?.token,
-      },
     })
       .then((res) => setValues({ ...values, data: res.data, loading: false }))
       .catch((error) => setValues({ ...values, loading: false, error }));
@@ -90,11 +84,11 @@ const useApiFeed = <S>(
     setValues({ ...values, loading: true });
     setPage(page);
 
-    axios(process.env.BACKEND_ENDPOINT + uri, {
+    apiRequest({
+      url: uri,
       ...config,
       params: {
-        ...config?.params,
-        token: userObject?.token,
+        ...config.params,
         offset: page * amount,
         amount,
       },
@@ -142,7 +136,7 @@ const useApiFeed = <S>(
   ];
 };
 
-const apiRequest = async (config) => {
+const apiRequest = async <P = any>(config): Promise<AxiosResponse<P>> => {
   return axios({
     ...config,
     url: process.env.BACKEND_ENDPOINT + config.url,
@@ -150,7 +144,18 @@ const apiRequest = async (config) => {
       ...config.params,
       token: Auth.getUser()?.token,
     },
+  }).catch((error: AxiosError) => {
+    if (
+      error?.response?.status === 401 &&
+      error?.response?.data?.error?.code === "INVALID_TOKEN"
+    ) {
+      Auth.setUser(null);
+      try {
+        Router.replace(process.env.MICROSOFT_REDIRECT_URL);
+      } catch (ignored) {}
+    }
+    throw error;
   });
 };
 
-export { useApi, useApiFeed, apiRequest, routes, responses };
+export { useApi, useApiFeed, apiRequest };

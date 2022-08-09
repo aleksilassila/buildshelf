@@ -1,4 +1,4 @@
 import { Sequelize } from "sequelize";
-import config from "./config";
+import { DB_URL } from "./config";
 
-export default new Sequelize(config.DB_URL, { logging: false });
+export default new Sequelize(DB_URL, { logging: false });

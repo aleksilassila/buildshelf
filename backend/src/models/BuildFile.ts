@@ -8,7 +8,7 @@ import {
   NOW,
 } from "sequelize";
 import sequelize from "../database";
-import config from "../config";
+import { UPLOAD_DIRECTORY } from "../config";
 
 export interface BuildFileModel extends BuildFileAttributes {
   getPath: () => string;
@@ -60,7 +60,7 @@ const BuildFile = <BuildFileStatic>sequelize.define<BuildFileAttributes>(
 );
 
 BuildFile.prototype.getPath = function () {
-  return `${config.UPLOAD_DIRECTORY}/${this.filename}`;
+  return `${UPLOAD_DIRECTORY}/${this.filename}`;
 };
 
 export { BuildFile };

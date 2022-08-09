@@ -16,6 +16,7 @@ import Build, { BuildJSON } from "./Build";
 import Image from "./Image";
 import Collection from "./Collection";
 import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
 
 export interface UserJSON {
   saves: BuildJSON[] | undefined;
@@ -99,16 +100,13 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   }
 
   getSignedToken() {
-    return jwt.sign(
-      { username: this.username, uuid: this.uuid },
-      "tbTybk6KnhcD"
-    );
+    return jwt.sign({ username: this.username, uuid: this.uuid }, JWT_SECRET);
   }
 
   static async getUserWithToken(
     token: string
   ): Promise<[user: User | undefined, decodeError: boolean]> {
-    const decoded = jwt.verify(token, "tbTybk6KnhcD", function (err, decoded) {
+    const decoded = jwt.verify(token, JWT_SECRET, function (err, decoded) {
       return err ? undefined : decoded;
     });
 

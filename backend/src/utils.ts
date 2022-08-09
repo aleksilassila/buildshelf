@@ -149,7 +149,7 @@ const compressImage = async (filePath: string) => {
     })
     .jpeg({ quality: 50 })
     .toBuffer();
-  sharp(buffer).toFile(newFilePath);
+  await sharp(buffer).toFile(newFilePath);
   if (filePath !== newFilePath) {
     fs.unlinkSync(filePath);
   }
