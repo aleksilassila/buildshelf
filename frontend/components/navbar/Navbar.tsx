@@ -1,12 +1,12 @@
 import Link from "next/link";
 import React, { ReactNode, useState } from "react";
-import { useRouter } from "next/router";
 import { NavItem, NavLink, NavLinkContext } from "./NavLink";
 import { LoginButton } from "./LoginButton";
 import { ProfileNavButton } from "./ProfileNavButton";
 import { storeLocalUser, useLocalUser } from "../../utils/auth";
 import AwesomeIcon from "../icons/AwesomeIcon";
 import { motion } from "framer-motion";
+import Router from "next/router";
 
 const NavBackground = () => (
   <div className="flex items-center px-6 border-b-2 border-b-stone-200 col-start-1 col-span-2 row-start-1">
@@ -38,6 +38,7 @@ const SecondaryNav = ({
   return (
     <motion.ul
       animate={isVisible ? "visible" : "hidden"}
+      initial={false}
       variants={{
         visible: { height: "auto" },
         hidden: { height: 0 },
@@ -87,12 +88,10 @@ const Navbar = ({ active = null }: { active?: string }) => {
   const [showPrimary, setShowPrimary] = useState(false);
   const localUser = useLocalUser();
 
-  const router = useRouter();
-
   const logOut = () => {
     storeLocalUser(null);
     setShowSecondary(false);
-    router.push("/").then();
+    Router.replace("/").then(() => Router.reload());
   };
 
   return (
