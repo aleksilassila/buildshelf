@@ -17,10 +17,10 @@ export const NavItem: FunctionComponent<
   { isActive?: boolean } & HTMLAttributes<HTMLLIElement>
 > = ({ children, isActive, ...rest }) => (
   <li
+    {...rest}
     className={`mx-2.5 md:my-0 my-2 text-xl md:text-base font-medium ${
       isActive ? "text-green-500" : "cursor-pointer"
-    }`}
-    {...rest}
+    } ${rest.className}`}
   >
     {children}
   </li>

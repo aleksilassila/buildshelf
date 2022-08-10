@@ -9,6 +9,7 @@ export const ProfileNavButton = ({
 }) => (
   <>
     <NavItem
+      className={"md:hidden"}
       onClick={(e) => {
         e.stopPropagation();
         setShowSecondary((p) => !p);

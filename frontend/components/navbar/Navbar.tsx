@@ -18,7 +18,7 @@ const NavBackground = () => (
   </div>
 );
 
-const Primary = ({ children }) => {
+const PrimaryNav = ({ children }) => {
   return (
     <ul
       className={`md:flex-row flex flex-col md:gap-0 items-center col-start-2 row-start-1 justify-self-end px-6`}
@@ -28,7 +28,7 @@ const Primary = ({ children }) => {
   );
 };
 
-const SecondaryNavbar = ({
+const SecondaryNav = ({
   isVisible,
   children,
 }: {
@@ -109,7 +109,7 @@ const Navbar = ({ active = null }: { active?: string }) => {
           showPrimary={showPrimary}
           setShowPrimary={setShowPrimary}
         >
-          <Primary>
+          <PrimaryNav>
             <NavLink href="/">Home</NavLink>
             <NavLink href="/builds">Builds</NavLink>
             {/*<NavLink name="collections" href="/collections">*/}
@@ -127,8 +127,8 @@ const Navbar = ({ active = null }: { active?: string }) => {
             ) : (
               <LoginButton />
             )}
-          </Primary>
-          <SecondaryNavbar isVisible={showSecondary}>
+          </PrimaryNav>
+          <SecondaryNav isVisible={showSecondary}>
             <NavLink href={"/users/" + localUser?.uuid}>Builds</NavLink>
             {/*<NavLink href={"/users/" + localUser?.uuid + "/collections"}>*/}
             {/*  Collections*/}
@@ -140,7 +140,7 @@ const Navbar = ({ active = null }: { active?: string }) => {
             {/*  Bookmarks*/}
             {/*</NavLink>*/}
             <NavItem onClick={logOut}>Log out</NavItem>
-          </SecondaryNavbar>
+          </SecondaryNav>
         </LinksContainer>
       </div>
     </NavLinkContext.Provider>
