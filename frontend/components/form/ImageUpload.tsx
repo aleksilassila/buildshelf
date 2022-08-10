@@ -1,4 +1,4 @@
-import Button from "../ui/Button";
+import Button from "../ui/button/Button";
 import { createRef, useState } from "react";
 import { apiRequest } from "../../utils/api";
 import ImageCollection from "../ImageCollection";

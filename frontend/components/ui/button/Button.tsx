@@ -1,4 +1,4 @@
-import theme from "../../constants/theme";
+import theme from "../../../constants/theme";
 import React from "react";
 
 interface Props {

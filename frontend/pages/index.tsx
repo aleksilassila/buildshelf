@@ -3,11 +3,11 @@ import Navbar from "../components/navbar/Navbar";
 import CardsRowView from "../containers/CardsRowView";
 import messages from "../constants/messages";
 import CardsGridView from "../containers/CardsGridView";
-import theme from "../constants/theme";
 import { useApi } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
 import styled from "../components/Styled";
 import { ImageIcon } from "../components/icons/ImageIcon";
+import { Anchor, Heading, Paragraph } from "../components/ui/CommonElements";
 
 const Banner = ({ children, uri }) => (
   <div
@@ -26,6 +26,9 @@ const Banner = ({ children, uri }) => (
 );
 
 const Padded = styled("px-8 xl:px-16 2xl:px-24");
+const Green = (props) => (
+  <span className="text-green-600 font-bold">{props.children}</span>
+);
 
 const Home = () => {
   const [popularData, popularLoading, popularError] = useApi<Build[]>(
@@ -92,40 +95,32 @@ const Home = () => {
           Buildshelf is a place to find, store and share all kinds of Minecraft
           builds and projects. This project utilises a Minecraft blueprinting
           mod called Litematica. You can download Litematica{" "}
-          <a
-            href="https://www.curseforge.com/minecraft/mc-mods/litematica"
-            className={theme.text.linkDark}
-          >
+          <Anchor href="https://www.curseforge.com/minecraft/mc-mods/litematica">
             here
-          </a>
+          </Anchor>
           .
         </p>
       </Banner>
-      <Padded className="flex flex-col flex-1 py-32 text-lg">
-        <h2 className={theme.text.bold + " text-stone-800"}>
-          How does it work?
-        </h2>
+      <Padded className="flex flex-col flex-1 text-lg py-32">
+        <Heading>How does it work?</Heading>
         <ul className={"tracking-wide"}>
           <li>
-            <span className={"text-green-600 font-bold"}>1.</span> Log in with
-            your Minecraft account
+            <Green>1.</Green> Log in with your Minecraft account
           </li>
           <li>
-            <span className={"text-green-600 font-bold"}>2.</span> Download{" "}
-            <a
+            <Green>2.</Green> Download{" "}
+            <Anchor
               href={
                 "https://www.curseforge.com/minecraft/mc-mods/buildshelf-sync"
               }
-              className={theme.text.link}
             >
               Litematica extension
-            </a>{" "}
+            </Anchor>{" "}
             (fabric mod) to automatically sync your builds
           </li>
           <li>
-            <span className={"text-green-600 font-bold"}>3.</span> Browse and
-            save builds in Buildshelf to automatically have them downloaded to
-            your Minecraft client
+            <Green>3.</Green> Browse and save builds in Buildshelf to
+            automatically have them downloaded to your Minecraft client
           </li>
         </ul>
       </Padded>
@@ -151,6 +146,17 @@ const Home = () => {
             </h2>
           </CardsGridView>
         ) : null}
+      </Padded>
+      <Padded className="py-32">
+        <Heading>About the project</Heading>
+        <Paragraph>
+          This project is currently under development. If you want to track the
+          progress or report a bug, you can do so in the project{" "}
+          <Anchor href="https://github.com/aleksilassila/buildshelf">
+            Github page
+          </Anchor>
+          .
+        </Paragraph>
       </Padded>
       <Padded className={"text-stone-500 text-sm py-8 text-center"}>
         <div className="flex justify-between">

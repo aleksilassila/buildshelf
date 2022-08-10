@@ -1,5 +1,5 @@
 import theme from "../../constants/theme";
-import Button from "./Button";
+import Button from "./button/Button";
 import { ReactNode } from "react";
 
 const Root = ({ children }) => {

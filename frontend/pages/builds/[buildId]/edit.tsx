@@ -5,7 +5,7 @@ import { Build, Image } from "../../../interfaces/ApiResponses";
 import Loading from "../../../components/statuses/Loading";
 import NetworkError from "../../../components/statuses/NetworkError";
 import * as Form from "../../../components/form/Form";
-import Button from "../../../components/ui/Button";
+import Button from "../../../components/ui/button/Button";
 import FormMarkdownEditor from "../../../components/form/FormMarkdownEditor";
 import { useEffect } from "react";
 import { Toast, useToast } from "../../../components/ui/Toast";

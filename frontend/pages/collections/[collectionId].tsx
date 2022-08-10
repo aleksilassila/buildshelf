@@ -8,7 +8,7 @@ import CardsGridView from "../../containers/CardsGridView";
 import CollectionTitle from "../../components/collectionPage/CollectionTitle";
 import { Banner } from "../../components/Banner";
 import Separator from "../../components/utils/Separator";
-import Button from "../../components/ui/Button";
+import Button from "../../components/ui/button/Button";
 import { useLocalUser } from "../../utils/auth";
 
 const FavoriteButton = ({

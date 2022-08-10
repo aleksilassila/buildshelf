@@ -1,6 +1,6 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { ReactNode } from "react";
-import Button from "./Button";
+import Button from "./button/Button";
 import theme from "../../constants/theme";
 
 const Root = ({

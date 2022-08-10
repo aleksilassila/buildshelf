@@ -4,7 +4,7 @@ import Separator from "./utils/Separator";
 import * as MultipleButton from "./ui/MultipleButton";
 import { useEffect, useState } from "react";
 import Heart from "./icons/Heart";
-import Button from "./ui/Button";
+import Button from "./ui/button/Button";
 import Link from "next/link";
 import Loading from "./statuses/Loading";
 import NetworkError from "./statuses/NetworkError";

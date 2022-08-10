@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Navbar from "../navbar/Navbar";
 import { useState } from "react";
 import { User } from "../../interfaces/ApiResponses";
-import Button from "../ui/Button";
+import Button from "../ui/button/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
 import { apiRequest, useApi } from "../../utils/api";

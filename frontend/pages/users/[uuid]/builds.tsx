@@ -3,7 +3,7 @@ import CardsGridView from "../../../containers/CardsGridView";
 import { Build } from "../../../interfaces/ApiResponses";
 import { useRouter } from "next/router";
 import { useApi } from "../../../utils/api";
-import Button from "../../../components/ui/Button";
+import Button from "../../../components/ui/button/Button";
 import Link from "next/link";
 import { useLocalUser } from "../../../utils/auth";
 

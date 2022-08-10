@@ -2,7 +2,7 @@ import Navbar from "../components/navbar/Navbar";
 import { AxiosResponse } from "axios";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
-import Button from "../components/ui/Button";
+import Button from "../components/ui/button/Button";
 import theme from "../constants/theme";
 import Tag from "../components/ui/Tag";
 import * as Form from "../components/form/Form";

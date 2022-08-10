@@ -1,6 +1,6 @@
 import * as AlertDialog from "../ui/AlertDialog";
 import theme from "../../constants/theme";
-import Button from "../ui/Button";
+import Button from "../ui/button/Button";
 import { NavItem } from "./NavLink";
 
 export const LoginButton = () => (
