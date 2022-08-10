@@ -1,11 +1,12 @@
 import * as AlertDialog from "../ui/AlertDialog";
 import theme from "../../constants/theme";
 import Button from "../ui/Button";
+import { NavItem } from "./NavLink";
 
-export const NavLoginButton = () => (
+export const LoginButton = () => (
   <AlertDialog.Root>
     <AlertDialog.Trigger>
-      <div className="mx-2.5 cursor-pointer">Log In</div>
+      <NavItem>Log In</NavItem>
     </AlertDialog.Trigger>
     <AlertDialog.Content className="flex flex-col gap-6">
       <div>

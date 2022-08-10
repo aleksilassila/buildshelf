@@ -1,22 +1,26 @@
 import NBSP from "../utils/NBSP";
 import ChevronDown from "../icons/ChevronDown";
+import { NavItem } from "./NavLink";
 
-export const ProfileNavButton = ({ showNav, setShowNav, username }) => (
+export const ProfileNavButton = ({
+  showSecondary,
+  setShowSecondary,
+  username,
+}) => (
   <>
-    <span
-      className="text-center md:hidden"
+    <NavItem
       onClick={(e) => {
         e.stopPropagation();
-        setShowNav((p) => !p);
+        setShowSecondary((p) => !p);
       }}
     >
       {username}
-    </span>
+    </NavItem>
     <div
       className={`cursor-pointer ${
-        showNav ? "bg-green-400 text-slate-50" : "bg-none"
-      } rounded-md px-2.5 py-1.5 md:block hidden`}
-      onClick={() => setShowNav((p) => !p)}
+        showSecondary ? "bg-green-400 text-slate-50" : "bg-none"
+      } rounded-md px-2.5 py-1.5 md:block hidden font-medium`}
+      onClick={() => setShowSecondary((p) => !p)}
     >
       {username}
       {NBSP}

@@ -13,6 +13,19 @@ const useIsHrefActive = (href: string) => {
   return active === href;
 };
 
+export const NavItem: FunctionComponent<
+  { isActive?: boolean } & HTMLAttributes<HTMLLIElement>
+> = ({ children, isActive, ...rest }) => (
+  <li
+    className={`mx-2.5 md:my-0 my-2 text-xl md:text-base font-medium ${
+      isActive ? "text-green-500" : "cursor-pointer"
+    }`}
+    {...rest}
+  >
+    {children}
+  </li>
+);
+
 const NavLink: FunctionComponent<
   { href: string } & HTMLAttributes<HTMLDivElement>
 > = ({ href, children }) => {
@@ -20,11 +33,7 @@ const NavLink: FunctionComponent<
 
   return (
     <Link href={href}>
-      <li
-        className={`mx-2.5 ${isActive ? "text-green-500" : "cursor-pointer"}`}
-      >
-        {children}
-      </li>
+      <NavItem isActive={isActive}>{children}</NavItem>
     </Link>
   );
 };
