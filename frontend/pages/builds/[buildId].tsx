@@ -1,6 +1,7 @@
 import Navbar from "../../components/navbar/Navbar";
 import * as BuildPage from "../../components/buildPage/BuildPage";
 import { getSingleParams } from "../../utils/utils";
+import { StaticBuildInfo } from "../../components/buildPage/BuildPage";
 
 const Build = ({}) => {
   const { buildId } = getSingleParams();
@@ -8,7 +9,7 @@ const Build = ({}) => {
   return (
     <div>
       <Navbar />
-      <BuildPage.Static buildId={buildId} />
+      <StaticBuildInfo buildId={buildId} />
     </div>
   );
 };

@@ -12,7 +12,7 @@ const useApi = <S>(
   data: S | null,
   loading: boolean,
   error: Error | null,
-  refetch: (config?) => void
+  refetch: (config?: AxiosRequestConfig) => Promise<AxiosResponse>
 ] => {
   const [values, setValues] = useState({
     data: null,
@@ -22,18 +22,25 @@ const useApi = <S>(
 
   const localUser = useLocalUser();
 
-  const fetch = useCallback((_config = config) => {
+  const fetch = useCallback((_config = config): Promise<AxiosResponse> => {
     if (values.loading || (!localUser.isLoggedIn() && requiresAuth)) return;
 
     setValues({ ...values, loading: true });
 
-    apiRequest({
+    return apiRequest({
       url: uri,
       ..._config,
     })
-      .then((res) => setValues({ ...values, data: res.data, loading: false }))
-      .catch((error) => setValues({ ...values, loading: false, error }));
-  }, [uri, localUser].concat(deps));
+      .then((res) => {
+        setValues({ ...values, data: res.data, loading: false });
+        return res;
+      })
+      .catch((error: AxiosError) => {
+        setValues({ ...values, loading: false, error });
+
+        return error.response;
+      });
+  }, [uri, localUser, values.loading].concat(deps));
 
   useEffect(() => {
     if (

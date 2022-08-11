@@ -1,6 +1,6 @@
 import BuildCard from "../components/BuildCard";
 import { Build } from "../interfaces/ApiResponses";
-import * as BuildPage from "../components/buildPage/BuildPage";
+import { FloatingBuildInfo } from "../components/buildPage/BuildPage";
 import { useState } from "react";
 import theme from "../constants/theme";
 import ArrowLeft from "../components/icons/ArrowLeft";
@@ -40,7 +40,7 @@ const CardsRowView = ({ builds, children }: Props) => {
 
   return (
     <div className="cards-row-view">
-      <BuildPage.Floating buildId={buildId} setBuildPage={setBuildId} />
+      <FloatingBuildInfo buildId={buildId} setBuildPage={setBuildId} />
       <div className="border-gray-200 border-solid border-0 box-border flex flex-row items-center justify-between">
         <div>{children}</div>
         <div className="heading-controls">

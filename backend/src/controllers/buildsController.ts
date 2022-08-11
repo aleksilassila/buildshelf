@@ -276,7 +276,7 @@ const save = async function (req: BuildReq & AuthReq, res: Res) {
 
   await build.updateTotals();
 
-  res.send(shouldSave ? "Build saved" : "Build unsaved");
+  res.send(await build.toJSON(user));
 };
 
 const bookmark = async function (req: BuildReq & AuthReq, res: Res) {

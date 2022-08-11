@@ -1,24 +1,28 @@
 import { Build } from "../../interfaces/ApiResponses";
 import ImageCollection from "../ImageCollection";
 import Separator from "../utils/Separator";
-import * as MultipleButton from "../ui/MultipleButton";
-import { useEffect, useState } from "react";
+import {
+  ButtonGroupCustomItem,
+  ButtonGroupItem,
+  ButtonGroupRoot,
+} from "../ui/MultipleButton";
 import Heart from "../icons/Heart";
 import PrimaryButton from "../ui/button/Button";
 import Link from "next/link";
 import Loading from "../statuses/Loading";
 import NetworkError from "../statuses/NetworkError";
-import { apiRequest, useApi } from "../../utils/api";
+import { useApi } from "../../utils/api";
 import theme from "../../constants/theme";
 import minecraftDataVersions from "../../constants/minecraftDataVersions";
 import Markdown from "../Markdown";
-import ExternalLink from "../icons/ExternalLink";
-import CloseIcon from "../icons/CloseIcon";
 import BuildTitle from "./BuildTitle";
 import { useLocalUser } from "../../utils/auth";
 import IconButton from "../ui/button/IconButton";
 import { DivComponent } from "../../interfaces/Props";
 import AwesomeIcon from "../icons/AwesomeIcon";
+import { ModalContainer } from "../../containers/ModalContainer";
+import LoadingButton from "../ui/button/LoadingButton";
+import { AxiosResponse } from "axios";
 
 interface Props {
   buildId: number | string;
@@ -28,17 +32,23 @@ interface FloatingProps extends Props {
   setBuildPage: (number) => void;
 }
 
-const Static = ({ ...rest }: Props) => (
+const StaticBuildInfo = ({ ...rest }: Props) => (
   <div className="page-container">
     <BuildPage {...rest} />
   </div>
 );
 
-const Floating = ({ buildId, setBuildPage, ...rest }: FloatingProps) => (
-  <div
-    className="fixed top-0 left-0 z-50 bg-[#00000022] w-screen h-screen md:p-4 lg:p-8 xl:p-12"
-    style={{ display: buildId === undefined ? "none" : "block" }}
-    onClick={(e) => e.target === e.currentTarget && setBuildPage(undefined)}
+const FloatingBuildInfo = ({
+  buildId,
+  setBuildPage,
+  ...rest
+}: FloatingProps) => (
+  <ModalContainer
+    className={`md:p-4 lg:p-8 xl:p-12`}
+    show={buildId !== undefined}
+    onBackgroundClick={(e) =>
+      e.target === e.currentTarget && setBuildPage(undefined)
+    }
   >
     <div className="bg-white w-full h-full flex flex-col md:rounded-xl">
       <div className="flex flex-row items-center justify-end text-stone-500 gap-2 p-2 px-2">
@@ -55,33 +65,20 @@ const Floating = ({ buildId, setBuildPage, ...rest }: FloatingProps) => (
         <BuildPage buildId={buildId} {...rest} />
       </div>
     </div>
-  </div>
+  </ModalContainer>
 );
 
 const BuildPage = ({ buildId }: Props) => {
   if (buildId === undefined) return null;
 
   const localUser = useLocalUser();
-  const [build, loading, error] = useApi<Build>("/builds/" + buildId, {}, [
-    buildId,
-  ]);
+  const [build, loading, error, refetch] = useApi<Build>(
+    "/builds/" + buildId,
+    {},
+    []
+  );
 
-  const [SBData, setSBData] = useState({
-    active: true,
-    isBuildSaved: false,
-    saveCount: 0,
-  });
-
-  useEffect(() => {
-    if (loading || error) return;
-    setSBData({
-      active: false,
-      saveCount: build.totalSaves,
-      isBuildSaved: build.isSaved,
-    });
-  }, [build]);
-
-  if (loading) {
+  if (loading && !build) {
     return <Loading />;
   }
 
@@ -107,11 +104,7 @@ const BuildPage = ({ buildId }: Props) => {
               <PrimaryButton mode="primary">Edit Build</PrimaryButton>
             </Link>
           ) : localUser.isLoggedIn() ? (
-            <SaveButton
-              buildId={buildId}
-              sbData={SBData}
-              setSBData={setSBData}
-            />
+            <SaveButton build={build} refetch={refetch} />
           ) : null}
         </div>
       </div>
@@ -141,46 +134,33 @@ const BuildPage = ({ buildId }: Props) => {
   );
 };
 
-const SaveButton = ({ buildId, sbData, setSBData }) => {
-  const saveBuild = () => {
-    if (sbData.active) return;
-
-    setSBData({ active: true, ...sbData });
-
-    apiRequest({
-      method: "POST",
-      url: "/builds/" + buildId + "/save",
-      data: {
-        save: !sbData.isBuildSaved,
-      },
-    })
-      .then((res) => {
-        const newSaveCount = sbData.saveCount + (!sbData.isBuildSaved ? 1 : -1);
-
-        setSBData({
-          active: false,
-          isBuildSaved:
-            res.status === 200 ? !sbData.isBuildSaved : sbData.isBuildSaved,
-          saveCount: res.status === 200 ? newSaveCount : sbData.saveCount,
-        });
-      })
-      .catch((err) => setSBData({ active: false, ...sbData }));
-  };
-
+const SaveButton = (props: { build: Build; refetch: () => void }) => {
   return (
-    <MultipleButton.Root>
-      <MultipleButton.Button
-        mode={sbData.isBuildSaved ? "primary" : "label"}
+    <ButtonGroupRoot>
+      <ButtonGroupItem
+        mode={props.build?.isSaved ? "primary" : "label"}
         className={"cursor-default"}
       >
         <span className="font-semibold">
-          <Heart /> {sbData.saveCount}
+          <Heart /> {props.build?.totalSaves}
         </span>
-      </MultipleButton.Button>
-      <MultipleButton.Button onClick={saveBuild}>
-        {sbData.isBuildSaved ? "Unsave build" : "Save build"}
-      </MultipleButton.Button>
-    </MultipleButton.Root>
+      </ButtonGroupItem>
+      <ButtonGroupCustomItem
+        Component={LoadingButton}
+        axiosConfig={{
+          method: "POST",
+          url: "/builds/" + props.build?.id + "/save",
+          data: {
+            save: !props.build?.isSaved,
+          },
+        }}
+        onResponse={(res: AxiosResponse) => {
+          props.refetch();
+        }}
+      >
+        {props.build?.isSaved ? "Unsave build" : "Save build"}
+      </ButtonGroupCustomItem>
+    </ButtonGroupRoot>
   );
 };
 
@@ -214,4 +194,4 @@ const BuildDetails = ({
   );
 };
 
-export { Static, Floating };
+export { StaticBuildInfo, FloatingBuildInfo };

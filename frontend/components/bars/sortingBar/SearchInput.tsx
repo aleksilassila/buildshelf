@@ -19,10 +19,10 @@ const SearchInput = (props: Props) => {
       placeholder={props.placeholder}
       onEnter={() => props.doSearch(searchValue)}
       onBlur={() => props.doSearch(searchValue)}
-      className={`${props.className}`}
+      className={`font-medium ${props.className}`}
     >
       <InputIcon>
-        <AwesomeIcon icon="faSearch" className="text-sm" />
+        <AwesomeIcon icon="faSearch" className="text-sm text-stone-700" />
       </InputIcon>
     </Input>
   );

@@ -43,13 +43,13 @@ const Input = ({
 
   return (
     <div
-      className={`input ${theme.ui.outline} ${
-        theme.ui.borders
-      } flex items-center h-10 w-full ${
-        textArea && "h-min"
-      } cursor-text bg-white ${className}`}
-      onClick={() => focusRef.current.focus()}
       {...rest}
+      className={`input flex items-center h-10 w-full ${
+        textArea && "h-min"
+      } cursor-text bg-white ${theme.ui.borders} ${
+        theme.ui.outline
+      } ${className}`}
+      onClick={() => focusRef.current.focus()}
     >
       {children}
       {textArea ? (

@@ -1,3 +1,3 @@
 import { HTMLAttributes } from "react";
 
-export type DivComponent = HTMLAttributes<DivComponent>;
+export type DivComponent = HTMLAttributes<HTMLDivElement>;
