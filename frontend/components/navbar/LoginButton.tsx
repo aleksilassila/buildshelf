@@ -1,6 +1,6 @@
 import * as AlertDialog from "../ui/AlertDialog";
 import theme from "../../constants/theme";
-import Button from "../ui/button/Button";
+import PrimaryButton from "../ui/button/Button";
 import { NavItem } from "./NavLink";
 
 export const LoginButton = () => (
@@ -16,13 +16,13 @@ export const LoginButton = () => (
       <div className="flex justify-between">
         <AlertDialog.Action>
           <a href={process.env.MICROSOFT_REDIRECT_URL}>
-            <Button mode="primary" className="w-min">
+            <PrimaryButton mode="primary" className="w-min">
               Log in via Microsoft
-            </Button>
+            </PrimaryButton>
           </a>
         </AlertDialog.Action>
         <AlertDialog.Cancel>
-          <Button>Cancel</Button>
+          <PrimaryButton>Cancel</PrimaryButton>
         </AlertDialog.Cancel>
       </div>
     </AlertDialog.Content>

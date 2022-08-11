@@ -31,7 +31,7 @@ const theme = {
     outline:
       "outline-0 focus:ring focus-within:ring ring-offset-1 ring-green-200",
     borders: "border border-stone-300 rounded-md",
-    spacing: "flex items-center px-6 py-0 h-10",
+    spacing: "flex items-center px-4 py-0 h-10",
   },
 };
 

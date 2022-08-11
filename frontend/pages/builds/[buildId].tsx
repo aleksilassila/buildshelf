@@ -1,5 +1,5 @@
 import Navbar from "../../components/navbar/Navbar";
-import * as BuildPage from "../../components/BuildPage";
+import * as BuildPage from "../../components/buildPage/BuildPage";
 import { getSingleParams } from "../../utils/utils";
 
 const Build = ({}) => {

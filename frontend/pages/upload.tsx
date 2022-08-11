@@ -2,7 +2,7 @@ import Navbar from "../components/navbar/Navbar";
 import { AxiosResponse } from "axios";
 import Input from "../components/ui/Input";
 import FileSelect from "../components/ui/FileSelect";
-import Button from "../components/ui/button/Button";
+import PrimaryButton from "../components/ui/button/Button";
 import theme from "../constants/theme";
 import Tag from "../components/ui/Tag";
 import * as Form from "../components/form/Form";
@@ -15,6 +15,8 @@ import { useRouter } from "next/router";
 import * as Dropdown from "../components/ui/Dropdown";
 import { apiRequest, useApi } from "../utils/api";
 import { useLocalUser } from "../utils/auth";
+import LoadingButton from "../components/ui/button/LoadingButton";
+import { useState } from "react";
 
 interface FormData {
   name: string;
@@ -51,7 +53,7 @@ const initialFormData: FormData = {
 const Clear = ({ setFormData }) => (
   <AlertDialog.Root>
     <AlertDialog.Trigger>
-      <Button mode="danger">Clear</Button>
+      <PrimaryButton mode="danger">Clear</PrimaryButton>
     </AlertDialog.Trigger>
     <AlertDialog.Content>
       <AlertDialog.ConfirmDangerous
@@ -68,6 +70,7 @@ const Upload = () => {
     initialFormData,
     "uploadFormData"
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const [categories, categoriesLoading, categoriesError] = useApi<Category[]>(
     "/categories",
@@ -120,6 +123,7 @@ const Upload = () => {
       data.append("tags[]", tag);
     }
 
+    setIsLoading(true);
     apiRequest({
       method: "POST",
       url: "/builds",
@@ -133,7 +137,8 @@ const Upload = () => {
           router.push("/builds/" + res.data?.id).then();
         }
       })
-      .catch((err) => toast("Error Occurred", err?.message, "danger"));
+      .catch((err) => toast("Error Occurred", err?.message, "danger"))
+      .finally(() => setIsLoading(false));
   };
 
   const addTag = (e) => {
@@ -270,7 +275,7 @@ const Upload = () => {
                 if (formData.tags?.length < 3) addTag(tag);
               }}
             />
-            <Button
+            <PrimaryButton
               onClick={addTag}
               mode={
                 formData.tags?.length >= 3 || formData.tagsInput.length === 0
@@ -279,7 +284,7 @@ const Upload = () => {
               }
             >
               Add
-            </Button>
+            </PrimaryButton>
           </div>
           <Form.Tip>
             Add up to three tags. Tags should be adjectives that describe your
@@ -403,9 +408,13 @@ const Upload = () => {
         {/*  </RadioAccordion.Root>*/}
         {/*</Form.Section>*/}
         <Form.Section className="flex flex-row justify-between">
-          <Button onClick={submitData} mode="primary">
+          <LoadingButton
+            loading={isLoading}
+            onClick={submitData}
+            mode="primary"
+          >
             Upload
-          </Button>
+          </LoadingButton>
           <Clear setFormData={setFormData} />
         </Form.Section>
       </Form.Root>

@@ -1,5 +1,5 @@
 import theme from "../../constants/theme";
-import Button from "./button/Button";
+import PrimaryButton from "./button/Button";
 import { ReactNode } from "react";
 
 const Root = ({ children }) => {
@@ -22,13 +22,13 @@ const Item = ({
   [p: string]: any;
 }) => (
   // <div className="px-4 py-0 max-h-full flex items-center w-max">{children}</div>
-  <Button
+  <PrimaryButton
     style={{ borderRadius: 0 }}
     className={"border-0 " + className}
     {...rest}
   >
     {children}
-  </Button>
+  </PrimaryButton>
 );
 
 export { Root, Item as Button };

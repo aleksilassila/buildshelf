@@ -1,6 +1,6 @@
 import BuildCard from "../components/BuildCard";
 import { Build } from "../interfaces/ApiResponses";
-import * as BuildPage from "../components/BuildPage";
+import * as BuildPage from "../components/buildPage/BuildPage";
 import { useState } from "react";
 import NetworkError from "../components/statuses/NetworkError";
 import Empty from "../components/statuses/Empty";

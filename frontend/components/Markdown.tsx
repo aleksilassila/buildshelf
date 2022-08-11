@@ -9,13 +9,24 @@ const components: Components = {
   h6: ({ children }) => <h6 className="text-xs font-medium">{children}</h6>,
   p: ({ children }) => <p className="my-2 leading-5">{children}</p>,
   ul: ({ children }) => <li className="list-disc">{children}</li>,
+  pre: ({ children }) => (
+    <pre className="bg-gray-100 p-4 whitespace-pre-wrap">{children}</pre>
+  ),
   code: ({ children }) => (
     <code className="font-body bg-stone-200 rounded px-1 py-0.5 font-monospace">
       {children}
     </code>
   ),
-  a: ({ children, ...rest }) => (
-    <a {...rest} className="underline text-green-600">
+  a: ({ children, href, ...rest }) => (
+    <a
+      {...rest}
+      href={
+        !href.startsWith("https://") && !href.startsWith("http://")
+          ? "http://" + href
+          : href
+      }
+      className="underline text-green-600"
+    >
       {children}
     </a>
   ),

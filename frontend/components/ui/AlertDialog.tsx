@@ -1,6 +1,6 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { ReactNode } from "react";
-import Button from "./button/Button";
+import PrimaryButton from "./button/Button";
 import theme from "../../constants/theme";
 
 const Root = ({
@@ -76,10 +76,10 @@ const ConfirmDangerous = ({ onConfirm }) => (
     </div>
     <div className="flex gap-4">
       <AlertDialog.Action onClick={onConfirm}>
-        <Button mode="primary">Confirm</Button>
+        <PrimaryButton mode="primary">Confirm</PrimaryButton>
       </AlertDialog.Action>
       <AlertDialog.Cancel>
-        <Button>Cancel</Button>
+        <PrimaryButton>Cancel</PrimaryButton>
       </AlertDialog.Cancel>
     </div>
   </div>

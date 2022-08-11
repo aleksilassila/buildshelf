@@ -5,7 +5,7 @@ import { Build, Image } from "../../../interfaces/ApiResponses";
 import Loading from "../../../components/statuses/Loading";
 import NetworkError from "../../../components/statuses/NetworkError";
 import * as Form from "../../../components/form/Form";
-import Button from "../../../components/ui/button/Button";
+import PrimaryButton from "../../../components/ui/button/Button";
 import FormMarkdownEditor from "../../../components/form/FormMarkdownEditor";
 import { useEffect } from "react";
 import { Toast, useToast } from "../../../components/ui/Toast";
@@ -78,7 +78,7 @@ const Edit = () => {
         <Form.Section className="flex flex-row justify-between items-end">
           <h2 className={theme.text.bold}>Edit build {build.name}</h2>
           <a href={"/builds/" + buildId}>
-            <Button onClick={() => {}}>View Build Page</Button>
+            <PrimaryButton onClick={() => {}}>View Build Page</PrimaryButton>
           </a>
         </Form.Section>
         <Form.Section>
@@ -111,12 +111,16 @@ const Edit = () => {
           />
         </Form.Section>
         <Form.Section className="flex justify-between">
-          <Button onClick={submitData} className="float-left" mode="primary">
+          <PrimaryButton
+            onClick={submitData}
+            className="float-left"
+            mode="primary"
+          >
             Update Build
-          </Button>
+          </PrimaryButton>
           <AlertDialog.Root>
             <AlertDialog.Trigger>
-              <Button mode="danger">Delete</Button>
+              <PrimaryButton mode="danger">Delete</PrimaryButton>
             </AlertDialog.Trigger>
             <AlertDialog.Content>
               <AlertDialog.ConfirmDangerous

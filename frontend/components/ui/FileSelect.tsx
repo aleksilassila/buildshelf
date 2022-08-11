@@ -1,4 +1,4 @@
-import Button from "./button/Button";
+import PrimaryButton from "./button/Button";
 import { useRef } from "react";
 
 interface Props {
@@ -30,7 +30,10 @@ const FileSelect = ({
   };
 
   return (
-    <Button onClick={() => inputRef.current.click()} className={className}>
+    <PrimaryButton
+      onClick={() => inputRef.current.click()}
+      className={className}
+    >
       {fileDescription(files)}
       <input
         ref={inputRef}
@@ -40,7 +43,7 @@ const FileSelect = ({
         accept={accept}
         onChange={(e) => setFiles(e.target.files)}
       />
-    </Button>
+    </PrimaryButton>
   );
 };
 

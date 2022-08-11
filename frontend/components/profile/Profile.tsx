@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Navbar from "../navbar/Navbar";
 import { useState } from "react";
 import { User } from "../../interfaces/ApiResponses";
-import Button from "../ui/button/Button";
+import PrimaryButton from "../ui/button/Button";
 import Heart from "../icons/Heart";
 import NBSP from "../utils/NBSP";
 import { apiRequest, useApi } from "../../utils/api";
@@ -93,11 +93,14 @@ const Profile = ({
           </div>
           {localUser.isLoggedIn() && localUser.uuid !== uuid ? (
             <div className="row-start-2 col-start-2 flex items-end justify-end">
-              <Button onClick={follow} mode={!followed ? "primary" : "default"}>
+              <PrimaryButton
+                onClick={follow}
+                mode={!followed ? "primary" : "default"}
+              >
                 <Heart style={{ height: "0.8em" }} />
                 {NBSP}
                 {followed ? "Unfollow" : "Follow"}
-              </Button>
+              </PrimaryButton>
             </div>
           ) : null}
         </div>

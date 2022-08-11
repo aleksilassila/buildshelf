@@ -1,7 +1,12 @@
 import { Build } from "../../interfaces/ApiResponses";
+import { HTMLAttributes } from "react";
 
-const BuildTitle = ({ build }: { build: Build }) => (
-  <div className="flex flex-row gap-4">
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  build: Build;
+}
+
+const BuildTitle = ({ build, className, ...rest }: Props) => (
+  <div {...rest} className={`flex flex-row gap-4 flex-shrink-0 ${className}`}>
     <div
       className="h-14 w-14 bg-cover bg-center"
       style={{

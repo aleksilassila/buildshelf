@@ -1,15 +1,17 @@
 import CloseIcon from "./icons/CloseIcon";
 import { Image } from "../interfaces/ApiResponses";
+import { DivComponent } from "../interfaces/Props";
 
-const ImageCollection: ({
-  images,
-  remove,
-}: {
+interface Props extends DivComponent {
   images: Image[];
   remove?: (id: number) => void | null;
-}) => JSX.Element = ({ images, remove = null }) => {
+}
+
+const ImageCollection = ({ images, remove = null, className }: Props) => {
   return (
-    <div className="flex gap-2 overflow-x-scroll h-48 md:h-56 lg:h-64 xl:h-76 pb-2">
+    <div
+      className={`flex gap-2 overflow-x-scroll max-h-72 md:h-56 lg:h-64 xl:h-76 pb-2 ${className}`}
+    >
       {images.map((image, key) => {
         return (
           <div key={key} className="relative group">

@@ -1,10 +1,11 @@
-import Button from "../ui/button/Button";
+import PrimaryButton from "../ui/button/Button";
 import { createRef, useState } from "react";
 import { apiRequest } from "../../utils/api";
 import ImageCollection from "../ImageCollection";
 import { Image } from "../../interfaces/ApiResponses";
 import { AxiosResponse } from "axios";
 import { Toast, useToast } from "../ui/Toast";
+import LoadingButton from "../ui/button/LoadingButton";
 
 const ImageUpload: ({
   uploadCallback,
@@ -19,6 +20,7 @@ const ImageUpload: ({
   const [localFiles, setLocalFiles] = useState<File[]>([]);
   const [remoteImages, setRemoteImages] = useState<Image[]>(initialImages);
   const [toast, toastProps] = useToast();
+  const [loading, setLoading] = useState(false);
 
   const inputRef = createRef<HTMLInputElement>();
 
@@ -32,6 +34,7 @@ const ImageUpload: ({
         data.append("images", image);
       }
 
+      setLoading(true);
       apiRequest({
         method: "POST",
         url: "/images/upload",
@@ -54,7 +57,10 @@ const ImageUpload: ({
           }
           uploadCallback(null, remoteImages);
         })
-        .finally(() => setLocalFiles([]));
+        .finally(() => {
+          setLocalFiles([]);
+          setLoading(false);
+        });
     }
   };
 
@@ -74,7 +80,7 @@ const ImageUpload: ({
         />
       ) : null}
       <div className="flex gap-2">
-        <Button
+        <PrimaryButton
           onClick={(e) => {
             inputRef.current.click();
           }}
@@ -94,13 +100,14 @@ const ImageUpload: ({
             className="hidden"
             ref={inputRef}
           />
-        </Button>
-        <Button
+        </PrimaryButton>
+        <LoadingButton
+          loading={loading}
           mode={localFiles.length ? "primary" : "disabled"}
           onClick={upload}
         >
           Add
-        </Button>
+        </LoadingButton>
       </div>
       <Toast toastProps={toastProps} />
     </div>

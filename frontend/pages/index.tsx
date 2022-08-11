@@ -7,7 +7,14 @@ import { useApi } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
 import styled from "../components/Styled";
 import { ImageIcon } from "../components/icons/ImageIcon";
-import { Anchor, Heading, Paragraph } from "../components/ui/CommonElements";
+import {
+  Anchor,
+  Heading,
+  Heading2,
+  List,
+  ListItem,
+  Paragraph,
+} from "../components/ui/CommonElements";
 
 const Banner = ({ children, uri }) => (
   <div
@@ -157,6 +164,19 @@ const Home = () => {
           </Anchor>
           .
         </Paragraph>
+        <Heading2>Changelog</Heading2>
+        <Paragraph className="font-medium">
+          8/11/2022 - UI improvements
+        </Paragraph>
+
+        <List>
+          <ListItem>Ui improvements regarding build pages and mobile.</ListItem>
+          <ListItem>Added loading animation to certain buttons</ListItem>
+          <ListItem>Code refactoring</ListItem>
+          <ListItem>
+            Fixed some markdown links not working in the build descriptions
+          </ListItem>
+        </List>
       </Padded>
       <Padded className={"text-stone-500 text-sm py-8 text-center"}>
         <div className="flex justify-between">

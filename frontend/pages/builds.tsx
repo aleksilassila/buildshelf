@@ -1,7 +1,7 @@
 import Navbar from "../components/navbar/Navbar";
 import CardsGridView from "../containers/CardsGridView";
 import { useState } from "react";
-import { SeparatorTag } from "../components/utils/Separator";
+import Separator from "../components/utils/Separator";
 import InfinityScroll from "../containers/InfinityScroll";
 import { useApiFeed } from "../utils/api";
 import { Build } from "../interfaces/ApiResponses";
@@ -84,7 +84,7 @@ const Builds = () => {
             />
           </SortingBarHalf>
         </SortingBar>
-        <SeparatorTag />
+        <Separator />
         <div className="content">
           <InfinityScroll fetchMore={fetchMore}>
             <CardsGridView

@@ -87,7 +87,7 @@ const Collections = () => {
             />
           </SortingBarHalf>
         </SortingBar>
-        {Separator}
+        <Separator />
         <div className="content">
           <InfinityScroll fetchMore={fetchMore}>
             <ListView

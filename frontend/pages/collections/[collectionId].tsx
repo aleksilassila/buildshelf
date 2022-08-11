@@ -8,7 +8,7 @@ import CardsGridView from "../../containers/CardsGridView";
 import CollectionTitle from "../../components/collectionPage/CollectionTitle";
 import { Banner } from "../../components/Banner";
 import Separator from "../../components/utils/Separator";
-import Button from "../../components/ui/button/Button";
+import PrimaryButton from "../../components/ui/button/Button";
 import { useLocalUser } from "../../utils/auth";
 
 const FavoriteButton = ({
@@ -18,7 +18,7 @@ const FavoriteButton = ({
   collection: Collection;
   afterClick: () => void;
 }) => (
-  <Button
+  <PrimaryButton
     mode={collection.isFavorite ? "default" : "primary"}
     onClick={() => {
       apiRequest({
@@ -31,7 +31,7 @@ const FavoriteButton = ({
     }}
   >
     Favorite
-  </Button>
+  </PrimaryButton>
 );
 
 const CollectionPage = () => {
@@ -80,10 +80,10 @@ const CollectionPage = () => {
             <div className="flex justify-between">
               <FavoriteButton collection={collection} afterClick={refresh} />
               {localUser.isLoggedIn(collection.creator.uuid) && (
-                <Button mode="default">Edit</Button>
+                <PrimaryButton mode="default">Edit</PrimaryButton>
               )}
             </div>
-            {Separator}
+            <Separator />
           </div>
         )}
         <CardsGridView
