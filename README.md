@@ -1,13 +1,11 @@
 # Buildshelf
 
-Work-in-progress website for sharing and browsing builds
-for a popular block game called Minecraft.
+Work-in-progress website that allows users to upload and share their creations in
+a popular block game called Minecraft.
+To upload builds, users can log in with a microsoft account that has a minecraft account linked to it.
 
-Users can log in with their Minecraft account to upload
-and store their builds. NextJS handles frontend, while
-express and sequelize handles backend logic together with
-PostgreSQL database. Files are stored on filesystem using
-Multer.
+Frontend has been built with Next.js and backend with Express.js and Sequelize.
+Postgresql is used as the database, and files are stored using Multer.
 
 Can be found live at [buildshelf.net](https://buildshelf.net).
 
@@ -36,3 +34,17 @@ JWT_SECRET=yoursecret
 MICROSOFT_CLIENT_ID=
 MICROSOFT_CLIENT_SECRET=
 ```
+
+## Screenshots
+
+### <center>Frontpage</center>
+![Screenshot 1](screenshot-1.png)
+
+### <center>Builds page</center>
+![Screenshot 2](screenshot-2.png)
+
+### <center>Upload page</center>
+![Screenshot 3](screenshot-3.png)
+
+### <center>Profile page</center>
+![Screenshot 4](screenshot-4.png)
