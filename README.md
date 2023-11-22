@@ -7,8 +7,6 @@ To upload builds, users can log in with a microsoft account that has a minecraft
 Frontend has been built with Next.js and backend with Express.js and Sequelize.
 Postgresql is used as the database, and files are stored using Multer.
 
-Can be found live at [buildshelf.net](https://buildshelf.net).
-
 ## Building
 The project runs via Docker. Get started with
 `docker-compose up --build`
